@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>se.sundsvall.dept44</groupId>
 		<artifactId>dept44-service-parent</artifactId>
-		<version>6.0.3</version>
+		<version>8.0.7</version>
 		<relativePath />
 		<!-- lookup parent from repository -->
 	</parent>
 	<groupId>se.sundsvall</groupId>
-	<artifactId>template-spring-boot</artifactId>
+	<artifactId>api-service-education-data</artifactId>
 	<version>1.0</version>
-	<name>template</name>
+	<name>api-service-education-data</name>
 	<properties />
 	<dependencies>
 		<dependency>
