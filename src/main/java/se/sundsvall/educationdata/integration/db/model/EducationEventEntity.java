@@ -35,7 +35,7 @@ public class EducationEventEntity {
 	private Long id;
 
 	@Column(name = "edu_id")
-	private String eduId; // link between same educations in susa and planned-education
+	private String eduId;
 
 	@Column(name = "identifier")
 	private String identifier;

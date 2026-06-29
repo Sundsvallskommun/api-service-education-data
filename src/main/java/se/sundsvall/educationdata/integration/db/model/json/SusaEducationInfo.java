@@ -25,8 +25,8 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @Entity
-@Table(name = "susa_info_raw")
-public class SusaInfo {
+@Table(name = "susa_education_info_raw")
+public class SusaEducationInfo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

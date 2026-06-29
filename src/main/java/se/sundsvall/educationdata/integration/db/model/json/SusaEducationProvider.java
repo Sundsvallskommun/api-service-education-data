@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
@@ -25,14 +26,15 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @Entity
-@Table(name = "susa_event_raw")
-public class SusaEvent {
+@Table(name = "susa_education_provider_raw")
+public class SusaEducationProvider {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 
+	@Lob
 	@Column(name = "json_body", columnDefinition = "TEXT", nullable = false, updatable = false)
 	private String jsonBody;
 

@@ -1,4 +1,4 @@
-package se.sundsvall.educationdata.integration.db.model.json;
+package se.sundsvall.educationdata.integration.db.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -6,9 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
-import java.time.LocalDate;
-
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -25,18 +23,23 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 @Entity
-@Table(name = "syllabus_raw")
-public class SyllabusClassification {
-
+@Table(name = "gy_program_category",
+	uniqueConstraints = @UniqueConstraint(name = "uq_gy_program_code", columnNames = "program_code"))
+public class GyProgramCategory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "json_body", columnDefinition = "TEXT", nullable = false, updatable = false)
-	private String jsonBody;
+	@Column(name = "program_code")
+	private String programCode;
 
-	@Column(name = "date_collected", nullable = false, updatable = false)
-	private LocalDate dateCollected;
+	@Column(name = "program_name")
+	private String programName;
 
+	@Column(name = "category")
+	private String category; // Lista med flera?
+
+	@Column(name = "vocational")
+	private Boolean vocational;
 }

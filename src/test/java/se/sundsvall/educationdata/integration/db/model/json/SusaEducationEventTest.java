@@ -17,7 +17,7 @@ import static java.time.LocalDate.now;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 
-public class PlannedEducationVuxenTest {
+public class SusaEducationEventTest {
 
 	@BeforeAll
 	static void setup() {
@@ -26,7 +26,7 @@ public class PlannedEducationVuxenTest {
 
 	@Test
 	void testBean() {
-		MatcherAssert.assertThat(PlannedEducationVuxen.class, allOf(
+		MatcherAssert.assertThat(SusaEducationEvent.class, allOf(
 			hasValidBeanConstructor(),
 			hasValidGettersAndSetters(),
 			hasValidBeanHashCode(),
@@ -42,7 +42,7 @@ public class PlannedEducationVuxenTest {
 		var dateCollected = LocalDate.of(2025, Month.JUNE, 1);
 
 		// Act
-		var bean = PlannedEducationVuxen.builder()
+		var bean = SusaEducationProvider.builder()
 			.withId(id)
 			.withJsonBody(jsonBody)
 			.withDateCollected(dateCollected).build();
@@ -55,7 +55,7 @@ public class PlannedEducationVuxenTest {
 
 	@Test
 	void testNoDirtOnCreatedBean() {
-		assertThat(PlannedEducationVuxen.builder().build()).hasAllNullFieldsOrProperties();
-		assertThat(new PlannedEducationVuxen()).hasAllNullFieldsOrProperties();
+		assertThat(SusaEducationEvent.builder().build()).hasAllNullFieldsOrProperties();
+		assertThat(new SusaEducationEvent()).hasAllNullFieldsOrProperties();
 	}
 }
