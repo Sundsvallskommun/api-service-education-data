@@ -28,35 +28,23 @@ public class EducationEventEntity {
 	@Column(name = "id")
 	private Long id;
 
+	@Column(name = "title")
+	private String title;
+
 	@Column(name = "education_event_id")
 	private String educationEventId;
 
-	@Column(name = "education_info_Id")
+	@Column(name = "education_info_id")
 	private String educationInfoId;
 
-	@Column(name = "name")
-	private String name;
-
-	@Column(name = "description", columnDefinition = "TEXT")
-	private String description;
+	@Column(name = "education_provider_id")
+	private String educationProviderId;
 
 	@Column(name = "city")
 	private String city;
 
-	@Column(name = "visiting_address")
-	private String visitingAddress;
-
 	@Column(name = "municipality_id")
 	private String municipalityId;
-
-	@Column(name = "school_unit_name")
-	private String schoolUnitName;
-
-	@Column(name = "provider_id")
-	private String providerId;
-
-	@Column(name = "provider_url")
-	private String providerUrl;
 
 	@Column(name = "course_post_url")
 	private String coursePostUrl;
@@ -70,29 +58,14 @@ public class EducationEventEntity {
 	@Column(name = "cost")
 	private BigDecimal cost;
 
-	@Column(name = "student_aid_eligible")
-	private Boolean studentAidEligible;
-
 	@Column(name = "lecture_type")
 	private String lectureType;
 
 	@Column(name = "study_pace")
 	private String studyPace;
 
-	@Column(name = "credit_type")
-	private String creditType;
-
-	@Column(name = "credits")
-	private String credits;
-
 	@Column(name = "language")
 	private String languageOfInstructions;
-
-	@Column(name = "recommended_knowledge")
-	private String recommendedKnowledge;
-
-	@Column(name = "requirements")
-	private String requirements;
 
 	@Column(name = "start_date")
 	private LocalDate startDate;
@@ -105,9 +78,6 @@ public class EducationEventEntity {
 
 	@Column(name = "application_end_date")
 	private LocalDate applicationDateEnd;
-
-	@Column(name = "subject_code")
-	private String subjectCode;
 
 	@CreationTimestamp
 	@Column(name = "created_at")
