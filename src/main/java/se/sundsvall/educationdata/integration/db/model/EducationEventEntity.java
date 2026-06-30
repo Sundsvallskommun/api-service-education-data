@@ -31,7 +31,7 @@ public class EducationEventEntity {
 	@Column(name = "education_event_id")
 	private String educationEventId;
 
-	@Column(name = "identifier")
+	@Column(name = "education_info_Id")
 	private String educationInfoId;
 
 	@Column(name = "name")
@@ -74,7 +74,7 @@ public class EducationEventEntity {
 	private Boolean studentAidEligible;
 
 	@Column(name = "lecture_type")
-	private String lectureType; // distance/atLocation/hybrid
+	private String lectureType;
 
 	@Column(name = "study_pace")
 	private String studyPace;
