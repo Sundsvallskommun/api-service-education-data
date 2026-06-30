@@ -10,19 +10,13 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
-@EqualsAndHashCode
-@ToString
 @Entity
 @Table(name = "event_category",
 	uniqueConstraints = @UniqueConstraint(name = "uq_event_category", columnNames = {
@@ -37,7 +31,7 @@ public class EventCategory {
 	private Long id;
 
 	@Column(name = "education_event_id")
-	private String eduId;
+	private String educationEventId;
 
 	@Column(name = "direction_id")
 	private String directionId;

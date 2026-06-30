@@ -42,7 +42,7 @@ public class SusaEducationInfoTest {
 		var dateCollected = LocalDate.of(2025, Month.JUNE, 1);
 
 		// Act
-		var bean = SusaEducationProvider.builder()
+		var bean = SusaEducationInfo.builder()
 			.withId(id)
 			.withJsonBody(jsonBody)
 			.withDateCollected(dateCollected).build();

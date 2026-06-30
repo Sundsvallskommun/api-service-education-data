@@ -11,19 +11,13 @@ import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
-@EqualsAndHashCode
-@ToString
 @Entity
 @Table(name = "susa_education_event_raw")
 public class SusaEducationEvent {
@@ -33,7 +27,7 @@ public class SusaEducationEvent {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "json_body", columnDefinition = "TEXT", nullable = false, updatable = false)
+	@Column(name = "json_body", columnDefinition = "LONGTEXT", nullable = false, updatable = false)
 	private String jsonBody;
 
 	@Column(name = "date_collected", nullable = false, updatable = false)

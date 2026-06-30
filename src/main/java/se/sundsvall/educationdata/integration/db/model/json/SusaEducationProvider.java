@@ -5,26 +5,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
-@EqualsAndHashCode
-@ToString
 @Entity
 @Table(name = "susa_education_provider_raw")
 public class SusaEducationProvider {
@@ -34,8 +27,7 @@ public class SusaEducationProvider {
 	@Column(name = "id")
 	private Long id;
 
-	@Lob
-	@Column(name = "json_body", columnDefinition = "TEXT", nullable = false, updatable = false)
+	@Column(name = "json_body", columnDefinition = "LONGTEXT", nullable = false, updatable = false)
 	private String jsonBody;
 
 	@Column(name = "date_collected", nullable = false, updatable = false)

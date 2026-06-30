@@ -11,20 +11,14 @@ import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
-@EqualsAndHashCode
-@ToString
 @Entity
 @Table(name = "education_event")
 public class EducationEventEntity {
@@ -34,11 +28,11 @@ public class EducationEventEntity {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "edu_id")
-	private String eduId;
+	@Column(name = "education_event_id")
+	private String educationEventId;
 
 	@Column(name = "identifier")
-	private String identifier;
+	private String educationInfoId;
 
 	@Column(name = "name")
 	private String name;
@@ -91,9 +85,6 @@ public class EducationEventEntity {
 	@Column(name = "credits")
 	private String credits;
 
-	@Column(name = "type_of_education")
-	private String typeOfEducation; // vocational/standalone-course/higher-studies-prep
-
 	@Column(name = "language")
 	private String languageOfInstructions;
 
@@ -117,12 +108,6 @@ public class EducationEventEntity {
 
 	@Column(name = "subject_code")
 	private String subjectCode;
-
-	@Column(name = "category")
-	private String category;
-
-	@Column(name = "subcategory")
-	private String subcategory;
 
 	@CreationTimestamp
 	@Column(name = "created_at")

@@ -38,8 +38,8 @@ class EducationEventEntityTest {
 	@Test
 	void builder() {
 		// Arrange
-		var eduId = "eduId";
-		var identifier = "identifier";
+		var educationEventId = "educationEventId";
+		var educationInfoId = "educationInfoId";
 		var name = "name";
 		var description = "description";
 		var city = "city";
@@ -57,7 +57,6 @@ class EducationEventEntityTest {
 		var studyPace = "100";
 		var creditType = "creditType";
 		var credits = "150";
-		var typeOfEducation = "vocational";
 		var languageOfInstructions = "Swedish";
 		var recommendedKnowledge = "recommendedKnowledge";
 		var requirements = "requirements";
@@ -66,15 +65,13 @@ class EducationEventEntityTest {
 		var applicationDateStart = LocalDate.of(2025, Month.JUNE, 1);
 		var applicationDateEnd = LocalDate.of(2025, Month.JUNE, 1);
 		var subjectCode = "subjectCode";
-		var category = "category";
-		var subcategory = "subcategory";
 		var outdatedAt = LocalDate.of(2025, Month.JUNE, 10);
 		var deleted = false;
 
 		// Act
 		var education = EducationEventEntity.builder()
-			.withEduId(eduId)
-			.withIdentifier(identifier)
+			.withEducationEventId(educationEventId)
+			.withEducationInfoId(educationInfoId)
 			.withName(name)
 			.withDescription(description)
 			.withCity(city)
@@ -92,7 +89,6 @@ class EducationEventEntityTest {
 			.withStudyPace(studyPace)
 			.withCreditType(creditType)
 			.withCredits(credits)
-			.withTypeOfEducation(typeOfEducation)
 			.withLanguageOfInstructions(languageOfInstructions)
 			.withRecommendedKnowledge(recommendedKnowledge)
 			.withRequirements(requirements)
@@ -101,14 +97,12 @@ class EducationEventEntityTest {
 			.withApplicationDateStart(applicationDateStart)
 			.withApplicationDateEnd(applicationDateEnd)
 			.withSubjectCode(subjectCode)
-			.withCategory(category)
-			.withSubcategory(subcategory)
 			.withOutdatedAt(outdatedAt)
 			.withDeleted(deleted).build();
 
 		// Assert
-		assertThat(education.getEduId()).isEqualTo(eduId);
-		assertThat(education.getIdentifier()).isEqualTo(identifier);
+		assertThat(education.getEducationEventId()).isEqualTo(educationEventId);
+		assertThat(education.getEducationInfoId()).isEqualTo(educationInfoId);
 		assertThat(education.getName()).isEqualTo(name);
 		assertThat(education.getDescription()).isEqualTo(description);
 		assertThat(education.getCity()).isEqualTo(city);
@@ -126,7 +120,6 @@ class EducationEventEntityTest {
 		assertThat(education.getStudyPace()).isEqualTo(studyPace);
 		assertThat(education.getCreditType()).isEqualTo(creditType);
 		assertThat(education.getCredits()).isEqualTo(credits);
-		assertThat(education.getTypeOfEducation()).isEqualTo(typeOfEducation);
 		assertThat(education.getLanguageOfInstructions()).isEqualTo(languageOfInstructions);
 		assertThat(education.getRecommendedKnowledge()).isEqualTo(recommendedKnowledge);
 		assertThat(education.getRequirements()).isEqualTo(requirements);
@@ -135,8 +128,6 @@ class EducationEventEntityTest {
 		assertThat(education.getApplicationDateStart()).isEqualTo(applicationDateStart);
 		assertThat(education.getApplicationDateEnd()).isEqualTo(applicationDateEnd);
 		assertThat(education.getSubjectCode()).isEqualTo(subjectCode);
-		assertThat(education.getCategory()).isEqualTo(category);
-		assertThat(education.getSubcategory()).isEqualTo(subcategory);
 		assertThat(education.getOutdatedAt()).isEqualTo(outdatedAt);
 		assertThat(education.getDeleted()).isEqualTo(deleted);
 	}

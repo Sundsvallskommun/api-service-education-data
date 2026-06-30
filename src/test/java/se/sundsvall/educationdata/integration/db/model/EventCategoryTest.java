@@ -27,17 +27,17 @@ public class EventCategoryTest {
 	void builder() {
 		// Arrange
 		var id = 1L;
-		var eduId = "eduId";
+		var educationEventId = "educationEventId";
 		var directionId = "directionId";
 
 		// Act
 		var bean = EventCategory.builder()
-			.withId(id).withEduId(eduId).withDirectionId(directionId)
+			.withId(id).withEducationEventId(educationEventId).withDirectionId(directionId)
 			.build();
 
 		// Assert
 		assertThat(bean.getId()).isEqualTo(id);
-		assertThat(bean.getEduId()).isEqualTo(eduId);
+		assertThat(bean.getEducationEventId()).isEqualTo(educationEventId);
 		assertThat(bean.getDirectionId()).isEqualTo(directionId);
 	}
 

@@ -37,16 +37,16 @@ public class ReferenceCategoryTest {
 			.withId(id)
 			.withCategoryId(categoryId)
 			.withCategoryName(categoryName)
-			.withDirectionId(directionName)
-			.withDirectionName(directionId)
+			.withDirectionId(directionId)
+			.withDirectionName(directionName)
 			.build();
 
 		// Assert
 		assertThat(bean.getId()).isEqualTo(id);
 		assertThat(bean.getCategoryId()).isEqualTo(categoryId);
 		assertThat(bean.getCategoryName()).isEqualTo(categoryName);
-		assertThat(bean.getDirectionId()).isEqualTo(directionName);
-		assertThat(bean.getDirectionName()).isEqualTo(directionId);
+		assertThat(bean.getDirectionId()).isEqualTo(directionId);
+		assertThat(bean.getDirectionName()).isEqualTo(directionName);
 	}
 
 	@Test
