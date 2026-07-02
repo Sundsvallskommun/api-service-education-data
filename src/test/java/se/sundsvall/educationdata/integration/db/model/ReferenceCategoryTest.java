@@ -1,5 +1,6 @@
 package se.sundsvall.educationdata.integration.db.model;
 
+import java.util.UUID;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ public class ReferenceCategoryTest {
 	@Test
 	void builder() {
 		// Arrange
-		var id = 1L;
+		var id = UUID.randomUUID().toString();
 		var categoryId = "categoryId";
 		var categoryName = "categoryName";
 		var directionName = "directionName";

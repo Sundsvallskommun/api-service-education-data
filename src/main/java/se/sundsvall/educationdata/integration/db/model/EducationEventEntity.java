@@ -24,9 +24,9 @@ import org.hibernate.annotations.CreationTimestamp;
 public class EducationEventEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id")
-	private Long id;
+	private String id;
 
 	@Column(name = "title")
 	private String title;

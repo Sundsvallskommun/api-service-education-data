@@ -29,9 +29,9 @@ import lombok.NoArgsConstructor;
 		columnList = "direction_id"))
 public class ReferenceCategory {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id")
-	private Long id;
+	private String id;
 
 	@Column(name = "category_id")
 	private String categoryId;

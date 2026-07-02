@@ -1,7 +1,11 @@
 package se.sundsvall.educationdata.integration.db;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
 
-public interface EducationInfoEntityRepository extends JpaRepository<EducationInfoEntity, Long> {
+@Repository
+@CircuitBreaker(name = "educationInfoEntityRepository")
+public interface EducationInfoEntityRepository extends JpaRepository<EducationInfoEntity, String> {
 }

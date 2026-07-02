@@ -21,9 +21,9 @@ import lombok.NoArgsConstructor;
 	uniqueConstraints = @UniqueConstraint(name = "uq_gy_program_code", columnNames = "program_code"))
 public class GyProgramCategory {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id")
-	private Long id;
+	private String id;
 
 	@Column(name = "program_code")
 	private String programCode;
