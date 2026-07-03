@@ -26,13 +26,13 @@ import lombok.NoArgsConstructor;
 public class EventCategory {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = "id", length = 36)
+	private String id;
 
-	@Column(name = "education_event_id")
+	@Column(name = "education_event_id", length = 64)
 	private String educationEventId;
 
-	@Column(name = "direction_id")
+	@Column(name = "direction_id", length = 64)
 	private String directionId;
 }

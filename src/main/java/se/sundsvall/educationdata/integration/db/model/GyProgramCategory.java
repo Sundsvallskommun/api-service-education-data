@@ -21,17 +21,17 @@ import lombok.NoArgsConstructor;
 	uniqueConstraints = @UniqueConstraint(name = "uq_gy_program_code", columnNames = "program_code"))
 public class GyProgramCategory {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = "id", length = 36)
+	private String id;
 
-	@Column(name = "program_code")
+	@Column(name = "program_code", length = 64)
 	private String programCode;
 
-	@Column(name = "program_name")
+	@Column(name = "program_name", length = 100)
 	private String programName;
 
-	@Column(name = "category")
+	@Column(name = "category", length = 32)
 	private String category; // Lista med flera?
 
 	@Column(name = "vocational")

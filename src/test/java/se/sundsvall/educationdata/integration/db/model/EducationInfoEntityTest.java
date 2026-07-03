@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Random;
+import java.util.UUID;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ public class EducationInfoEntityTest {
 	@Test
 	void builder() {
 		// Arrange
-		var id = 1L;
+		var id = UUID.randomUUID().toString();
 		var educationInfoId = "education_info_id";
 		var title = "title";
 		var schoolType = "schoolType";

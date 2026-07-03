@@ -24,47 +24,47 @@ import org.hibernate.annotations.CreationTimestamp;
 public class EducationEventEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = "id", length = 36)
+	private String id;
 
-	@Column(name = "title")
+	@Column(name = "title", length = 100)
 	private String title;
 
-	@Column(name = "education_event_id")
+	@Column(name = "education_event_id", length = 64)
 	private String educationEventId;
 
-	@Column(name = "education_info_id")
+	@Column(name = "education_info_id", length = 64)
 	private String educationInfoId;
 
-	@Column(name = "education_provider_id")
+	@Column(name = "education_provider_id", length = 64)
 	private String educationProviderId;
 
-	@Column(name = "city")
+	@Column(name = "city", length = 100)
 	private String city;
 
-	@Column(name = "municipality_id")
+	@Column(name = "municipality_id", length = 6)
 	private String municipalityId;
 
-	@Column(name = "course_post_url")
+	@Column(name = "course_post_url", length = 255)
 	private String coursePostUrl;
 
 	@Column(name = "seats")
 	private Integer seats;
 
-	@Column(name = "currency_type")
+	@Column(name = "currency_type", length = 10)
 	private String currencyType;
 
-	@Column(name = "cost")
+	@Column(name = "cost", length = 10)
 	private BigDecimal cost;
 
-	@Column(name = "lecture_type")
+	@Column(name = "lecture_type", length = 32)
 	private String lectureType;
 
-	@Column(name = "study_pace")
+	@Column(name = "study_pace", length = 10)
 	private String studyPace;
 
-	@Column(name = "language")
+	@Column(name = "language", length = 32)
 	private String languageOfInstructions;
 
 	@Column(name = "start_date")

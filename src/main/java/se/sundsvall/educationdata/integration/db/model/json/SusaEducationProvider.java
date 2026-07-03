@@ -23,9 +23,9 @@ import lombok.NoArgsConstructor;
 public class SusaEducationProvider {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = "id", length = 36)
+	private String id;
 
 	@Column(name = "json_body", columnDefinition = "LONGTEXT", nullable = false, updatable = false)
 	private String jsonBody;

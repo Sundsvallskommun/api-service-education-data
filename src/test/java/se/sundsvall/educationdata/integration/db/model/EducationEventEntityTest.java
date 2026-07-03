@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Random;
+import java.util.UUID;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,7 @@ class EducationEventEntityTest {
 	@Test
 	void builder() {
 		// Arrange
+		var id = UUID.randomUUID().toString();
 		var educationEventId = "educationEventId";
 		var educationInfoId = "educationInfoId";
 		var title = "name";
@@ -60,6 +62,7 @@ class EducationEventEntityTest {
 
 		// Act
 		var education = EducationEventEntity.builder()
+			.withId(id)
 			.withEducationEventId(educationEventId)
 			.withEducationInfoId(educationInfoId)
 			.withTitle(title)
@@ -81,6 +84,7 @@ class EducationEventEntityTest {
 			.withDeleted(deleted).build();
 
 		// Assert
+		assertThat(education.getId()).isEqualTo(id);
 		assertThat(education.getEducationEventId()).isEqualTo(educationEventId);
 		assertThat(education.getEducationInfoId()).isEqualTo(educationInfoId);
 		assertThat(education.getTitle()).isEqualTo(title);

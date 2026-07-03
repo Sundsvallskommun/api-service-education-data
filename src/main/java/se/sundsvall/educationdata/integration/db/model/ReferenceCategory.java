@@ -29,20 +29,20 @@ import lombok.NoArgsConstructor;
 		columnList = "direction_id"))
 public class ReferenceCategory {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = "id", length = 36)
+	private String id;
 
-	@Column(name = "category_id")
+	@Column(name = "category_id", length = 64)
 	private String categoryId;
 
-	@Column(name = "category_name")
+	@Column(name = "category_name", length = 32)
 	private String categoryName;
 
-	@Column(name = "direction_id")
+	@Column(name = "direction_id", length = 64)
 	private String directionId;
 
-	@Column(name = "direction_name")
+	@Column(name = "direction_name", length = 32)
 	private String directionName;
 
 }

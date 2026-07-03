@@ -3,6 +3,7 @@ package se.sundsvall.educationdata.integration.db.model.json;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Random;
+import java.util.UUID;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ public class SusaEducationProviderTest {
 	@Test
 	void builder() {
 		// Arrange
-		var id = 1L;
+		var id = UUID.randomUUID().toString();
 		var jsonBody = "json body in text";
 		var dateCollected = LocalDate.of(2025, Month.JUNE, 1);
 
