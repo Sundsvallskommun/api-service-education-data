@@ -24,7 +24,7 @@ public class SusaEducationProvider {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name = "id")
+	@Column(name = "id", length = 36)
 	private String id;
 
 	@Column(name = "json_body", columnDefinition = "LONGTEXT", nullable = false, updatable = false)

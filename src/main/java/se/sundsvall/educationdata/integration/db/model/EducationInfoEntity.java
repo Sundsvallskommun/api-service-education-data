@@ -24,47 +24,47 @@ public class EducationInfoEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Column(name = "id")
+	@Column(name = "id", length = 36)
 	private String id;
 
-	@Column(name = "education_info_id")
+	@Column(name = "education_info_id", length = 64)
 	private String educationInfoId;
 
-	@Column(name = "title")
+	@Column(name = "title", length = 100)
 	private String title;
 
-	@Column(name = "school_type")
+	@Column(name = "school_type", length = 32)
 	private String schoolType;
 
 	// Ex. program or course
-	@Column(name = "education_type")
+	@Column(name = "education_type", length = 32)
 	private String educationType;
 
-	@Column(name = "code")
+	@Column(name = "code", length = 50)
 	private String code;
 
-	@Column(name = "description")
+	@Column(name = "description", columnDefinition = "TEXT")
 	private String description;
 
-	@Column(name = "education_eligibility")
+	@Column(name = "education_eligibility", columnDefinition = "TEXT")
 	private String educationEligibility;
 
-	@Column(name = "recommended_prior_knowledge")
+	@Column(name = "recommended_prior_knowledge", columnDefinition = "TEXT")
 	private String recommendedPriorKnowledge;
 
-	@Column(name = "credit_type")
+	@Column(name = "credit_type", length = 10)
 	private String creditType;
 
-	@Column(name = "credits")
+	@Column(name = "credits", length = 10)
 	private String credits;
 
-	@Column(name = "duration")
+	@Column(name = "duration", length = 10)
 	private String duration;
 
 	@Column(name = "result_is_degree")
 	private Boolean resultIsDegree;
 
-	@Column(name = "degree")
+	@Column(name = "degree", length = 50)
 	private String degree;
 
 	@Column(name = "content_url")
@@ -73,10 +73,10 @@ public class EducationInfoEntity {
 	@Column(name = "expires")
 	private LocalDateTime expires;
 
-	@Column(name = "student_aid_eligibility")
+	@Column(name = "student_aid_eligibility", length = 10)
 	private String studentAidEligibility;
 
-	@Column(name = "subjects")
+	@Column(name = "subjects", length = 32)
 	private String subjects;
 
 	@CreationTimestamp
