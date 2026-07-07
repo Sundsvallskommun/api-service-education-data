@@ -1,11 +1,10 @@
-package se.sundsvall.educationdata.integration.susanavet.configuration;
+package se.sundsvall.educationdata.integration.susanavet;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import se.sundsvall.educationdata.Application;
-import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegrationProperties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,12 +12,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("junit")
 class SusaNavetPropertiesTest {
 
-    @Autowired
-    private SusaNavetIntegrationProperties properties;
+	@Autowired
+	private SusaNavetIntegrationProperties properties;
 
-    @Test
-    void testProperties() {
-        assertThat(properties.connectTimeout()).isEqualTo(5);
-        assertThat(properties.readTimeout()).isEqualTo(30);
-    }
+	@Test
+	void testProperties() {
+		assertThat(properties.connectTimeout()).isEqualTo(30);
+		assertThat(properties.readTimeout()).isEqualTo(5);
+	}
 }
