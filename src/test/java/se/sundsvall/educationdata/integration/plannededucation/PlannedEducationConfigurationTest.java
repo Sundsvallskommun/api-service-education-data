@@ -17,7 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class PlannedEducationConfigurationTest {
+class PlannedEducationConfigurationTest {
 
 	@Mock
 	private PlannedEducationIntegrationProperties propertiesMock;
