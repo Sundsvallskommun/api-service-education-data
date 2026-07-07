@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class SusaNavetIntegrationTest {
+class SusaNavetIntegrationTest {
 
 	@Mock
 	private SusaNavetClient clientMock;

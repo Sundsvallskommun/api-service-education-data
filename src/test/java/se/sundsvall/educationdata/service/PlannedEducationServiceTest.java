@@ -25,7 +25,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class PlannedEducationServiceTest {
+class PlannedEducationServiceTest {
 
 	@Mock
 	private PlannedEducationIntegration integration;
@@ -39,7 +39,7 @@ public class PlannedEducationServiceTest {
 	@InjectMocks
 	private PlannedEducationService service;
 
-	private static final String json = """
+	private static final String JSON = """
 		{
 		  "body": {
 		    "areas": [
@@ -56,7 +56,7 @@ public class PlannedEducationServiceTest {
 
 	@Test
 	void getCategoryInfo_updateRows() throws JsonProcessingException {
-		when(integration.getAllAreas()).thenReturn(json);
+		when(integration.getAllAreas()).thenReturn(JSON);
 
 		final var response = service.getEducationInfo();
 

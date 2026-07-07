@@ -3,6 +3,7 @@ package se.sundsvall.educationdata.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class EducationInfosServiceTest {
+class EducationInfosServiceTest {
 	@Mock
 	private SusaNavetIntegration integration;
 
@@ -38,7 +39,7 @@ public class EducationInfosServiceTest {
 	@InjectMocks
 	private EducationInfosService service;
 
-	private static final String json = """
+	private static final String JSON = """
 		{
 		  "data": [],
 		  "page": {
@@ -52,7 +53,7 @@ public class EducationInfosServiceTest {
 		final int page = 0;
 		final int size = 1;
 
-		when(integration.getEducationInfos(page, size)).thenReturn(json);
+		when(integration.getEducationInfos(page, size)).thenReturn(JSON);
 
 		service.savePageInfoJsonTable(page, size);
 
@@ -60,8 +61,8 @@ public class EducationInfosServiceTest {
 		verify(repository).save(captor.capture());
 		final var saved = captor.getValue();
 
-		assertThat(saved.getJsonBody()).isEqualTo(json);
-		assertThat(saved.getDateCollected()).isEqualTo(LocalDate.now());
+		assertThat(saved.getJsonBody()).isEqualTo(JSON);
+		assertThat(saved.getDateCollected()).isEqualTo(LocalDate.now(ZoneId.systemDefault()));
 
 		verify(integration).getEducationInfos(page, size);
 		verifyNoMoreInteractions(integration, repository);
@@ -71,9 +72,9 @@ public class EducationInfosServiceTest {
 	void saveAllPagesTest_successful() throws JsonProcessingException {
 		final int size = 1;
 
-		when(integration.getEducationInfos(0, size)).thenReturn(json);
-		when(integration.getEducationInfos(1, size)).thenReturn(json);
-		when(integration.getEducationInfos(2, size)).thenReturn(json);
+		when(integration.getEducationInfos(0, size)).thenReturn(JSON);
+		when(integration.getEducationInfos(1, size)).thenReturn(JSON);
+		when(integration.getEducationInfos(2, size)).thenReturn(JSON);
 
 		service.saveAllPagesInfoJsonTable(1);
 
@@ -82,8 +83,8 @@ public class EducationInfosServiceTest {
 		final var saved = captor.getAllValues();
 
 		assertThat(saved).hasSize(3);
-		assertThat(saved).extracting(SusaEducationInfo::getJsonBody).containsExactly(json, json, json);
-		assertThat(saved).allSatisfy(e -> assertThat(e.getDateCollected()).isEqualTo(LocalDate.now()));
+		assertThat(saved).extracting(SusaEducationInfo::getJsonBody).containsExactly(JSON, JSON, JSON);
+		assertThat(saved).allSatisfy(e -> assertThat(e.getDateCollected()).isEqualTo(LocalDate.now(ZoneId.systemDefault())));
 
 		verify(integration).getEducationInfos(0, size);
 		verify(integration).getEducationInfos(1, size);

@@ -18,7 +18,7 @@ import static com.google.code.beanmatchers.BeanMatchers.registerValueGenerator;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 
-public class EducationInfoEntityTest {
+class EducationInfoEntityTest {
 	@BeforeAll
 	static void setup() {
 		registerValueGenerator(() -> LocalDateTime.now().plusDays(new Random().nextInt()), LocalDateTime.class);

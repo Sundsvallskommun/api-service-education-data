@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class PlannedEducationIntegrationTest {
+class PlannedEducationIntegrationTest {
 
 	@Mock
 	private PlannedEducationClient clientMock;

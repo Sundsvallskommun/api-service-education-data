@@ -3,6 +3,7 @@ package se.sundsvall.educationdata.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class EducationProvidersServiceTest {
+class EducationProvidersServiceTest {
 	@Mock
 	private SusaNavetIntegration integration;
 
@@ -38,7 +39,7 @@ public class EducationProvidersServiceTest {
 	@InjectMocks
 	private EducationProvidersService service;
 
-	private static final String json = """
+	private static final String JSON = """
 		{
 		  "data": [],
 		  "page": {
@@ -52,7 +53,7 @@ public class EducationProvidersServiceTest {
 		final int page = 0;
 		final int size = 1;
 
-		when(integration.getEducationProviders(page, size)).thenReturn(json);
+		when(integration.getEducationProviders(page, size)).thenReturn(JSON);
 
 		service.savePageProviderJsonTable(page, size);
 
@@ -60,8 +61,8 @@ public class EducationProvidersServiceTest {
 		verify(repository).save(captor.capture());
 		final var saved = captor.getValue();
 
-		assertThat(saved.getJsonBody()).isEqualTo(json);
-		assertThat(saved.getDateCollected()).isEqualTo(LocalDate.now());
+		assertThat(saved.getJsonBody()).isEqualTo(JSON);
+		assertThat(saved.getDateCollected()).isEqualTo(LocalDate.now(ZoneId.systemDefault()));
 
 		verify(integration).getEducationProviders(page, size);
 		verifyNoMoreInteractions(integration, repository);
@@ -71,9 +72,9 @@ public class EducationProvidersServiceTest {
 	void saveAllPagesTest_succesful() throws JsonProcessingException {
 		final int size = 1;
 
-		when(integration.getEducationProviders(0, size)).thenReturn(json);
-		when(integration.getEducationProviders(1, size)).thenReturn(json);
-		when(integration.getEducationProviders(2, size)).thenReturn(json);
+		when(integration.getEducationProviders(0, size)).thenReturn(JSON);
+		when(integration.getEducationProviders(1, size)).thenReturn(JSON);
+		when(integration.getEducationProviders(2, size)).thenReturn(JSON);
 
 		service.saveAllPagesProviderJsonTable(1);
 
@@ -82,8 +83,8 @@ public class EducationProvidersServiceTest {
 		final var saved = captor.getAllValues();
 
 		assertThat(saved).hasSize(3);
-		assertThat(saved).extracting(SusaEducationProvider::getJsonBody).containsExactly(json, json, json);
-		assertThat(saved).allSatisfy(e -> assertThat(e.getDateCollected()).isEqualTo(LocalDate.now()));
+		assertThat(saved).extracting(SusaEducationProvider::getJsonBody).containsExactly(JSON, JSON, JSON);
+		assertThat(saved).allSatisfy(e -> assertThat(e.getDateCollected()).isEqualTo(LocalDate.now(ZoneId.systemDefault())));
 
 		verify(integration).getEducationProviders(0, size);
 		verify(integration).getEducationProviders(1, size);

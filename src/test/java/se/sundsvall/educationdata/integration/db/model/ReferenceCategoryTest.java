@@ -12,7 +12,7 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetter
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 
-public class ReferenceCategoryTest {
+class ReferenceCategoryTest {
 
 	@Test
 	void testBean() {

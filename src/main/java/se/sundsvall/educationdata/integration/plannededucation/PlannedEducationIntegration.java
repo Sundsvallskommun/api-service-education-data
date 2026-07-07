@@ -14,7 +14,7 @@ public class PlannedEducationIntegration {
 	}
 
 	public String getAllAreas() {
-		var body = client.getAllAreas().getBody();;
+		var body = client.getAllAreas().getBody();
 		if (body == null) {
 			return null;
 		}
