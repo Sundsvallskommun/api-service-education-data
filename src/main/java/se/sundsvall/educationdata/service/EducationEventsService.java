@@ -3,6 +3,8 @@ package se.sundsvall.educationdata.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import java.time.ZoneId;
+
 import org.springframework.stereotype.Service;
 import se.sundsvall.educationdata.integration.db.SusaEducationEventRepository;
 import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEvent;
@@ -28,7 +30,7 @@ public class EducationEventsService {
 		}
 		var raw = SusaEducationEvent.builder()
 			.withJsonBody(json)
-			.withDateCollected(LocalDate.now())
+			.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
 			.build();
 		eventRepository.save(raw);
 	}
@@ -50,7 +52,7 @@ public class EducationEventsService {
 
 			var raw = SusaEducationEvent.builder()
 				.withJsonBody(json)
-				.withDateCollected(LocalDate.now())
+				.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
 				.build();
 			eventRepository.save(raw);
 

@@ -3,6 +3,8 @@ package se.sundsvall.educationdata.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import java.time.ZoneId;
+
 import org.springframework.stereotype.Service;
 import se.sundsvall.educationdata.integration.db.SusaEducationInfoRepository;
 import se.sundsvall.educationdata.integration.db.model.json.SusaEducationInfo;
@@ -29,7 +31,7 @@ public class EducationInfosService {
 
 		var raw = SusaEducationInfo.builder()
 			.withJsonBody(json)
-			.withDateCollected(LocalDate.now())
+			.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
 			.build();
 		infoRepository.save(raw);
 	}
@@ -51,7 +53,7 @@ public class EducationInfosService {
 
 			var raw = SusaEducationInfo.builder()
 				.withJsonBody(json)
-				.withDateCollected(LocalDate.now())
+				.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
 				.build();
 			infoRepository.save(raw);
 
