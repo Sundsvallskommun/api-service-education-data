@@ -9,6 +9,8 @@ import java.util.zip.GZIPOutputStream;
 
 public final class Util {
 
+	private Util() {}
+
 	public static byte[] zip(byte[] data) {
 		var out = new ByteArrayOutputStream();
 		try (var gz = new GZIPOutputStream(out)) {

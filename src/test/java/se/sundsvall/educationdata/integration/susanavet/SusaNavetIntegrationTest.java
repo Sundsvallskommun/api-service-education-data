@@ -29,8 +29,8 @@ class SusaNavetIntegrationTest {
 	@InjectMocks
 	private SusaNavetIntegration integration;
 
-	final int PAGE = 1;
-	final int SIZE = 1;
+	private static final int PAGE = 1;
+	private static final int SIZE = 1;
 
 	@Test
 	void getEducationEvents() throws IOException {

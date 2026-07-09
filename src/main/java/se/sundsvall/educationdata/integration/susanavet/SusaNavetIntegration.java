@@ -16,6 +16,8 @@ public class SusaNavetIntegration {
 	private final SusaNavetClient client;
 	private final SusaNavetIntegrationMapper mapper;
 
+	private static final String EMPTY_BODY = "Empty body for page %s";
+
 	SusaNavetIntegration(SusaNavetClient client, SusaNavetIntegrationMapper mapper) {
 		this.client = client;
 		this.mapper = mapper;
@@ -24,7 +26,7 @@ public class SusaNavetIntegration {
 	public SusaPage<SusaEducationEvent> getEducationEventsWithPage(int page, int size) throws IOException {
 		final var response = client.getAllEducationEvents(page, size);
 		if (response == null || response.length == 0) {
-			throw Problem.valueOf(HttpStatus.BAD_GATEWAY, "Empty body for page %s".formatted(page));
+			throw Problem.valueOf(HttpStatus.BAD_GATEWAY, EMPTY_BODY.formatted(page));
 		}
 		return mapper.toEducationEventWithPages(response);
 
@@ -33,7 +35,7 @@ public class SusaNavetIntegration {
 	public SusaPage<SusaEducationInfo> getEducationInfosWithPage(int page, int size) throws IOException {
 		final var response = client.getAllEducationInfos(page, size);
 		if (response == null || response.length == 0) {
-			throw Problem.valueOf(HttpStatus.BAD_GATEWAY, "Empty body for page %s".formatted(page));
+			throw Problem.valueOf(HttpStatus.BAD_GATEWAY, EMPTY_BODY.formatted(page));
 		}
 		return mapper.toEducationInfosWithPages(response);
 	}
@@ -41,7 +43,7 @@ public class SusaNavetIntegration {
 	public SusaPage<SusaEducationProvider> getEducationProvidersWithPage(int page, int size) throws IOException {
 		final var response = client.getAllEducationProviders(page, size);
 		if (response == null || response.length == 0) {
-			throw Problem.valueOf(HttpStatus.BAD_GATEWAY, "Empty body for page %s".formatted(page));
+			throw Problem.valueOf(HttpStatus.BAD_GATEWAY, EMPTY_BODY.formatted(page));
 		}
 		return mapper.toEducationProviderWithPages(response);
 	}

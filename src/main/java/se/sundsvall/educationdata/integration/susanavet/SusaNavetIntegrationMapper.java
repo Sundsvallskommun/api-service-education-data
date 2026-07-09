@@ -15,13 +15,16 @@ public class SusaNavetIntegrationMapper {
 
 	private final ObjectMapper objectMapper;
 
+	private static final String PAGE = "page";
+	private static final String TOTAL_PAGES = "totalPages";
+
 	public SusaNavetIntegrationMapper(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 	}
 
 	public SusaPage<SusaEducationEvent> toEducationEventWithPages(byte[] json) throws IOException {
 		final var pages = objectMapper.readTree(json)
-			.path("page").path("totalPages").asInt();
+			.path(PAGE).path(TOTAL_PAGES).asInt();
 
 		final var entity = SusaEducationEvent.builder()
 			.withJsonBody(Util.zip(json))
@@ -32,7 +35,7 @@ public class SusaNavetIntegrationMapper {
 
 	public SusaPage<SusaEducationInfo> toEducationInfosWithPages(byte[] json) throws IOException {
 		final var pages = objectMapper.readTree(json)
-			.path("page").path("totalPages").asInt();
+			.path(PAGE).path(TOTAL_PAGES).asInt();
 
 		final var entity = SusaEducationInfo.builder()
 			.withJsonBody(Util.zip(json))
@@ -48,7 +51,7 @@ public class SusaNavetIntegrationMapper {
 			.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
 			.build();
 		final var pages = objectMapper.readTree(json)
-			.path("page").path("totalPages").asInt();
+			.path(PAGE).path(TOTAL_PAGES).asInt();
 
 		return new SusaPage<>(entity, pages);
 	}

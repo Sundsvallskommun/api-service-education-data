@@ -12,7 +12,7 @@ import se.sundsvall.educationdata.util.Util;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class SusaNavetIntegrationMapperTest {
+class SusaNavetIntegrationMapperTest {
 
 	private final SusaNavetIntegrationMapper mapper = new SusaNavetIntegrationMapper(new ObjectMapper());
 

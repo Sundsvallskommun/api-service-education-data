@@ -18,7 +18,7 @@ import static java.time.LocalDate.now;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 
-public class SusaEducationInfoTest {
+class SusaEducationInfoTest {
 
 	@BeforeAll
 	static void setup() {

@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 @ExtendWith(MockitoExtension.class)
-public class PlannedEducationIntegrationMapperTest {
+class PlannedEducationIntegrationMapperTest {
 	private final PlannedEducationIntegrationMapper mapper = new PlannedEducationIntegrationMapper(new ObjectMapper());
 
 	@Test
