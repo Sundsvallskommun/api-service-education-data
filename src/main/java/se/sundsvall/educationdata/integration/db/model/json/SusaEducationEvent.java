@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
@@ -27,8 +28,9 @@ public class SusaEducationEvent {
 	@Column(name = "id", length = 36)
 	private String id;
 
-	@Column(name = "json_body", columnDefinition = "LONGTEXT", nullable = false, updatable = false)
-	private String jsonBody;
+	@Lob
+	@Column(name = "json_body", columnDefinition = "LONGBLOB", nullable = false, updatable = false)
+	private byte[] jsonBody;
 
 	@Column(name = "date_collected", nullable = false, updatable = false)
 	private LocalDate dateCollected;

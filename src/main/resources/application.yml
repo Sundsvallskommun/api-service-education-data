@@ -18,3 +18,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+
+integration:
+  planned-education:
+    base-url: ${ENV_PLANNED_EDUCATION_BASE_URL}
+  susa-navet:
+    base-url: ${ENV_SUSA_NAVET_BASE_URL}

@@ -1,62 +1,36 @@
 package se.sundsvall.educationdata.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.io.IOException;
 
 import org.springframework.stereotype.Service;
 import se.sundsvall.educationdata.integration.db.SusaEducationProviderRepository;
-import se.sundsvall.educationdata.integration.db.model.json.SusaEducationProvider;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 
 @Service
 public class EducationProvidersService {
 	private final SusaNavetIntegration susaNavetIntegration;
 	private final SusaEducationProviderRepository providerRepository;
-	private final ObjectMapper objectMapper;
 
-	public EducationProvidersService(SusaNavetIntegration susaNavetIntegration, SusaEducationProviderRepository providerRepository, ObjectMapper objectMapper) {
+	public EducationProvidersService(SusaNavetIntegration susaNavetIntegration, SusaEducationProviderRepository providerRepository) {
 		this.susaNavetIntegration = susaNavetIntegration;
 		this.providerRepository = providerRepository;
-		this.objectMapper = objectMapper;
 	}
 
-	public void savePageProviderJsonTable(int page, int size) {
-		String json = susaNavetIntegration.getEducationProviders(page, size);
-		if (json == null) {
-			throw new IllegalStateException(
-				"Empty body for page %d".formatted(page));
-		}
-
-		var raw = SusaEducationProvider.builder()
-			.withJsonBody(json)
-			.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
-			.build();
-		providerRepository.save(raw);
+	public void savePageProviderJsonTable(int page, int size) throws IOException {
+		final var entity = susaNavetIntegration.getEducationProvidersWithPage(page, size).entity();
+		providerRepository.save(entity);
 	}
 
-	public void saveAllPagesProviderJsonTable(int size) throws JsonProcessingException {
+	public void saveAllPagesProviderJsonTable(int size) throws IOException {
 		int page = 0;
 		int totalPages;
 
 		do {
-			String json = susaNavetIntegration.getEducationProviders(page, size);
-			if (json == null) {
-				throw new IllegalStateException(
-					"Empty body for page %d".formatted(page));
-			}
+			final var providerWithPage = susaNavetIntegration.getEducationProvidersWithPage(page, size);
+			final var entity = providerWithPage.entity();
+			providerRepository.save(entity);
 
-			totalPages = objectMapper.readTree(json)
-				.path("page")
-				.path("totalPages").asInt();
-
-			var raw = SusaEducationProvider.builder()
-				.withJsonBody(json)
-				.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
-				.build();
-			providerRepository.save(raw);
-
+			totalPages = providerWithPage.totalPages();
 			page++;
 		} while (page < totalPages);
 	}

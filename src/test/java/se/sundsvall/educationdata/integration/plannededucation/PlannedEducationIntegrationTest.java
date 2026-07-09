@@ -1,13 +1,17 @@
 package se.sundsvall.educationdata.integration.plannededucation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
+import se.sundsvall.educationdata.integration.db.model.ReferenceCategory;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -17,29 +21,43 @@ class PlannedEducationIntegrationTest {
 
 	@Mock
 	private PlannedEducationClient clientMock;
+	@Mock
+	private PlannedEducationIntegrationMapper mapper;
 
 	@InjectMocks
 	private PlannedEducationIntegration integration;
 
 	@Test
-	void getEducationEvents() {
-		var json = "json".getBytes();
-		when(clientMock.getAllAreas()).thenReturn(ResponseEntity.ok(json));
+	void getAreas() throws JsonProcessingException {
+		final var body = "areas-json".getBytes(StandardCharsets.UTF_8);
+		final var rows = List.of(ReferenceCategory.builder().withCategoryId("1").build());
+		when(clientMock.getAllAreas()).thenReturn(body);
+		when(mapper.toReferenceCategory("areas-json")).thenReturn(rows);
 
-		var result = integration.getAllAreas();
+		final var result = integration.getAllAreas();
 
-		assertThat(result).isEqualTo("json");
+		assertThat(result).isSameAs(rows);
+		verify(clientMock).getAllAreas();
+		verify(mapper).toReferenceCategory("areas-json");
+		verifyNoMoreInteractions(clientMock, mapper);
+	}
+
+	@Test
+	void getEducationEvents_null() {
+		when(clientMock.getAllAreas()).thenReturn(null);
+
+		assertThatThrownBy(() -> integration.getAllAreas()).hasMessageContaining("Empty body");
+
 		verify(clientMock).getAllAreas();
 		verifyNoMoreInteractions(clientMock);
 	}
 
 	@Test
-	void getEducationEvents_null() {
-		when(clientMock.getAllAreas()).thenReturn(ResponseEntity.ok(null));
+	void getEducationEvents_emptyBody() {
+		when(clientMock.getAllAreas()).thenReturn(new byte[0]);
 
-		var result = integration.getAllAreas();
+		assertThatThrownBy(() -> integration.getAllAreas()).hasMessageContaining("Empty body");
 
-		assertThat(result).isNull();
 		verify(clientMock).getAllAreas();
 		verifyNoMoreInteractions(clientMock);
 	}

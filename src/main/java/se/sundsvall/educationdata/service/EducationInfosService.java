@@ -1,62 +1,36 @@
 package se.sundsvall.educationdata.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.io.IOException;
 
 import org.springframework.stereotype.Service;
 import se.sundsvall.educationdata.integration.db.SusaEducationInfoRepository;
-import se.sundsvall.educationdata.integration.db.model.json.SusaEducationInfo;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 
 @Service
 public class EducationInfosService {
 	private final SusaNavetIntegration susaNavetIntegration;
 	private final SusaEducationInfoRepository infoRepository;
-	private final ObjectMapper objectMapper;
 
-	public EducationInfosService(SusaNavetIntegration susaNavetIntegration, SusaEducationInfoRepository infoRepository, ObjectMapper objectMapper) {
+	public EducationInfosService(SusaNavetIntegration susaNavetIntegration, SusaEducationInfoRepository infoRepository) {
 		this.susaNavetIntegration = susaNavetIntegration;
 		this.infoRepository = infoRepository;
-		this.objectMapper = objectMapper;
 	}
 
-	public void savePageInfoJsonTable(int page, int size) {
-		String json = susaNavetIntegration.getEducationInfos(page, size);
-		if (json == null) {
-			throw new IllegalStateException(
-				"Empty body for page %d".formatted(page));
-		}
-
-		var raw = SusaEducationInfo.builder()
-			.withJsonBody(json)
-			.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
-			.build();
-		infoRepository.save(raw);
+	public void savePageInfoJsonTable(int page, int size) throws IOException {
+		final var entity = susaNavetIntegration.getEducationInfosWithPage(page, size).entity();
+		infoRepository.save(entity);
 	}
 
-	public void saveAllPagesInfoJsonTable(int size) throws JsonProcessingException {
+	public void saveAllPagesInfoJsonTable(int size) throws IOException {
 		int page = 0;
 		int totalPages;
 
 		do {
-			String json = susaNavetIntegration.getEducationInfos(page, size);
-			if (json == null) {
-				throw new IllegalStateException(
-					"Empty body for page %d".formatted(page));
-			}
+			final var infosWithPage = susaNavetIntegration.getEducationInfosWithPage(page, size);
+			final var entity = infosWithPage.entity();
+			infoRepository.save(entity);
 
-			totalPages = objectMapper.readTree(json)
-				.path("page")
-				.path("totalPages").asInt();
-
-			var raw = SusaEducationInfo.builder()
-				.withJsonBody(json)
-				.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
-				.build();
-			infoRepository.save(raw);
-
+			totalPages = infosWithPage.totalPages();
 			page++;
 		} while (page < totalPages);
 	}

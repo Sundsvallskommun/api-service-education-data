@@ -10,19 +10,13 @@ import se.sundsvall.dept44.configuration.feign.decoder.ProblemErrorDecoder;
 @Import(FeignConfiguration.class)
 public class PlannedEducationIntegrationConfiguration {
 
-	private final PlannedEducationIntegrationProperties properties;
-
-	private static final String CLIENT_ID = "planned-education";
-
-	public PlannedEducationIntegrationConfiguration(PlannedEducationIntegrationProperties properties) {
-		this.properties = properties;
-	}
+	public static final String CLIENT_ID = "planned-education";
 
 	@Bean
-	FeignBuilderCustomizer feignCustomizer() {
+	FeignBuilderCustomizer feignCustomizer(PlannedEducationIntegrationProperties properties) {
 		return FeignMultiCustomizer.create()
 			.withErrorDecoder(new ProblemErrorDecoder(CLIENT_ID))
-			.withRequestTimeoutsInSeconds(properties.readTimeout(), properties.connectTimeout())
+			.withRequestTimeoutsInSeconds(properties.connectTimeout(), properties.readTimeout())
 			.composeCustomizersToOne();
 	}
 }

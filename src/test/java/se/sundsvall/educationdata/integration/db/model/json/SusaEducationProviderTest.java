@@ -39,7 +39,7 @@ public class SusaEducationProviderTest {
 	void builder() {
 		// Arrange
 		var id = UUID.randomUUID().toString();
-		var jsonBody = "json body in text";
+		var jsonBody = new byte[123];
 		var dateCollected = LocalDate.of(2025, Month.JUNE, 1);
 
 		// Act

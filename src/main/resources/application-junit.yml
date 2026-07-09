@@ -13,3 +13,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+
+integration:
+  planned-education:
+    base-url: http://localhost
+  susa-navet:
+    base-url: http://localhost

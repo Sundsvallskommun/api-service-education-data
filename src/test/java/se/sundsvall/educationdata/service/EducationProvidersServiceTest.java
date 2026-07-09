@@ -1,9 +1,7 @@
 package se.sundsvall.educationdata.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -14,14 +12,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.educationdata.integration.db.SusaEducationProviderRepository;
 import se.sundsvall.educationdata.integration.db.model.json.SusaEducationProvider;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
+import se.sundsvall.educationdata.integration.susanavet.SusaPage;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -39,107 +36,59 @@ class EducationProvidersServiceTest {
 	@InjectMocks
 	private EducationProvidersService service;
 
-	private static final String JSON = """
-		{
-		  "data": [],
-		  "page": {
-		    "totalPages": 3
-		  }
-		}
-		""";
-
 	@Test
-	void savePageTest_successful() {
+	void savePageTest_successful() throws IOException {
 		final int page = 0;
 		final int size = 1;
 
-		when(integration.getEducationProviders(page, size)).thenReturn(JSON);
+		final var entity = SusaEducationProvider.builder().build();
+		when(integration.getEducationProvidersWithPage(page, size)).thenReturn(new SusaPage<>(entity, page));
 
 		service.savePageProviderJsonTable(page, size);
 
-		final var captor = ArgumentCaptor.forClass(SusaEducationProvider.class);
-		verify(repository).save(captor.capture());
-		final var saved = captor.getValue();
-
-		assertThat(saved.getJsonBody()).isEqualTo(JSON);
-		assertThat(saved.getDateCollected()).isEqualTo(LocalDate.now(ZoneId.systemDefault()));
-
-		verify(integration).getEducationProviders(page, size);
+		verify(integration).getEducationProvidersWithPage(page, size);
+		verify(repository).save(entity);
 		verifyNoMoreInteractions(integration, repository);
 	}
 
 	@Test
-	void saveAllPagesTest_succesful() throws JsonProcessingException {
-		final int size = 1;
+	void saveAllPagesTest_succesful() throws IOException {
+		final var size = 1;
+		final var entity1 = SusaEducationProvider.builder().build();
+		final var entity2 = SusaEducationProvider.builder().build();
+		final var entity3 = SusaEducationProvider.builder().build();
 
-		when(integration.getEducationProviders(0, size)).thenReturn(JSON);
-		when(integration.getEducationProviders(1, size)).thenReturn(JSON);
-		when(integration.getEducationProviders(2, size)).thenReturn(JSON);
+		when(integration.getEducationProvidersWithPage(0, size)).thenReturn(new SusaPage<>(entity1, 3));
+		when(integration.getEducationProvidersWithPage(1, size)).thenReturn(new SusaPage<>(entity2, 3));
+		when(integration.getEducationProvidersWithPage(2, size)).thenReturn(new SusaPage<>(entity3, 3));
 
 		service.saveAllPagesProviderJsonTable(1);
 
 		final var captor = ArgumentCaptor.forClass(SusaEducationProvider.class);
 		verify(repository, times(3)).save(captor.capture());
-		final var saved = captor.getAllValues();
+		assertThat(captor.getAllValues()).containsExactly(entity1, entity2, entity3);
 
-		assertThat(saved).hasSize(3);
-		assertThat(saved).extracting(SusaEducationProvider::getJsonBody).containsExactly(JSON, JSON, JSON);
-		assertThat(saved).allSatisfy(e -> assertThat(e.getDateCollected()).isEqualTo(LocalDate.now(ZoneId.systemDefault())));
-
-		verify(integration).getEducationProviders(0, size);
-		verify(integration).getEducationProviders(1, size);
-		verify(integration).getEducationProviders(2, size);
+		verify(integration).getEducationProvidersWithPage(0, size);
+		verify(integration).getEducationProvidersWithPage(1, size);
+		verify(integration).getEducationProvidersWithPage(2, size);
 		verifyNoMoreInteractions(integration, repository);
 	}
 
 	@Test
-	void saveAllPagesTest_withOnlyOnePage() throws JsonProcessingException {
+	void saveAllPagesTest_withOnlyOnePage() throws IOException {
 		final int page = 0;
 		final int nonExistentPage = 1;
 		final int size = 1;
 
-		final var oneTotalPages = """
-			{
-			  "data": [],
-			  "page": {
-			     "totalPages": 1
-			  }
-			}
-			""";
+		final var entity = SusaEducationProvider.builder().build();
 
-		when(integration.getEducationProviders(page, size)).thenReturn(oneTotalPages);
+		when(integration.getEducationProvidersWithPage(page, size)).thenReturn(new SusaPage<>(entity, 1));
 
 		service.saveAllPagesProviderJsonTable(size);
 
-		verify(integration).getEducationProviders(page, size);
-		verify(integration, never()).getEducationProviders(nonExistentPage, size);
+		verify(integration).getEducationProvidersWithPage(page, size);
+		verify(integration, never()).getEducationProvidersWithPage(nonExistentPage, size);
 		verify(repository).save(any());
 		verifyNoMoreInteractions(integration, repository);
-	}
-
-	@Test
-	void savePage_whenBodyIsNull_doesNotSave() {
-		final int page = 0;
-		final int size = 1;
-
-		when(integration.getEducationProviders(page, size)).thenReturn(null);
-
-		assertThatThrownBy(() -> service.savePageProviderJsonTable(page, size))
-			.isInstanceOf(IllegalStateException.class).hasMessage("Empty body for page %d".formatted(page));
-
-		verifyNoInteractions(repository);
-	}
-
-	@Test
-	void saveAllPage_whenBodyIsNull_doesNotSave() {
-		final int page = 0;
-		final int size = 1;
-
-		when(integration.getEducationProviders(page, size)).thenReturn(null);
-
-		assertThatThrownBy(() -> service.saveAllPagesProviderJsonTable(size))
-			.isInstanceOf(IllegalStateException.class).hasMessage("Empty body for page %d".formatted(page));
-
-		verifyNoInteractions(repository);
 	}
 }

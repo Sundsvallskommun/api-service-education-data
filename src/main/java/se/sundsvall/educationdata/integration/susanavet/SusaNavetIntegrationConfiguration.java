@@ -10,19 +10,13 @@ import se.sundsvall.dept44.configuration.feign.decoder.ProblemErrorDecoder;
 @Import(FeignConfiguration.class)
 public class SusaNavetIntegrationConfiguration {
 
-	private final SusaNavetIntegrationProperties properties;
-
-	private static final String CLIENT_ID = "susa-navet";
-
-	public SusaNavetIntegrationConfiguration(SusaNavetIntegrationProperties properties) {
-		this.properties = properties;
-	}
+	public static final String CLIENT_ID = "susa-navet";
 
 	@Bean
-	FeignBuilderCustomizer feignCustomizer() {
+	FeignBuilderCustomizer feignCustomizer(SusaNavetIntegrationProperties properties) {
 		return FeignMultiCustomizer.create()
 			.withErrorDecoder(new ProblemErrorDecoder(CLIENT_ID))
-			.withRequestTimeoutsInSeconds(properties.readTimeout(), properties.connectTimeout())
+			.withRequestTimeoutsInSeconds(properties.connectTimeout(), properties.readTimeout())
 			.composeCustomizersToOne();
 	}
 }

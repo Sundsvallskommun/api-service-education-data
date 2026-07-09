@@ -1,61 +1,35 @@
 package se.sundsvall.educationdata.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.time.ZoneId;
-
+import java.io.IOException;
 import org.springframework.stereotype.Service;
 import se.sundsvall.educationdata.integration.db.SusaEducationEventRepository;
-import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEvent;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 
 @Service
 public class EducationEventsService {
 	private final SusaNavetIntegration susaNavetIntegration;
 	private final SusaEducationEventRepository eventRepository;
-	private final ObjectMapper objectMapper;
 
-	public EducationEventsService(SusaNavetIntegration susaNavetIntegration, SusaEducationEventRepository eventRepository, ObjectMapper objectMapper) {
+	public EducationEventsService(SusaNavetIntegration susaNavetIntegration, SusaEducationEventRepository eventRepository) {
 		this.susaNavetIntegration = susaNavetIntegration;
 		this.eventRepository = eventRepository;
-		this.objectMapper = objectMapper;
 	}
 
-	public void savePageEventJsonTable(int page, int size) {
-		String json = susaNavetIntegration.getEducationEvents(page, size);
-		if (json == null) {
-			throw new IllegalStateException(
-				"Empty body for page %d".formatted(page));
-		}
-		var raw = SusaEducationEvent.builder()
-			.withJsonBody(json)
-			.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
-			.build();
-		eventRepository.save(raw);
+	public void savePageEventJsonTable(int page, int size) throws IOException {
+		final var entity = susaNavetIntegration.getEducationEventsWithPage(page, size).entity();
+		eventRepository.save(entity);
 	}
 
-	public void saveAllPagesEventsJsonTable(int size) throws JsonProcessingException {
+	public void saveAllPagesEventsJsonTable(int size) throws IOException {
 		int page = 0;
 		int totalPages;
 
 		do {
-			String json = susaNavetIntegration.getEducationEvents(page, size);
-			if (json == null) {
-				throw new IllegalStateException(
-					"Empty body for page %d".formatted(page));
-			}
+			final var eventsWithPage = susaNavetIntegration.getEducationEventsWithPage(page, size);
+			final var entity = eventsWithPage.entity();
+			eventRepository.save(entity);
 
-			totalPages = objectMapper.readTree(json)
-				.path("page")
-				.path("totalPages").asInt();
-
-			var raw = SusaEducationEvent.builder()
-				.withJsonBody(json)
-				.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
-				.build();
-			eventRepository.save(raw);
-
+			totalPages = eventsWithPage.totalPages();
 			page++;
 		} while (page < totalPages);
 	}

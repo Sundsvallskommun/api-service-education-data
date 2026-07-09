@@ -28,19 +28,19 @@ class PlannedEducationConfigurationTest {
 
 	@Test
 	void testFeignBuilderCustomizer() {
-		final var configuration = new PlannedEducationIntegrationConfiguration(propertiesMock);
-		when(propertiesMock.readTimeout()).thenReturn(2);
+		final var configuration = new PlannedEducationIntegrationConfiguration();
 		when(propertiesMock.connectTimeout()).thenReturn(1);
+		when(propertiesMock.readTimeout()).thenReturn(2);
 		when(feignMultiCustomizerSpy.composeCustomizersToOne()).thenReturn(feignBuilderCustomizerMock);
 
 		try (final MockedStatic<FeignMultiCustomizer> staticMock = Mockito.mockStatic(FeignMultiCustomizer.class)) {
 			staticMock.when(FeignMultiCustomizer::create).thenReturn(feignMultiCustomizerSpy);
 
-			final var customizer = configuration.feignCustomizer();
+			final var customizer = configuration.feignCustomizer(propertiesMock);
 
 			final ArgumentCaptor<ProblemErrorDecoder> captor = ArgumentCaptor.forClass(ProblemErrorDecoder.class);
 			verify(feignMultiCustomizerSpy).withErrorDecoder(captor.capture());
-			verify(feignMultiCustomizerSpy).withRequestTimeoutsInSeconds(2, 1);   // (readTimeout, connectTimeout) — match your config's arg order
+			verify(feignMultiCustomizerSpy).withRequestTimeoutsInSeconds(1, 2);
 			verify(feignMultiCustomizerSpy).composeCustomizersToOne();
 			verify(propertiesMock).readTimeout();
 			verify(propertiesMock).connectTimeout();
