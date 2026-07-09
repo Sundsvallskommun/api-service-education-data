@@ -1,5 +1,7 @@
 package se.sundsvall.educationdata.util;
 
+import se.sundsvall.dept44.util.jacoco.ExcludeFromJacocoGeneratedCoverageReport;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -7,6 +9,7 @@ import java.io.UncheckedIOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+@ExcludeFromJacocoGeneratedCoverageReport
 public final class Util {
 
 	private Util() {}
