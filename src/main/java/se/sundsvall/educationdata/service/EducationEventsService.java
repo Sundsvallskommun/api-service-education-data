@@ -22,12 +22,12 @@ public class EducationEventsService {
 		this.mapper = mapper;
 	}
 
-	public void savePageEventJsonTable(int page, int size) throws IOException {
+	public void savePageEventJsonTable(int page, int size) {
 		var json = susaNavetIntegration.getEducationEvents(page, size);
 		eventRepository.save(mapper.toZippedEvents(json, page));
 	}
 
-	public void saveAllPagesEventsJsonTable(int size) throws IOException {
+	public void saveAllPagesEventsJsonTable(int size) {
 		int page = 0;
 		var json = susaNavetIntegration.getEducationEvents(page, size);
 		int totalPages = objectMapper.readTree(json).path("page").path("totalPages").asInt();

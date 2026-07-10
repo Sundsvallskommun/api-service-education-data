@@ -26,7 +26,7 @@ public class EducationInfosService {
 		infoRepository.save(mapper.toZippedInfos(json, page));
 	}
 
-	public void saveAllPagesInfoJsonTable(int size) throws IOException {
+	public void saveAllPagesInfoJsonTable(int size) {
 		int page = 0;
 		var json = susaNavetIntegration.getEducationInfos(page, size);
 		int totalPages = objectMapper.readTree(json).path("page").path("totalPages").asInt();
