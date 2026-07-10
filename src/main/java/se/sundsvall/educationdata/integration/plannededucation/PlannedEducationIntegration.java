@@ -20,7 +20,6 @@ public class PlannedEducationIntegration {
 
 	public List<ReferenceCategory> getAllAreas() throws JsonProcessingException {
 		final var response = client.getAllAreas();
-		final var json = new String(response);
-		return mapper.toReferenceCategory(json);
+		return mapper.toReferenceCategory(response);
 	}
 }

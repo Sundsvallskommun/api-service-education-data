@@ -31,7 +31,7 @@ public class EducationProvidersService {
 		int totalPages = objectMapper.readTree(json).path("page").path("totalPages").asInt();
 		providerRepository.save(mapper.toZippedProviders(json, page));
 
-		for (page++; page < totalPages; page++) {
+		for (page = 1; page < totalPages; page++) {
 			json = susaNavetIntegration.getEducationProviders(page, size);
 			final var entity = mapper.toZippedProviders(json, page);
 			providerRepository.save(entity);

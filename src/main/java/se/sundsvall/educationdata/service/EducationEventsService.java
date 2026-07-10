@@ -32,7 +32,7 @@ public class EducationEventsService {
 		int totalPages = objectMapper.readTree(json).path("page").path("totalPages").asInt();
 		eventRepository.save(mapper.toZippedEvents(json, page));
 
-		for (page++; page < totalPages; page++) {
+		for (page = 1; page < totalPages; page++) {
 			json = susaNavetIntegration.getEducationEvents(page, size);
 			final var entity = mapper.toZippedEvents(json, page);
 			eventRepository.save(entity);
