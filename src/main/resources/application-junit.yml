@@ -16,6 +16,6 @@ spring:
 
 integration:
   planned-education:
-    base-url: http://localhost
+    base-url: http://localhost/planned-educations
   susa-navet:
-    base-url: http://localhost
+    base-url: http://localhost/susa-navet/emil3

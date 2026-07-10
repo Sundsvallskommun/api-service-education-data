@@ -1,8 +1,8 @@
 package se.sundsvall.educationdata.integration.plannededucation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import generated.se.sundsvall.plannededucation.ApiResponseAreasRM;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -18,18 +18,18 @@ public class PlannedEducationIntegrationMapper {
 	}
 
 	List<ReferenceCategory> toReferenceCategory(String json) throws JsonProcessingException {
-		final var areas = objectMapper.readTree(json).path("body").path("areas");
-		List<ReferenceCategory> rows = new ArrayList<>();
-		for (var area : areas) {
-			String categoryId = area.path("areaId").asText();
-			String categoryName = area.path("name").asText();
+		final ApiResponseAreasRM areas;
 
-			for (JsonNode direction : area.path("directions")) {
+		areas = objectMapper.readValue(json, ApiResponseAreasRM.class);
+
+		List<ReferenceCategory> rows = new ArrayList<>();
+		for (var area : areas.getBody().getAreas()) {
+			for (var direction : area.getDirections()) {
 				rows.add(ReferenceCategory.builder()
-					.withCategoryId(categoryId)
-					.withCategoryName(categoryName)
-					.withDirectionId(direction.path("directionId").asText())
-					.withDirectionName(direction.path("name").asText())
+					.withCategoryId(String.valueOf(area.getAreaId()))
+					.withCategoryName(area.getName())
+					.withDirectionId(String.valueOf(direction.getDirectionId()))
+					.withDirectionName(direction.getName())
 					.build());
 			}
 		}

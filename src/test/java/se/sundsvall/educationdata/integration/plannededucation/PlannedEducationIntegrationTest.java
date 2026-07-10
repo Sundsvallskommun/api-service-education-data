@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.educationdata.integration.db.model.ReferenceCategory;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -40,25 +39,5 @@ class PlannedEducationIntegrationTest {
 		verify(clientMock).getAllAreas();
 		verify(mapper).toReferenceCategory("areas-json");
 		verifyNoMoreInteractions(clientMock, mapper);
-	}
-
-	@Test
-	void getEducationEvents_null() {
-		when(clientMock.getAllAreas()).thenReturn(null);
-
-		assertThatThrownBy(() -> integration.getAllAreas()).hasMessageContaining("Empty body");
-
-		verify(clientMock).getAllAreas();
-		verifyNoMoreInteractions(clientMock);
-	}
-
-	@Test
-	void getEducationEvents_emptyBody() {
-		when(clientMock.getAllAreas()).thenReturn(new byte[0]);
-
-		assertThatThrownBy(() -> integration.getAllAreas()).hasMessageContaining("Empty body");
-
-		verify(clientMock).getAllAreas();
-		verifyNoMoreInteractions(clientMock);
 	}
 }

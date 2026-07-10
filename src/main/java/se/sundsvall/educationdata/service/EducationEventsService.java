@@ -1,36 +1,42 @@
 package se.sundsvall.educationdata.service;
 
 import java.io.IOException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import se.sundsvall.educationdata.integration.db.SusaEducationEventRepository;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
+import se.sundsvall.educationdata.service.mapper.SusaMapper;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 public class EducationEventsService {
 	private final SusaNavetIntegration susaNavetIntegration;
 	private final SusaEducationEventRepository eventRepository;
+	private final ObjectMapper objectMapper;
+	private final SusaMapper mapper;
 
-	public EducationEventsService(SusaNavetIntegration susaNavetIntegration, SusaEducationEventRepository eventRepository) {
+	public EducationEventsService(SusaNavetIntegration susaNavetIntegration, SusaEducationEventRepository eventRepository, @Qualifier("jacksonJsonMapper") ObjectMapper objectMapper, SusaMapper mapper) {
 		this.susaNavetIntegration = susaNavetIntegration;
 		this.eventRepository = eventRepository;
+		this.objectMapper = objectMapper;
+		this.mapper = mapper;
 	}
 
 	public void savePageEventJsonTable(int page, int size) throws IOException {
-		final var entity = susaNavetIntegration.getEducationEventsWithPage(page, size).entity();
-		eventRepository.save(entity);
+		var json = susaNavetIntegration.getEducationEvents(page, size);
+		eventRepository.save(mapper.toZippedEvents(json, page));
 	}
 
 	public void saveAllPagesEventsJsonTable(int size) throws IOException {
 		int page = 0;
-		int totalPages;
+		var json = susaNavetIntegration.getEducationEvents(page, size);
+		int totalPages = objectMapper.readTree(json).path("page").path("totalPages").asInt();
+		eventRepository.save(mapper.toZippedEvents(json, page));
 
-		do {
-			final var eventsWithPage = susaNavetIntegration.getEducationEventsWithPage(page, size);
-			final var entity = eventsWithPage.entity();
+		for (page++; page < totalPages; page++) {
+			json = susaNavetIntegration.getEducationEvents(page, size);
+			final var entity = mapper.toZippedEvents(json, page);
 			eventRepository.save(entity);
-
-			totalPages = eventsWithPage.totalPages();
-			page++;
-		} while (page < totalPages);
+		}
 	}
 }

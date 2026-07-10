@@ -32,6 +32,9 @@ public class SusaEducationInfo {
 	@Column(name = "json_body", columnDefinition = "LONGBLOB", nullable = false, updatable = false)
 	private byte[] jsonBody;
 
+	@Column(name = "page", length = 6, nullable = false, updatable = false)
+	private Integer page;
+
 	@Column(name = "date_collected", nullable = false, updatable = false)
 	private LocalDate dateCollected;
 

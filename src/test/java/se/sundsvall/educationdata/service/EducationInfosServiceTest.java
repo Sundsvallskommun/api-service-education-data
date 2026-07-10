@@ -10,10 +10,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.educationdata.integration.db.SusaEducationInfoRepository;
 import se.sundsvall.educationdata.integration.db.model.json.SusaEducationInfo;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
-import se.sundsvall.educationdata.integration.susanavet.SusaPage;
+import se.sundsvall.educationdata.service.mapper.SusaMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -28,6 +29,12 @@ class EducationInfosServiceTest {
 	@Mock
 	private SusaEducationInfoRepository repository;
 
+	@Mock
+	private SusaMapper mapper;
+
+	@Mock
+	private ObjectMapper objectMapper;
+
 	@InjectMocks
 	private EducationInfosService service;
 
@@ -35,13 +42,15 @@ class EducationInfosServiceTest {
 	void savePageTest_successful() throws IOException {
 		final int page = 0;
 		final int size = 1;
-
+		final byte[] json = "json".getBytes();
 		final var entity = SusaEducationInfo.builder().build();
-		when(integration.getEducationInfosWithPage(page, size)).thenReturn(new SusaPage<>(entity, page));
+
+		when(integration.getEducationInfos(page, size)).thenReturn(json);
+		when(mapper.toZippedInfos(json, 0)).thenReturn(entity);
 
 		service.savePageInfoJsonTable(page, size);
 
-		verify(integration).getEducationInfosWithPage(page, size);
+		verify(integration).getEducationInfos(page, size);
 		verify(repository).save(entity);
 		verifyNoMoreInteractions(integration, repository);
 	}
@@ -49,41 +58,52 @@ class EducationInfosServiceTest {
 	@Test
 	void saveAllPagesTest_succesful() throws IOException {
 		final var size = 1;
+		final byte[] json1 = "json1".getBytes();
+		final byte[] json2 = "json2".getBytes();
+		final byte[] json3 = "json3".getBytes();
 		final var entity1 = SusaEducationInfo.builder().build();
 		final var entity2 = SusaEducationInfo.builder().build();
 		final var entity3 = SusaEducationInfo.builder().build();
+		final var firstPage = JsonMapper.builder().build().readTree("{\"page\":{\"totalPages\":3}}");
 
-		when(integration.getEducationInfosWithPage(0, size)).thenReturn(new SusaPage<>(entity1, 3));
-		when(integration.getEducationInfosWithPage(1, size)).thenReturn(new SusaPage<>(entity2, 3));
-		when(integration.getEducationInfosWithPage(2, size)).thenReturn(new SusaPage<>(entity3, 3));
+		when(integration.getEducationInfos(0, size)).thenReturn(json1);
+		when(integration.getEducationInfos(1, size)).thenReturn(json2);
+		when(integration.getEducationInfos(2, size)).thenReturn(json3);
+		when(objectMapper.readTree(json1)).thenReturn(firstPage);
+		when(mapper.toZippedInfos(json1, 0)).thenReturn(entity1);
+		when(mapper.toZippedInfos(json2, 1)).thenReturn(entity2);
+		when(mapper.toZippedInfos(json3, 2)).thenReturn(entity3);
 
-		service.saveAllPagesInfoJsonTable(1);
+		service.saveAllPagesInfoJsonTable(size);
 
 		final var captor = ArgumentCaptor.forClass(SusaEducationInfo.class);
 		verify(repository, times(3)).save(captor.capture());
 		assertThat(captor.getAllValues()).containsExactly(entity1, entity2, entity3);
 
-		verify(integration).getEducationInfosWithPage(0, size);
-		verify(integration).getEducationInfosWithPage(1, size);
-		verify(integration).getEducationInfosWithPage(2, size);
+		verify(integration).getEducationInfos(0, size);
+		verify(integration).getEducationInfos(1, size);
+		verify(integration).getEducationInfos(2, size);
 		verifyNoMoreInteractions(integration, repository);
 	}
 
 	@Test
 	void saveAllPagesTest_withOnlyOnePage() throws IOException {
-		final int page = 0;
-		final int nonExistentPage = 1;
 		final int size = 1;
-
+		final int page = 0;
+		final int nonExistingPage = 1;
+		final byte[] json = "{page:{totalPages:1}}".getBytes();
+		final var firstPage = JsonMapper.builder().build().readTree("{\"page\":{\"totalPages\":1}}");
 		final var entity = SusaEducationInfo.builder().build();
 
-		when(integration.getEducationInfosWithPage(page, size)).thenReturn(new SusaPage<>(entity, 1));
+		when(integration.getEducationInfos(page, size)).thenReturn(json);
+		when(objectMapper.readTree(json)).thenReturn(firstPage);
+		when(mapper.toZippedInfos(json, 0)).thenReturn(entity);
 
 		service.saveAllPagesInfoJsonTable(size);
 
-		verify(integration).getEducationInfosWithPage(page, size);
-		verify(integration, never()).getEducationInfosWithPage(nonExistentPage, size);
-		verify(repository).save(any());
+		verify(integration).getEducationInfos(page, size);
+		verify(integration, never()).getEducationInfos(nonExistingPage, size);
+		verify(repository).save(entity);
 		verifyNoMoreInteractions(integration, repository);
 	}
 }
