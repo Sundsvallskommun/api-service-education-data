@@ -1,6 +1,5 @@
 package se.sundsvall.educationdata.service;
 
-import java.io.IOException;
 import org.springframework.stereotype.Service;
 import se.sundsvall.educationdata.integration.db.SusaEducationProviderRepository;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;

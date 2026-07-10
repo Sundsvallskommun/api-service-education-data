@@ -1,6 +1,5 @@
 package se.sundsvall.educationdata.service;
 
-import java.io.IOException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import se.sundsvall.educationdata.integration.db.SusaEducationEventRepository;
