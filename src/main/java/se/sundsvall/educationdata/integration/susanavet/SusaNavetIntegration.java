@@ -9,9 +9,7 @@ public class SusaNavetIntegration {
 
 	private final SusaNavetClient client;
 
-	private static final String EMPTY_BODY = "Empty body for page %s";
-
-	SusaNavetIntegration(SusaNavetClient client) {
+    SusaNavetIntegration(SusaNavetClient client) {
 		this.client = client;
 	}
 

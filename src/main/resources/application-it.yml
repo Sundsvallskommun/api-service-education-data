@@ -4,3 +4,24 @@
 logging:
   level:
     root: DEBUG
+spring:
+  datasource:
+    url: jdbc:tc:mariadb:10.6:///
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  flyway:
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+scheduler:
+  import:
+    cron: "0 */1 * * * *"
+    name: "scheduled-import"
+    shedlock-lock-at-most-for: "PT2H"
+    maximum-execution-time: "PT2H"
+
+integration:
+  planned-education:
+    base-url: http://localhost:${wiremock.server.port}/planned-educations
+  susa-navet:
+    base-url: http://localhost:${wiremock.server.port}/susa-navet/emil3
