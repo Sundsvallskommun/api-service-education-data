@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 		"education_event_id", "direction_id"
 	}),
 	indexes = @Index(name = "idx_event_category_event", columnList = "education_event_id"))
-public class EventCategory {
+public class EventCategoryEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)

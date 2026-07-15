@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 	indexes = @Index(
 		name = "index_reference_category_direction",
 		columnList = "direction_id"))
-public class ReferenceCategory {
+public class ReferenceCategoryEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id", length = 36)
@@ -36,13 +36,13 @@ public class ReferenceCategory {
 	@Column(name = "category_id", length = 64)
 	private String categoryId;
 
-	@Column(name = "category_name", length = 32)
+	@Column(name = "category_name", length = 64)
 	private String categoryName;
 
 	@Column(name = "direction_id", length = 64)
 	private String directionId;
 
-	@Column(name = "direction_name", length = 32)
+	@Column(name = "direction_name", length = 64)
 	private String directionName;
 
 }

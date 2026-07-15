@@ -1,18 +1,21 @@
 CREATE TABLE susa_education_event_raw (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
-    json_body              LONGTEXT NOT NULL,
+    json_body              LONGBLOB NOT NULL,
+    page                   INTEGER(6) NOT NULL,
     date_collected         DATE NOT NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE susa_education_info_raw (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
-    json_body              LONGTEXT NOT NULL,
+    json_body              LONGBLOB NOT NULL,
+    page                   INTEGER(6) NOT NULL,
     date_collected         DATE NOT NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE susa_education_provider_raw (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
-    json_body              LONGTEXT NOT NULL,
+    json_body              LONGBLOB NOT NULL,
+    page                   INTEGER(6) NOT NULL,
     date_collected         DATE NOT NULL
 ) ENGINE=InnoDB;
 
@@ -69,9 +72,9 @@ CREATE TABLE education_info (
 CREATE TABLE reference_category (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
     category_id            VARCHAR(64) NOT NULL,
-    category_name          VARCHAR(32),
+    category_name          VARCHAR(50),
     direction_id           VARCHAR(64) NOT NULL,
-    direction_name         VARCHAR(32),
+    direction_name         VARCHAR(50),
 CONSTRAINT uq_reference_category_direction UNIQUE (category_id, direction_id),
     INDEX idx_reference_category_direction (direction_id)
 ) ENGINE=InnoDB;

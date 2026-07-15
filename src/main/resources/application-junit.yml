@@ -3,4 +3,19 @@
 #========================================
 logging:
   level:
-    root: DEBUG
+    root: INFO
+spring:
+  datasource:
+    url: jdbc:tc:mariadb:10.6:///
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  flyway:
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+integration:
+  planned-education:
+    base-url: http://localhost/planned-educations
+  susa-navet:
+    base-url: http://localhost/susa-navet/emil3

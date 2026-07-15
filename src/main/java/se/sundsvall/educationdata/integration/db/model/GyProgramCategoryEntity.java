@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "gy_program_category",
 	uniqueConstraints = @UniqueConstraint(name = "uq_gy_program_code", columnNames = "program_code"))
-public class GyProgramCategory {
+public class GyProgramCategoryEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id", length = 36)

@@ -12,11 +12,11 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetter
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 
-public class GyProgramCategoryTest {
+class ReferenceCategoryEntityTest {
 
 	@Test
 	void testBean() {
-		MatcherAssert.assertThat(GyProgramCategory.class, allOf(
+		MatcherAssert.assertThat(ReferenceCategoryEntity.class, allOf(
 			hasValidBeanConstructor(),
 			hasValidGettersAndSetters(),
 			hasValidBeanHashCode(),
@@ -28,31 +28,31 @@ public class GyProgramCategoryTest {
 	void builder() {
 		// Arrange
 		var id = UUID.randomUUID().toString();
-		var programName = "programName";
-		var programCode = "programCode";
-		boolean vocational = true;
-		var category = "category";
+		var categoryId = "categoryId";
+		var categoryName = "categoryName";
+		var directionName = "directionName";
+		var directionId = "directionId";
+
 		// Act
-		var bean = GyProgramCategory.builder()
+		var bean = ReferenceCategoryEntity.builder()
 			.withId(id)
-			.withProgramName(programName)
-			.withProgramCode(programCode)
-			.withVocational(vocational)
-			.withCategory(category)
+			.withCategoryId(categoryId)
+			.withCategoryName(categoryName)
+			.withDirectionId(directionId)
+			.withDirectionName(directionName)
 			.build();
 
 		// Assert
 		assertThat(bean.getId()).isEqualTo(id);
-		assertThat(bean.getProgramName()).isEqualTo(programName);
-		assertThat(bean.getProgramCode()).isEqualTo(programCode);
-		assertThat(bean.getVocational()).isEqualTo(vocational);
-		assertThat(bean.getCategory()).isEqualTo(category);
-
+		assertThat(bean.getCategoryId()).isEqualTo(categoryId);
+		assertThat(bean.getCategoryName()).isEqualTo(categoryName);
+		assertThat(bean.getDirectionId()).isEqualTo(directionId);
+		assertThat(bean.getDirectionName()).isEqualTo(directionName);
 	}
 
 	@Test
 	void testNoDirtOnCreatedBean() {
-		assertThat(GyProgramCategory.builder().build()).hasAllNullFieldsOrProperties();
-		assertThat(new GyProgramCategory()).hasAllNullFieldsOrProperties();
+		assertThat(ReferenceCategoryEntity.builder().build()).hasAllNullFieldsOrProperties();
+		assertThat(new ReferenceCategoryEntity()).hasAllNullFieldsOrProperties();
 	}
 }

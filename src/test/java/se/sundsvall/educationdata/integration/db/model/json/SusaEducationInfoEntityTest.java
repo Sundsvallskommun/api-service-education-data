@@ -18,7 +18,7 @@ import static java.time.LocalDate.now;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 
-public class SusaEducationProviderTest {
+class SusaEducationInfoEntityTest {
 
 	@BeforeAll
 	static void setup() {
@@ -27,7 +27,7 @@ public class SusaEducationProviderTest {
 
 	@Test
 	void testBean() {
-		MatcherAssert.assertThat(SusaEducationProvider.class, allOf(
+		MatcherAssert.assertThat(SusaEducationInfoEntity.class, allOf(
 			hasValidBeanConstructor(),
 			hasValidGettersAndSetters(),
 			hasValidBeanHashCode(),
@@ -39,11 +39,11 @@ public class SusaEducationProviderTest {
 	void builder() {
 		// Arrange
 		var id = UUID.randomUUID().toString();
-		var jsonBody = "json body in text";
+		var jsonBody = new byte[123];
 		var dateCollected = LocalDate.of(2025, Month.JUNE, 1);
 
 		// Act
-		var bean = SusaEducationProvider.builder()
+		var bean = SusaEducationInfoEntity.builder()
 			.withId(id)
 			.withJsonBody(jsonBody)
 			.withDateCollected(dateCollected).build();
@@ -56,7 +56,7 @@ public class SusaEducationProviderTest {
 
 	@Test
 	void testNoDirtOnCreatedBean() {
-		assertThat(SusaEducationProvider.builder().build()).hasAllNullFieldsOrProperties();
-		assertThat(new SusaEducationProvider()).hasAllNullFieldsOrProperties();
+		assertThat(SusaEducationInfoEntity.builder().build()).hasAllNullFieldsOrProperties();
+		assertThat(new SusaEducationInfoEntity()).hasAllNullFieldsOrProperties();
 	}
 }
