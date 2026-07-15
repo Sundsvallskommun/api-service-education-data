@@ -31,15 +31,15 @@ public class Scheduler {
 		final int jsonSize = 100;
 
 		// for use under development
-		// eventsService.saveAllPagesEventsJsonTable(jsonSize);
+		// swap to saveAllPagesEventsJsonTable(jsonSize) after development
 		eventsService.savePageEventJsonTable(0, jsonSize);
 
 		// for use under development
-		// infosService.saveAllPagesInfoJsonTable(jsonSize);
+		// swap to saveAllPagesInfoJsonTable(jsonSize) after development
 		infosService.savePageInfoJsonTable(0, jsonSize);
 
 		// for use under development
-		// providersService.saveAllPagesProviderJsonTable(jsonSize);
+		// swap to saveAllPagesProviderJsonTable(jsonSize) after development
 		providersService.savePageProviderJsonTable(0, jsonSize);
 
 		educationService.getCategoryInfo();
