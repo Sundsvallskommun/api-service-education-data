@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-import se.sundsvall.dept44.util.jacoco.ExcludeFromJacocoGeneratedCoverageReport;
 
-@ExcludeFromJacocoGeneratedCoverageReport
 public final class Util {
 
 	private Util() {}

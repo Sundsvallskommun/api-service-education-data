@@ -2,8 +2,8 @@ package se.sundsvall.educationdata.integration.db;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.data.jpa.repository.JpaRepository;
-import se.sundsvall.educationdata.integration.db.model.GyProgramCategory;
+import se.sundsvall.educationdata.integration.db.model.GyProgramCategoryEntity;
 
 @CircuitBreaker(name = "gyProgramCategoryRepository")
-public interface GyProgramCategoryRepository extends JpaRepository<GyProgramCategory, String> {
+public interface GyProgramCategoryRepository extends JpaRepository<GyProgramCategoryEntity, String> {
 }

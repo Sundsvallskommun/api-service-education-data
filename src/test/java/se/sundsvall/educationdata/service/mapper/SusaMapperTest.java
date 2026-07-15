@@ -12,12 +12,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class SusaMapperTest {
 
-	private final SusaMapper mapper = new SusaMapper();
+	private final SusaMapper susaMapper = new SusaMapper();
 	private final byte[] json = "{\"page\":{\"totalPages\":1}}".getBytes();
 
 	@Test
 	void toZippedEvents() {
-		final var entity = mapper.toZippedEvents(json, 2);
+		final var entity = susaMapper.toZippedEvents(json, 2);
 
 		assertThat(entity.getPage()).isEqualTo(2);
 		assertThat(entity.getDateCollected()).isEqualTo(LocalDate.now(ZoneId.systemDefault()));
@@ -26,7 +26,7 @@ class SusaMapperTest {
 
 	@Test
 	void toZippedInfos() {
-		final var entity = mapper.toZippedInfos(json, 5);
+		final var entity = susaMapper.toZippedInfos(json, 5);
 
 		assertThat(entity.getPage()).isEqualTo(5);
 		assertThat(entity.getDateCollected()).isEqualTo(LocalDate.now(ZoneId.systemDefault()));
@@ -35,7 +35,7 @@ class SusaMapperTest {
 
 	@Test
 	void toZippedProviders() {
-		final var entity = mapper.toZippedProviders(json, 0);
+		final var entity = susaMapper.toZippedProviders(json, 0);
 
 		assertThat(entity.getPage()).isZero();
 		assertThat(entity.getDateCollected()).isEqualTo(LocalDate.now(ZoneId.systemDefault()));

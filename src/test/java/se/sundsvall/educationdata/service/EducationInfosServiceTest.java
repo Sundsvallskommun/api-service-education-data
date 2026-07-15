@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.educationdata.integration.db.SusaEducationInfoRepository;
-import se.sundsvall.educationdata.integration.db.model.json.SusaEducationInfo;
+import se.sundsvall.educationdata.integration.db.model.json.SusaEducationInfoEntity;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 import se.sundsvall.educationdata.service.mapper.SusaMapper;
 import tools.jackson.databind.ObjectMapper;
@@ -43,7 +43,7 @@ class EducationInfosServiceTest {
 		final int page = 0;
 		final int size = 1;
 		final byte[] json = "json".getBytes();
-		final var entity = SusaEducationInfo.builder().build();
+		final var entity = SusaEducationInfoEntity.builder().build();
 
 		when(integration.getEducationInfos(page, size)).thenReturn(json);
 		when(mapper.toZippedInfos(json, 0)).thenReturn(entity);
@@ -61,9 +61,9 @@ class EducationInfosServiceTest {
 		final byte[] json1 = "json1".getBytes();
 		final byte[] json2 = "json2".getBytes();
 		final byte[] json3 = "json3".getBytes();
-		final var entity1 = SusaEducationInfo.builder().build();
-		final var entity2 = SusaEducationInfo.builder().build();
-		final var entity3 = SusaEducationInfo.builder().build();
+		final var entity1 = SusaEducationInfoEntity.builder().build();
+		final var entity2 = SusaEducationInfoEntity.builder().build();
+		final var entity3 = SusaEducationInfoEntity.builder().build();
 		final var firstPage = JsonMapper.builder().build().readTree("{\"page\":{\"totalPages\":3}}");
 
 		when(integration.getEducationInfos(0, size)).thenReturn(json1);
@@ -76,7 +76,7 @@ class EducationInfosServiceTest {
 
 		service.saveAllPagesInfoJsonTable(size);
 
-		final var captor = ArgumentCaptor.forClass(SusaEducationInfo.class);
+		final var captor = ArgumentCaptor.forClass(SusaEducationInfoEntity.class);
 		verify(repository, times(3)).save(captor.capture());
 		assertThat(captor.getAllValues()).containsExactly(entity1, entity2, entity3);
 
@@ -93,7 +93,7 @@ class EducationInfosServiceTest {
 		final int nonExistingPage = 1;
 		final byte[] json = "{page:{totalPages:1}}".getBytes();
 		final var firstPage = JsonMapper.builder().build().readTree("{\"page\":{\"totalPages\":1}}");
-		final var entity = SusaEducationInfo.builder().build();
+		final var entity = SusaEducationInfoEntity.builder().build();
 
 		when(integration.getEducationInfos(page, size)).thenReturn(json);
 		when(objectMapper.readTree(json)).thenReturn(firstPage);

@@ -18,21 +18,31 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
 @Entity
-@Table(name = "event_category",
-	uniqueConstraints = @UniqueConstraint(name = "uq_event_category", columnNames = {
-		"education_event_id", "direction_id"
-	}),
-	indexes = @Index(name = "idx_event_category_event", columnList = "education_event_id"))
-public class EventCategory {
-
+@Table(name = "reference_category",
+	uniqueConstraints = @UniqueConstraint(
+		name = "uq_reference_category_direction",
+		columnNames = {
+			"category_id", "direction_id"
+		}),
+	indexes = @Index(
+		name = "index_reference_category_direction",
+		columnList = "direction_id"))
+public class ReferenceCategoryEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(name = "id", length = 36)
 	private String id;
 
-	@Column(name = "education_event_id", length = 64)
-	private String educationEventId;
+	@Column(name = "category_id", length = 64)
+	private String categoryId;
+
+	@Column(name = "category_name", length = 64)
+	private String categoryName;
 
 	@Column(name = "direction_id", length = 64)
 	private String directionId;
+
+	@Column(name = "direction_name", length = 64)
+	private String directionName;
+
 }

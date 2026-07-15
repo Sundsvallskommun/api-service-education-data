@@ -1,6 +1,5 @@
 package se.sundsvall.educationdata.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import se.sundsvall.educationdata.integration.db.SusaEducationEventRepository;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
@@ -14,7 +13,7 @@ public class EducationEventsService {
 	private final ObjectMapper objectMapper;
 	private final SusaMapper mapper;
 
-	public EducationEventsService(SusaNavetIntegration susaNavetIntegration, SusaEducationEventRepository eventRepository, @Qualifier("jacksonJsonMapper") ObjectMapper objectMapper, SusaMapper mapper) {
+	public EducationEventsService(SusaNavetIntegration susaNavetIntegration, SusaEducationEventRepository eventRepository, ObjectMapper objectMapper, SusaMapper mapper) {
 		this.susaNavetIntegration = susaNavetIntegration;
 		this.eventRepository = eventRepository;
 		this.objectMapper = objectMapper;

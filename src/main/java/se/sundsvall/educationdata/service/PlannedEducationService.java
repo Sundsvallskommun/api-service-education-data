@@ -1,15 +1,13 @@
 package se.sundsvall.educationdata.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.educationdata.integration.db.ReferenceCategoryRepository;
-import se.sundsvall.educationdata.integration.db.model.ReferenceCategory;
+import se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity;
 import se.sundsvall.educationdata.integration.plannededucation.PlannedEducationIntegration;
+
+import static se.sundsvall.dept44.problem.Problem.badGateway;
 
 @Service
 public class PlannedEducationService {
@@ -23,12 +21,13 @@ public class PlannedEducationService {
 	}
 
 	@Transactional
-	public void getCategoryInfo() throws JsonProcessingException {
-		List<ReferenceCategory> categories = integration.getAllAreas();
+	public void getCategoryInfo() {
+		List<ReferenceCategoryEntity> categories = integration.getAllAreas();
 
-		if (categories.isEmpty())
-			throw Problem.valueOf(HttpStatus.BAD_GATEWAY,
+		if (categories.isEmpty()) {
+			throw badGateway(
 				"No content");
+		}
 
 		referenceCategoryRepository.deleteAllInBatch();
 		referenceCategoryRepository.saveAll(categories);
