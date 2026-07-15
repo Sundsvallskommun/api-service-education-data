@@ -14,6 +14,13 @@ spring:
     hibernate:
       ddl-auto: validate
 
+scheduler:
+  import:
+    cron: "0 */1 * * * *"
+    name: "scheduled-import"
+    shedlock-lock-at-most-for: "PT2H"
+    maximum-execution-time: "PT2H"
+
 integration:
   planned-education:
     base-url: http://localhost/planned-educations
