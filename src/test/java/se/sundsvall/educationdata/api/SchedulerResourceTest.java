@@ -1,33 +1,54 @@
 package se.sundsvall.educationdata.api;
 
-import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import se.sundsvall.educationdata.Application;
 import se.sundsvall.educationdata.scheduler.Scheduler;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient
+@ActiveProfiles("junit")
 public class SchedulerResourceTest {
 
-	@Mock
+	@MockitoBean
 	private Scheduler scheduler;
 
-	@InjectMocks
-	private SchedulerResource schedulerResource;
+	@Autowired
+	private WebTestClient webTestClient;
+
+	private static final String PATH = "/{municipalityId}/scheduler/trigger";
+	private static final String MUNICIPALITY_ID = "2281";
+	private static final String INVALID_MUNICIPALITY_ID = "9999";
 
 	@Test
-	void triggerScheduler_returnsOk() throws IOException {
-		final var response = schedulerResource.triggerScheduler();
+	void triggerScheduler_Accepted() {
+		webTestClient.post()
+			.uri(PATH, MUNICIPALITY_ID)
+			.exchange()
+			.expectStatus().isAccepted();
 
-		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-		verify(scheduler).importData();
+		verify(scheduler).triggerAsyncImport();
 		verifyNoMoreInteractions(scheduler);
 	}
+
+	@Test
+	void triggerScheduler_BadRequest() {
+		webTestClient.post()
+			.uri(PATH, INVALID_MUNICIPALITY_ID)
+			.exchange()
+			.expectStatus().isEqualTo(BAD_REQUEST);
+
+		verifyNoInteractions(scheduler);
+	}
+
 }

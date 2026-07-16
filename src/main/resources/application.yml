@@ -23,8 +23,9 @@ scheduler:
   import:
     cron: "0 0 2 * * *"
     name: "scheduled-import"
-    shedlock-lock-at-most-for: "PT2H"
-    maximum-execution-time: "PT2H"
+    shedlock-lock-at-most-for: "PT15M"
+    maximum-execution-time: "PT15M"
+    json-size: 100
 
 integration:
   planned-education:

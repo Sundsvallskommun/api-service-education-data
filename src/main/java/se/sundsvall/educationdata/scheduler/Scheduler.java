@@ -1,5 +1,9 @@
 package se.sundsvall.educationdata.scheduler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import se.sundsvall.dept44.scheduling.Dept44Scheduled;
 import se.sundsvall.educationdata.service.EducationEventsService;
@@ -15,11 +19,25 @@ public class Scheduler {
 	private final EducationProvidersService providersService;
 	private final PlannedEducationService educationService;
 
-	public Scheduler(EducationEventsService eventsService, EducationInfosService infosService, EducationProvidersService providersService, PlannedEducationService educationService) {
+	private final int jsonSize;
+
+	private static final Logger log = LoggerFactory.getLogger(Scheduler.class);
+
+	public Scheduler(EducationEventsService eventsService, EducationInfosService infosService, EducationProvidersService providersService, PlannedEducationService educationService, @Value("${scheduler.import.json-size}") int jsonSize) {
 		this.eventsService = eventsService;
 		this.infosService = infosService;
 		this.providersService = providersService;
 		this.educationService = educationService;
+		this.jsonSize = jsonSize;
+	}
+
+	@Async
+	public void triggerAsyncImport() {
+		try {
+			importData();
+		} catch (Exception e) {
+			log.error("Manually triggered import failed", e);
+		}
 	}
 
 	@Dept44Scheduled(
@@ -28,19 +46,12 @@ public class Scheduler {
 		lockAtMostFor = "${scheduler.import.shedlock-lock-at-most-for}",
 		maximumExecutionTime = "${scheduler.import.maximum-execution-time}")
 	public void importData() {
-		final int jsonSize = 100;
 
-		// for use under development
-		// swap to saveAllPagesEventsJsonTable(jsonSize) after development
-		eventsService.savePageEventJsonTable(0, jsonSize);
+		eventsService.saveAllPagesEventsJsonTable(jsonSize);
 
-		// for use under development
-		// swap to saveAllPagesInfoJsonTable(jsonSize) after development
-		infosService.savePageInfoJsonTable(0, jsonSize);
+		infosService.saveAllPagesInfoJsonTable(jsonSize);
 
-		// for use under development
-		// swap to saveAllPagesProviderJsonTable(jsonSize) after development
-		providersService.savePageProviderJsonTable(0, jsonSize);
+		providersService.saveAllPagesProviderJsonTable(jsonSize);
 
 		educationService.getCategoryInfo();
 	}
