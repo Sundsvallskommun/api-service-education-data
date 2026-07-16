@@ -33,7 +33,6 @@ public class SchedulerResourceIT extends AbstractAppTest {
     private static final String MUNICIPALITY = "2281";
     private static final String PATH = "/" + MUNICIPALITY + "/scheduler/trigger";
     private static final String INVALID_PATH = "/9999/scheduler/trigger";
-    private static final String RESPONSE = "response.json";
 
 
     @Test

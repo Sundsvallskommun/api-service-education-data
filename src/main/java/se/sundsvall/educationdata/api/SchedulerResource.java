@@ -18,6 +18,14 @@ import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 
 @RestController
 @RequestMapping("{municipalityId}/scheduler")
+@ApiResponse(responseCode = "400",
+	description = "Bad Request",
+	content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+		schema = @Schema(implementation = Problem.class)))
+@ApiResponse(responseCode = "500",
+	description = "Internal Server Error",
+	content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
+		schema = @Schema(implementation = Problem.class)))
 class SchedulerResource {
 
 	private final Scheduler scheduler;
@@ -28,13 +36,8 @@ class SchedulerResource {
 
 	@PostMapping("/trigger")
 	@Operation(summary = "Triggers the scheduled imports", responses = {
-		@ApiResponse(responseCode = "202", description = "Accepted"),
-		@ApiResponse(responseCode = "400",
-			description = "Bad Request",
-			content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE,
-				schema = @Schema(implementation = Problem.class)))
+		@ApiResponse(responseCode = "202", description = "Accepted")
 	})
-
 	public ResponseEntity<Void> triggerScheduler(@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @ValidMunicipalityId @PathVariable final String municipalityId) {
 		scheduler.triggerAsyncImport();
 		return ResponseEntity.accepted().build();
