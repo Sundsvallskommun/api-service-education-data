@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.educationdata.integration.db.SusaEducationEventRepository;
-import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEvent;
+import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEventEntity;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 import se.sundsvall.educationdata.service.mapper.SusaMapper;
 import tools.jackson.databind.ObjectMapper;
@@ -44,7 +44,7 @@ class EducationEventsServiceTest {
 		final int page = 0;
 		final int size = 1;
 		final byte[] json = "json".getBytes();
-		final var entity = SusaEducationEvent.builder().build();
+		final var entity = SusaEducationEventEntity.builder().build();
 
 		when(integration.getEducationEvents(page, size)).thenReturn(json);
 		when(mapper.toZippedEvents(json, 0)).thenReturn(entity);
@@ -62,9 +62,9 @@ class EducationEventsServiceTest {
 		final byte[] json1 = "json1".getBytes();
 		final byte[] json2 = "json2".getBytes();
 		final byte[] json3 = "json3".getBytes();
-		final var entity1 = SusaEducationEvent.builder().build();
-		final var entity2 = SusaEducationEvent.builder().build();
-		final var entity3 = SusaEducationEvent.builder().build();
+		final var entity1 = SusaEducationEventEntity.builder().build();
+		final var entity2 = SusaEducationEventEntity.builder().build();
+		final var entity3 = SusaEducationEventEntity.builder().build();
 		final var firstPage = JsonMapper.builder().build().readTree("{\"page\":{\"totalPages\":3}}");
 
 		when(integration.getEducationEvents(0, size)).thenReturn(json1);
@@ -77,7 +77,7 @@ class EducationEventsServiceTest {
 
 		service.saveAllPagesEventsJsonTable(size);
 
-		final var captor = ArgumentCaptor.forClass(SusaEducationEvent.class);
+		final var captor = ArgumentCaptor.forClass(SusaEducationEventEntity.class);
 		verify(repository, times(3)).save(captor.capture());
 		assertThat(captor.getAllValues()).containsExactly(entity1, entity2, entity3);
 
@@ -94,7 +94,7 @@ class EducationEventsServiceTest {
 		final int nonExistingPage = 1;
 		final byte[] json = "{\"page\":{\"totalPages\":1}}".getBytes();
 		final var firstPage = JsonMapper.builder().build().readTree("{\"page\":{\"totalPages\":1}}");
-		final var entity = SusaEducationEvent.builder().build();
+		final var entity = SusaEducationEventEntity.builder().build();
 
 		when(integration.getEducationEvents(page, size)).thenReturn(json);
 		when(objectMapper.readTree(json)).thenReturn(firstPage);

@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Builder(setterPrefix = "with")
 @Entity
 @Table(name = "susa_education_event_raw")
-public class SusaEducationEvent {
+public class SusaEducationEventEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)

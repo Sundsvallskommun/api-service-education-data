@@ -1,6 +1,5 @@
 package se.sundsvall.educationdata.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.educationdata.integration.db.ReferenceCategoryRepository;
-import se.sundsvall.educationdata.integration.db.model.ReferenceCategory;
+import se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity;
 import se.sundsvall.educationdata.integration.plannededucation.PlannedEducationIntegration;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,8 +29,8 @@ class PlannedEducationServiceTest {
 	private PlannedEducationService service;
 
 	@Test
-	void getCategoryInfo_updateRows() throws JsonProcessingException {
-		final var rows = List.of(ReferenceCategory.builder().withCategoryId("1").build());
+	void getCategoryInfo_updateRows() {
+		final var rows = List.of(ReferenceCategoryEntity.builder().withCategoryId("1").build());
 		when(integration.getAllAreas()).thenReturn(rows);
 
 		service.getCategoryInfo();
@@ -45,8 +44,8 @@ class PlannedEducationServiceTest {
 	}
 
 	@Test
-	void getCategoryInfo_emptyRows() throws JsonProcessingException {
-		final List<ReferenceCategory> rows = List.of();
+	void getCategoryInfo_emptyRows() {
+		final List<ReferenceCategoryEntity> rows = List.of();
 		when(integration.getAllAreas()).thenReturn(rows);
 
 		assertThatThrownBy(() -> service.getCategoryInfo())

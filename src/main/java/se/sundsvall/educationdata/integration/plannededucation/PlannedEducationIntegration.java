@@ -1,10 +1,11 @@
 package se.sundsvall.educationdata.integration.plannededucation;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
-import se.sundsvall.educationdata.integration.db.model.ReferenceCategory;
+import se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity;
+
+import static se.sundsvall.dept44.problem.Problem.badGateway;
 
 @Component
 @EnableConfigurationProperties(PlannedEducationIntegrationProperties.class)
@@ -18,8 +19,12 @@ public class PlannedEducationIntegration {
 		this.mapper = mapper;
 	}
 
-	public List<ReferenceCategory> getAllAreas() throws JsonProcessingException {
+	public List<ReferenceCategoryEntity> getAllAreas() {
 		final var response = client.getAllAreas();
+		if (response == null || response.getBody() == null || response.getBody().getAreas() == null
+			|| response.getBody().getAreas().isEmpty()) {
+			throw badGateway("Empty body");
+		}
 		return mapper.toReferenceCategory(response);
 	}
 }

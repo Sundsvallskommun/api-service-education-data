@@ -12,11 +12,11 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetter
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 
-class EventCategoryTest {
+class EventCategoryEntityTest {
 
 	@Test
 	void testBean() {
-		MatcherAssert.assertThat(EventCategory.class, allOf(
+		MatcherAssert.assertThat(EventCategoryEntity.class, allOf(
 			hasValidBeanConstructor(),
 			hasValidGettersAndSetters(),
 			hasValidBeanHashCode(),
@@ -32,7 +32,7 @@ class EventCategoryTest {
 		var directionId = "directionId";
 
 		// Act
-		var bean = EventCategory.builder()
+		var bean = EventCategoryEntity.builder()
 			.withId(id).withEducationEventId(educationEventId).withDirectionId(directionId)
 			.build();
 
@@ -44,7 +44,7 @@ class EventCategoryTest {
 
 	@Test
 	void testNoDirtOnCreatedBean() {
-		assertThat(EventCategory.builder().build()).hasAllNullFieldsOrProperties();
-		assertThat(new EventCategory()).hasAllNullFieldsOrProperties();
+		assertThat(EventCategoryEntity.builder().build()).hasAllNullFieldsOrProperties();
+		assertThat(new EventCategoryEntity()).hasAllNullFieldsOrProperties();
 	}
 }

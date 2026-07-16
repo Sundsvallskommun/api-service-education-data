@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import org.springframework.stereotype.Component;
+import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEventEntity;
+import se.sundsvall.educationdata.integration.db.model.json.SusaEducationInfoEntity;
+import se.sundsvall.educationdata.integration.db.model.json.SusaEducationProviderEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
 import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEvent;
@@ -18,24 +21,24 @@ import se.sundsvall.educationdata.util.Util;
 @Component
 public class SusaMapper {
 
-	public SusaEducationEvent toZippedEvents(byte[] json, int page) {
-		return SusaEducationEvent.builder()
+	public SusaEducationEventEntity toZippedEvents(byte[] json, int page) {
+		return SusaEducationEventEntity.builder()
 			.withJsonBody(Util.zip(json))
 			.withPage(page)
 			.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
 			.build();
 	}
 
-	public SusaEducationInfo toZippedInfos(byte[] json, int page) {
-		return SusaEducationInfo.builder()
+	public SusaEducationInfoEntity toZippedInfos(byte[] json, int page) {
+		return SusaEducationInfoEntity.builder()
 			.withJsonBody(Util.zip(json))
 			.withPage(page)
 			.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
 			.build();
 	}
 
-	public SusaEducationProvider toZippedProviders(byte[] json, int page) {
-		return SusaEducationProvider.builder()
+	public SusaEducationProviderEntity toZippedProviders(byte[] json, int page) {
+		return SusaEducationProviderEntity.builder()
 			.withJsonBody(Util.zip(json))
 			.withPage(page)
 			.withDateCollected(LocalDate.now(ZoneId.systemDefault()))
