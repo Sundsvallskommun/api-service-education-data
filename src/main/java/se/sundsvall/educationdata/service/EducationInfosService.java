@@ -1,6 +1,8 @@
 package se.sundsvall.educationdata.service;
 
+import generated.se.sundsvall.susanavet.EducationEventListResponse;
 import generated.se.sundsvall.susanavet.EducationInfoListResponse;
+import generated.se.sundsvall.susanavet.EducationInfoResponse;
 import org.springframework.stereotype.Service;
 import se.sundsvall.educationdata.integration.db.EducationInfoEntityRepository;
 import se.sundsvall.educationdata.integration.db.SusaEducationInfoRepository;
@@ -37,14 +39,22 @@ public class EducationInfosService {
 
 	public void saveAllPagesInfoJsonTable(int size) {
 		int page = 0;
-		var json = susaNavetIntegration.getEducationInfos(page, size);
-		int totalPages = objectMapper.readTree(json).path("page").path("totalPages").asInt();
+		var json = susaNavetIntegration.getEducationEvents(page, size);
+		var response = objectMapper.readValue(json, EducationInfoListResponse.class);
+
+		var pageInfo = response.getPage();
+		var totalPages = (pageInfo == null || pageInfo.getTotalPages() == null) ? 0 : pageInfo.getTotalPages();
+
 		infoRepository.save(mapper.toZippedInfos(json, page));
+		var susaInfos = response.getEducationInfos();
+		infoEntityRepository.saveAll(mapper.toInfoEntities(susaInfos));
 
 		for (page = 1; page < totalPages; page++) {
-			json = susaNavetIntegration.getEducationInfos(page, size);
-			final var entity = mapper.toZippedInfos(json, page);
-			infoRepository.save(entity);
+			json = susaNavetIntegration.getEducationEvents(page, size);
+			infoRepository.save(mapper.toZippedInfos(json, page));
+
+			susaInfos = response.getEducationInfos();
+			infoEntityRepository.saveAll(mapper.toInfoEntities(susaInfos));
 		}
 	}
 }

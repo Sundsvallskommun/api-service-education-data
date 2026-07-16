@@ -11,7 +11,9 @@ public class SusaNavetIntegration {
 
 	private final SusaNavetClient client;
 
-    SusaNavetIntegration(SusaNavetClient client) {
+	private static final String EMPTY_BODY = "Empty body";
+
+	SusaNavetIntegration(SusaNavetClient client) {
 		this.client = client;
 	}
 

@@ -8,14 +8,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import org.springframework.stereotype.Component;
+import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
+import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
 import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.json.SusaEducationInfoEntity;
 import se.sundsvall.educationdata.integration.db.model.json.SusaEducationProviderEntity;
-import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
-import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
-import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEvent;
-import se.sundsvall.educationdata.integration.db.model.json.SusaEducationInfo;
-import se.sundsvall.educationdata.integration.db.model.json.SusaEducationProvider;
 import se.sundsvall.educationdata.util.Util;
 
 @Component
