@@ -10,10 +10,12 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import se.sundsvall.educationdata.Application;
 import se.sundsvall.educationdata.scheduler.Scheduler;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -49,6 +51,18 @@ public class SchedulerResourceTest {
 			.expectStatus().isEqualTo(BAD_REQUEST);
 
 		verifyNoInteractions(scheduler);
+	}
+
+	@Test
+	void triggerScheduler_InternalServerError() {
+		doThrow(new RuntimeException("boom")).when(scheduler).triggerAsyncImport();
+		webTestClient.post()
+			.uri(PATH, MUNICIPALITY_ID)
+			.exchange()
+			.expectStatus().isEqualTo(INTERNAL_SERVER_ERROR);
+
+		verify(scheduler).triggerAsyncImport();
+		verifyNoMoreInteractions(scheduler);
 	}
 
 }
