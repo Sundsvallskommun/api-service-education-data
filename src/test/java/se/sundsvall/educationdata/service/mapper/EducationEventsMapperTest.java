@@ -13,6 +13,7 @@ import generated.se.sundsvall.susanavet.PaceOfStudy;
 import generated.se.sundsvall.susanavet.UrlNode;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +42,10 @@ class EducationEventsMapperTest {
 
 	@Test
 	void toEventEntities_test() {
-		final var startDate = LocalDate.of(2027, 1, 10);
-		final var endDate = LocalDate.of(2027, 6, 10);
-		final var applicationStart = LocalDate.of(2026, 10, 1);
-		final var applicationEnd = LocalDate.of(2026, 12, 1);
+		final var startDate = LocalDate.of(2027, Month.JANUARY, 10);
+		final var endDate = LocalDate.of(2027, Month.JUNE, 10);
+		final var applicationStart = LocalDate.of(2026, Month.OCTOBER, 1);
+		final var applicationEnd = LocalDate.of(2026, Month.DECEMBER, 1);
 
 		final var event = new EducationEvent()
 			.identifier("event-123")

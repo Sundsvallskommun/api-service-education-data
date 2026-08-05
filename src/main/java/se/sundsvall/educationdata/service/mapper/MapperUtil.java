@@ -9,7 +9,7 @@ final class MapperUtil {
 
 	private MapperUtil() {}
 
-	static <Value> Value firstOrNull(List<Value> values) {
+	static <T> T firstOrNull(List<T> values) {
 		return values == null || values.isEmpty() ? null : values.getFirst();
 	}
 
