@@ -16,7 +16,7 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanToString;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static com.google.code.beanmatchers.BeanMatchers.registerValueGenerator;
 import static java.time.LocalDate.now;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 
 class EducationEventEntityTest {
@@ -57,8 +57,7 @@ class EducationEventEntityTest {
 		var endDate = LocalDate.of(2025, Month.JUNE, 1);
 		var applicationDateStart = LocalDate.of(2025, Month.JUNE, 1);
 		var applicationDateEnd = LocalDate.of(2025, Month.JUNE, 1);
-		var outdatedAt = LocalDate.of(2025, Month.JUNE, 10);
-		var deleted = false;
+		var cancelled = false;
 
 		// Act
 		var education = EducationEventEntity.builder()
@@ -80,8 +79,7 @@ class EducationEventEntityTest {
 			.withEndDate(endDate)
 			.withApplicationDateStart(applicationDateStart)
 			.withApplicationDateEnd(applicationDateEnd)
-			.withOutdatedAt(outdatedAt)
-			.withDeleted(deleted).build();
+			.withCancelled(cancelled).build();
 
 		// Assert
 		assertThat(education.getId()).isEqualTo(id);
@@ -102,8 +100,7 @@ class EducationEventEntityTest {
 		assertThat(education.getEndDate()).isEqualTo(endDate);
 		assertThat(education.getApplicationDateStart()).isEqualTo(applicationDateStart);
 		assertThat(education.getApplicationDateEnd()).isEqualTo(applicationDateEnd);
-		assertThat(education.getOutdatedAt()).isEqualTo(outdatedAt);
-		assertThat(education.getDeleted()).isEqualTo(deleted);
+		assertThat(education.getCancelled()).isEqualTo(cancelled);
 	}
 
 	@Test

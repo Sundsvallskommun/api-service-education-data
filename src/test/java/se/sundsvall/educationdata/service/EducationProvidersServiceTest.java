@@ -1,6 +1,5 @@
 package se.sundsvall.educationdata.service;
 
-import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -10,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.educationdata.integration.db.SusaEducationProviderRepository;
 import se.sundsvall.educationdata.integration.db.model.json.SusaEducationProviderEntity;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
-import se.sundsvall.educationdata.service.mapper.SusaMapper;
+import se.sundsvall.educationdata.service.mapper.EducationProvidersMapper;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -30,7 +29,7 @@ class EducationProvidersServiceTest {
 	private SusaEducationProviderRepository repository;
 
 	@Mock
-	private SusaMapper mapper;
+	private EducationProvidersMapper providersMapper;
 
 	@Mock
 	private ObjectMapper objectMapper;
@@ -39,14 +38,14 @@ class EducationProvidersServiceTest {
 	private EducationProvidersService service;
 
 	@Test
-	void savePageTest_successful() throws IOException {
+	void savePageTest_successful() {
 		final int page = 0;
 		final int size = 1;
 		final byte[] json = "json".getBytes();
 		final var entity = SusaEducationProviderEntity.builder().build();
 
 		when(integration.getEducationProviders(page, size)).thenReturn(json);
-		when(mapper.toZippedProviders(json, 0)).thenReturn(entity);
+		when(providersMapper.toZippedProviders(json, 0)).thenReturn(entity);
 
 		service.savePageProviderJsonTable(page, size);
 
@@ -56,7 +55,7 @@ class EducationProvidersServiceTest {
 	}
 
 	@Test
-	void saveAllPagesTest_succesful() throws IOException {
+	void saveAllPagesTest_succesful() {
 		final var size = 1;
 		final byte[] json1 = "json1".getBytes();
 		final byte[] json2 = "json2".getBytes();
@@ -70,9 +69,9 @@ class EducationProvidersServiceTest {
 		when(integration.getEducationProviders(1, size)).thenReturn(json2);
 		when(integration.getEducationProviders(2, size)).thenReturn(json3);
 		when(objectMapper.readTree(json1)).thenReturn(firstPage);
-		when(mapper.toZippedProviders(json1, 0)).thenReturn(entity1);
-		when(mapper.toZippedProviders(json2, 1)).thenReturn(entity2);
-		when(mapper.toZippedProviders(json3, 2)).thenReturn(entity3);
+		when(providersMapper.toZippedProviders(json1, 0)).thenReturn(entity1);
+		when(providersMapper.toZippedProviders(json2, 1)).thenReturn(entity2);
+		when(providersMapper.toZippedProviders(json3, 2)).thenReturn(entity3);
 
 		service.saveAllPagesProviderJsonTable(size);
 
@@ -87,7 +86,7 @@ class EducationProvidersServiceTest {
 	}
 
 	@Test
-	void saveAllPagesTest_withOnlyOnePage() throws IOException {
+	void saveAllPagesTest_withOnlyOnePage() {
 		final int size = 1;
 		final int page = 0;
 		final int nonExistingPage = 1;
@@ -97,7 +96,7 @@ class EducationProvidersServiceTest {
 
 		when(integration.getEducationProviders(page, size)).thenReturn(json);
 		when(objectMapper.readTree(json)).thenReturn(firstPage);
-		when(mapper.toZippedProviders(json, 0)).thenReturn(entity);
+		when(providersMapper.toZippedProviders(json, 0)).thenReturn(entity);
 
 		service.saveAllPagesProviderJsonTable(size);
 

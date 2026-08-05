@@ -3,6 +3,7 @@ package se.sundsvall.educationdata.integration.db.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import org.hamcrest.MatcherAssert;
@@ -15,7 +16,7 @@ import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanHashCode;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanToString;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidGettersAndSetters;
 import static com.google.code.beanmatchers.BeanMatchers.registerValueGenerator;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.allOf;
 
 class EducationInfoEntityTest {
@@ -47,14 +48,13 @@ class EducationInfoEntityTest {
 		var educationEligibility = "educationEligibility";
 		var recommendedPriorKnowledge = "recommendedPriorKnowledge";
 		var creditType = "creditType";
-		var credits = "credits";
+		var credits = 300.0;
 		var duration = "6 weeks";
-		var degree = "degree";
-		var url = "url";
-		var studentAidEligibility = "studentAidEligibility";
-		var subjects = "subjects";
-		var code = "subjects";
-		boolean deleted = true;
+		var degree = List.of("degree");
+		var subjectType = "typeCode";
+		var subjectCode = "1234";
+		var subjects = List.of(new EducationInfoEntity.Subject(subjectType, subjectCode));
+
 		boolean resultIsDegree = true;
 		var localDateTime = LocalDateTime.of(2025, Month.JUNE, 10, 0, 0, 0);
 		var localDate = LocalDate.of(2025, Month.JULY, 10);
@@ -65,7 +65,6 @@ class EducationInfoEntityTest {
 			.withEducationInfoId(educationInfoId)
 			.withTitle(title)
 			.withSchoolType(schoolType)
-			.withCode(code)
 			.withEducationType(educationType)
 			.withDescription(description)
 			.withEducationEligibility(educationEligibility)
@@ -74,14 +73,10 @@ class EducationInfoEntityTest {
 			.withCreditType(creditType)
 			.withDegree(degree)
 			.withResultIsDegree(resultIsDegree)
-			.withContentUrl(url)
 			.withExpires(localDateTime)
-			.withStudentAidEligibility(studentAidEligibility)
 			.withSubjects(subjects)
 			.withDuration(duration)
-			.withOutdatedAt(localDate)
 			.withCreatedAt(localDate)
-			.withDeleted(deleted)
 			.build();
 
 		// Assert
@@ -89,23 +84,18 @@ class EducationInfoEntityTest {
 		assertThat(education.getEducationEligibility()).isEqualTo(educationEligibility);
 		assertThat(education.getEducationInfoId()).isEqualTo(educationInfoId);
 		assertThat(education.getDegree()).isEqualTo(degree);
-		assertThat(education.getCode()).isEqualTo(code);
 		assertThat(education.getExpires()).isEqualTo(localDateTime);
 		assertThat(education.getTitle()).isEqualTo(title);
 		assertThat(education.getDescription()).isEqualTo(description);
-		assertThat(education.getSubjects()).isEqualTo(subjects);
 		assertThat(education.getSchoolType()).isEqualTo(schoolType);
 		assertThat(education.getCredits()).isEqualTo(credits);
-		assertThat(education.getStudentAidEligibility()).isEqualTo(studentAidEligibility);
 		assertThat(education.getEducationType()).isEqualTo(educationType);
 		assertThat(education.getRecommendedPriorKnowledge()).isEqualTo(recommendedPriorKnowledge);
 		assertThat(education.getCreditType()).isEqualTo(creditType);
 		assertThat(education.getDuration()).isEqualTo(duration);
 		assertThat(education.getResultIsDegree()).isEqualTo(resultIsDegree);
-		assertThat(education.getContentUrl()).isEqualTo(url);
 		assertThat(education.getCreatedAt()).isEqualTo(localDate);
-		assertThat(education.getOutdatedAt()).isEqualTo(localDate);
-		assertThat(education.getDeleted()).isEqualTo(deleted);
+		assertThat(education.getSubjects()).containsExactly(new EducationInfoEntity.Subject(subjectType, subjectCode));
 	}
 
 	@Test

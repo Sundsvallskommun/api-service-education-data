@@ -83,10 +83,7 @@ public class EducationEventEntity {
 	@Column(name = "created_at")
 	private LocalDate createdAt;
 
-	@Column(name = "outdated_at")
-	private LocalDate outdatedAt;
-
-	@Column(name = "deleted")
-	private Boolean deleted;
+	@Column(name = "cancelled")
+	private Boolean cancelled;
 
 }

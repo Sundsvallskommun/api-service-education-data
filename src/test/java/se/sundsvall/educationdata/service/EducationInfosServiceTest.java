@@ -1,20 +1,29 @@
 package se.sundsvall.educationdata.service;
 
-import java.io.IOException;
+import generated.se.sundsvall.susanavet.EducationInfo;
+import generated.se.sundsvall.susanavet.EducationInfoListResponse;
+import generated.se.sundsvall.susanavet.EducationInfoResponse;
+import generated.se.sundsvall.susanavet.PageMetadata;
+import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.sundsvall.educationdata.integration.db.EducationEventEntityRepository;
+import se.sundsvall.educationdata.integration.db.EducationInfoEntityRepository;
 import se.sundsvall.educationdata.integration.db.SusaEducationInfoRepository;
+import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
 import se.sundsvall.educationdata.integration.db.model.json.SusaEducationInfoEntity;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
-import se.sundsvall.educationdata.service.mapper.SusaMapper;
+import se.sundsvall.educationdata.service.mapper.EducationInfosMapper;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -27,10 +36,16 @@ class EducationInfosServiceTest {
 	private SusaNavetIntegration integration;
 
 	@Mock
-	private SusaEducationInfoRepository repository;
+	private SusaEducationInfoRepository jsonRepository;
 
 	@Mock
-	private SusaMapper mapper;
+	private EducationInfoEntityRepository entityRepository;
+
+	@Mock
+	private EducationEventEntityRepository eventEntityRepository;
+
+	@Mock
+	private EducationInfosMapper infosMapper;
 
 	@Mock
 	private ObjectMapper objectMapper;
@@ -39,24 +54,29 @@ class EducationInfosServiceTest {
 	private EducationInfosService service;
 
 	@Test
-	void savePageTest_successful() throws IOException {
+	void savePageTest_successful() {
 		final int page = 0;
 		final int size = 1;
 		final byte[] json = "json".getBytes();
 		final var entity = SusaEducationInfoEntity.builder().build();
+		final var response = new EducationInfoListResponse().educationInfos(List.of());
 
 		when(integration.getEducationInfos(page, size)).thenReturn(json);
-		when(mapper.toZippedInfos(json, 0)).thenReturn(entity);
+		when(infosMapper.toZippedInfos(json, 0)).thenReturn(entity);
+		when(objectMapper.readValue(json, EducationInfoListResponse.class)).thenReturn(response);
+		when(eventEntityRepository.findAllByDistinctId()).thenReturn(java.util.Set.of());
+		when(infosMapper.toInfoEntities(any())).thenReturn(List.of());
 
 		service.savePageInfoJsonTable(page, size);
 
 		verify(integration).getEducationInfos(page, size);
-		verify(repository).save(entity);
-		verifyNoMoreInteractions(integration, repository);
+		verify(jsonRepository).save(entity);
+		verify(entityRepository).saveAll(List.of());
+		verifyNoMoreInteractions(integration, jsonRepository, entityRepository, infosMapper);
 	}
 
 	@Test
-	void saveAllPagesTest_succesful() throws IOException {
+	void saveAllPagesTest_successful() {
 		final var size = 1;
 		final byte[] json1 = "json1".getBytes();
 		final byte[] json2 = "json2".getBytes();
@@ -64,46 +84,126 @@ class EducationInfosServiceTest {
 		final var entity1 = SusaEducationInfoEntity.builder().build();
 		final var entity2 = SusaEducationInfoEntity.builder().build();
 		final var entity3 = SusaEducationInfoEntity.builder().build();
-		final var firstPage = JsonMapper.builder().build().readTree("{\"page\":{\"totalPages\":3}}");
+
+		final var firstResponse = new EducationInfoListResponse()
+			.page(new PageMetadata().totalPages(3L))
+			.educationInfos(List.of());
+		final var otherResponse = new EducationInfoListResponse()
+			.educationInfos(List.of());
 
 		when(integration.getEducationInfos(0, size)).thenReturn(json1);
 		when(integration.getEducationInfos(1, size)).thenReturn(json2);
 		when(integration.getEducationInfos(2, size)).thenReturn(json3);
-		when(objectMapper.readTree(json1)).thenReturn(firstPage);
-		when(mapper.toZippedInfos(json1, 0)).thenReturn(entity1);
-		when(mapper.toZippedInfos(json2, 1)).thenReturn(entity2);
-		when(mapper.toZippedInfos(json3, 2)).thenReturn(entity3);
+		when(objectMapper.readValue(any(byte[].class), eq(EducationInfoListResponse.class))).thenReturn(firstResponse, otherResponse, otherResponse);
+		when(infosMapper.toZippedInfos(json1, 0)).thenReturn(entity1);
+		when(infosMapper.toZippedInfos(json2, 1)).thenReturn(entity2);
+		when(infosMapper.toZippedInfos(json3, 2)).thenReturn(entity3);
+		when(eventEntityRepository.findAllByDistinctId()).thenReturn(java.util.Set.of());
+		when(infosMapper.toInfoEntities(any())).thenReturn(List.of());
 
 		service.saveAllPagesInfoJsonTable(size);
 
 		final var captor = ArgumentCaptor.forClass(SusaEducationInfoEntity.class);
-		verify(repository, times(3)).save(captor.capture());
+		verify(jsonRepository, times(3)).save(captor.capture());
 		assertThat(captor.getAllValues()).containsExactly(entity1, entity2, entity3);
 
 		verify(integration).getEducationInfos(0, size);
 		verify(integration).getEducationInfos(1, size);
 		verify(integration).getEducationInfos(2, size);
-		verifyNoMoreInteractions(integration, repository);
+		verify(entityRepository, times(3)).saveAll(any());
+		verifyNoMoreInteractions(integration, jsonRepository, entityRepository);
 	}
 
 	@Test
-	void saveAllPagesTest_withOnlyOnePage() throws IOException {
+	void saveAllPagesTest_withOnlyOnePage() {
 		final int size = 1;
 		final int page = 0;
 		final int nonExistingPage = 1;
-		final byte[] json = "{page:{totalPages:1}}".getBytes();
-		final var firstPage = JsonMapper.builder().build().readTree("{\"page\":{\"totalPages\":1}}");
+		final byte[] json = "json".getBytes();
 		final var entity = SusaEducationInfoEntity.builder().build();
 
+		final var response = new EducationInfoListResponse()
+			.page(new PageMetadata().totalPages(1L))
+			.educationInfos(List.of());
+
 		when(integration.getEducationInfos(page, size)).thenReturn(json);
-		when(objectMapper.readTree(json)).thenReturn(firstPage);
-		when(mapper.toZippedInfos(json, 0)).thenReturn(entity);
+		when(objectMapper.readValue(json, EducationInfoListResponse.class)).thenReturn(response);
+		when(infosMapper.toZippedInfos(json, 0)).thenReturn(entity);
+		when(eventEntityRepository.findAllByDistinctId()).thenReturn(java.util.Set.of());
+		when(infosMapper.toInfoEntities(any())).thenReturn(List.of());
 
 		service.saveAllPagesInfoJsonTable(size);
 
 		verify(integration).getEducationInfos(page, size);
 		verify(integration, never()).getEducationInfos(nonExistingPage, size);
-		verify(repository).save(entity);
-		verifyNoMoreInteractions(integration, repository);
+		verify(jsonRepository).save(entity);
+		verify(entityRepository).saveAll(List.of());
+		verifyNoMoreInteractions(integration, jsonRepository, entityRepository);
+	}
+
+	@Test
+	void saveAllPagesTest_NullPage() {
+		final int size = 1;
+		final byte[] json = "json".getBytes();
+		final var entity = SusaEducationInfoEntity.builder().build();
+		final var response = new EducationInfoListResponse().educationInfos(List.of());
+
+		when(integration.getEducationInfos(0, size)).thenReturn(json);
+		when(objectMapper.readValue(json, EducationInfoListResponse.class)).thenReturn(response);
+		when(infosMapper.toZippedInfos(json, 0)).thenReturn(entity);
+		when(eventEntityRepository.findAllByDistinctId()).thenReturn(java.util.Set.of());
+		when(infosMapper.toInfoEntities(any())).thenReturn(List.of());
+
+		service.saveAllPagesInfoJsonTable(size);
+
+		verify(integration).getEducationInfos(0, size);
+		verify(integration, never()).getEducationInfos(1, size);
+	}
+
+	@Test
+	void saveAllPagesTest_totalPagesNull() {
+		final int size = 1;
+		final byte[] json = "json".getBytes();
+		final var entity = SusaEducationInfoEntity.builder().build();
+		final var response = new EducationInfoListResponse()
+			.page(new PageMetadata())
+			.educationInfos(List.of());
+
+		when(integration.getEducationInfos(0, size)).thenReturn(json);
+		when(objectMapper.readValue(json, EducationInfoListResponse.class)).thenReturn(response);
+		when(infosMapper.toZippedInfos(json, 0)).thenReturn(entity);
+		when(eventEntityRepository.findAllByDistinctId()).thenReturn(java.util.Set.of());
+		when(infosMapper.toInfoEntities(any())).thenReturn(List.of());
+
+		service.saveAllPagesInfoJsonTable(size);
+
+		verify(integration).getEducationInfos(0, size);
+		verify(integration, never()).getEducationInfos(1, size);
+	}
+
+	@Test
+	void saveFilteredInfos_keepWhitelisted() {
+		final var whitelistedId = new EducationInfoResponse().content(new EducationInfo().identifier("i.id.whitelisted"));
+		final var wrongId = new EducationInfoResponse().content(new EducationInfo().identifier("i.id.wrong"));
+		final var nullContent = new EducationInfoResponse().content(null);
+		final var entities = List.of(new EducationInfoEntity());
+
+		when(infosMapper.toInfoEntities(List.of(whitelistedId))).thenReturn(entities);
+
+		service.saveFilteredInfos(List.of(whitelistedId, wrongId, nullContent), Set.of("i.id.whitelisted"));
+
+		verify(infosMapper).toInfoEntities(List.of(whitelistedId));
+		verify(entityRepository).saveAll(entities);
+	}
+
+	@Test
+	void saveFilteredInfos_empty() {
+		final var info = new EducationInfoResponse().content(new EducationInfo().identifier("i.sv.wrong"));
+
+		when(infosMapper.toInfoEntities(List.of())).thenReturn(List.of());
+
+		service.saveFilteredInfos(List.of(info), Set.of());
+
+		verify(entityRepository).saveAll(List.of());
 	}
 }

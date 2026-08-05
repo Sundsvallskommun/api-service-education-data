@@ -669,7 +669,9 @@ components:
         resultIsDegree:
           type: boolean
         degrees:
-          $ref: '#/components/schemas/LangString'
+          type: array
+          items:
+            $ref: '#/components/schemas/LangString'
         qualificationLevel:
           $ref: '#/components/schemas/Code_Qualification'
         credits:
@@ -1405,24 +1407,18 @@ components:
       properties:
         type:
           type: string
-      discriminator:
-        propertyName: type
-        mapping:
-          AUB_Subject: '#/components/schemas/AUB_Subject'
-          FH_Subject: '#/components/schemas/FH_Subject'
-          SV_Subject: '#/components/schemas/SV_Subject'
-          F_Subject: '#/components/schemas/F_Subject'
-          C_Subject_SUN: '#/components/schemas/C_Subject_SUN'
-          C_Subject_ISCED97: '#/components/schemas/C_Subject_ISCED97'
-          C_Subject_ISCED2013: '#/components/schemas/C_Subject_ISCED2013'
-      oneOf:
-        - $ref: '#/components/schemas/AUB_Subject'
-        - $ref: '#/components/schemas/FH_Subject'
-        - $ref: '#/components/schemas/SV_Subject'
-        - $ref: '#/components/schemas/F_Subject'
-        - $ref: '#/components/schemas/C_Subject_SUN'
-        - $ref: '#/components/schemas/C_Subject_ISCED97'
-        - $ref: '#/components/schemas/C_Subject_ISCED2013'
+        code:
+          type: string
+    UH_Subject:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          type: string
     AUB_Subject:
       type: object
       required:
@@ -1482,7 +1478,7 @@ components:
         type:
           type: string
         code:
-          $ref: '#/components/schemas/SubjectISCED97Code'
+          type: string
     C_Subject_ISCED2013:
       type: object
       required:
@@ -1492,7 +1488,7 @@ components:
         type:
           type: string
         code:
-          $ref: '#/components/schemas/SubjectISCED2013Code'
+          type: string
     SubjectISCED97Code:
       type: string
       enum:

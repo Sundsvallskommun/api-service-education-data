@@ -6,11 +6,13 @@ import generated.se.sundsvall.susanavet.EducationEventResponse;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import se.sundsvall.educationdata.integration.db.EducationEventEntityRepository;
 import se.sundsvall.educationdata.integration.db.SusaEducationEventRepository;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
-import se.sundsvall.educationdata.service.mapper.SusaMapper;
+import se.sundsvall.educationdata.service.mapper.EducationEventsMapper;
 import tools.jackson.databind.ObjectMapper;
 
 @Service
@@ -19,29 +21,28 @@ public class EducationEventsService {
 	private final SusaEducationEventRepository eventRepository;
 	private final EducationEventEntityRepository eventEntityRepository;
 	private final ObjectMapper objectMapper;
-	private final SusaMapper mapper;
+	private final EducationEventsMapper eventsMapper;
+	private final Set<String> municipalityIdWhitelist;
 
-	public EducationEventsService(SusaNavetIntegration susaNavetIntegration, SusaEducationEventRepository eventRepository, EducationEventEntityRepository eventEntityRepository, ObjectMapper objectMapper, SusaMapper mapper) {
+	public EducationEventsService(SusaNavetIntegration susaNavetIntegration, SusaEducationEventRepository eventRepository, EducationEventEntityRepository eventEntityRepository, ObjectMapper objectMapper, EducationEventsMapper eventsMapper,
+		@Value("${scheduler.import.municipality-whitelist}") Set<String> municipalityIdWhitelist) {
 		this.susaNavetIntegration = susaNavetIntegration;
 		this.eventRepository = eventRepository;
 		this.eventEntityRepository = eventEntityRepository;
 		this.objectMapper = objectMapper;
-
-		this.mapper = mapper;
+		this.eventsMapper = eventsMapper;
+		this.municipalityIdWhitelist = municipalityIdWhitelist;
 	}
-
-	// tillåtna kommuner
-	private static final Set<String> municipalityIdWhitelist = Set.of("2281", "9999");
 
 	public void savePageEventJsonTable(int page, int size) {
 
 		var json = susaNavetIntegration.getEducationEvents(page, size);
-		eventRepository.save(mapper.toZippedEvents(json, page));
+		eventRepository.save(eventsMapper.toZippedEvents(json, page));
 
 		var response = objectMapper.readValue(json, EducationEventListResponse.class);
 		var susaEvents = getMunicipalityFilteredEvents(response.getEducationEvents(), municipalityIdWhitelist);
 
-		eventEntityRepository.saveAll(mapper.toEventEntities(susaEvents));
+		eventEntityRepository.saveAll(eventsMapper.toEventEntities(susaEvents));
 	}
 
 	public void saveAllPagesEventsJsonTable(int size) {
@@ -52,16 +53,17 @@ public class EducationEventsService {
 		var pageInfo = response.getPage();
 		var totalPages = (pageInfo == null || pageInfo.getTotalPages() == null) ? 0 : pageInfo.getTotalPages();
 
-		eventRepository.save(mapper.toZippedEvents(json, page));
+		eventRepository.save(eventsMapper.toZippedEvents(json, page));
 		var susaEvents = getMunicipalityFilteredEvents(response.getEducationEvents(), municipalityIdWhitelist);
-		eventEntityRepository.saveAll(mapper.toEventEntities(susaEvents));
+		eventEntityRepository.saveAll(eventsMapper.toEventEntities(susaEvents));
 
 		for (page = 1; page < totalPages; page++) {
 			json = susaNavetIntegration.getEducationEvents(page, size);
-			eventRepository.save(mapper.toZippedEvents(json, page));
+			eventRepository.save(eventsMapper.toZippedEvents(json, page));
 
+			response = objectMapper.readValue(json, EducationEventListResponse.class);
 			susaEvents = getMunicipalityFilteredEvents(response.getEducationEvents(), municipalityIdWhitelist);
-			eventEntityRepository.saveAll(mapper.toEventEntities(susaEvents));
+			eventEntityRepository.saveAll(eventsMapper.toEventEntities(susaEvents));
 		}
 	}
 
@@ -71,7 +73,8 @@ public class EducationEventsService {
 			.filter(Objects::nonNull)
 			.filter(event -> event.getLocations() != null)
 			.filter(event -> event.getLocations().stream()
-				.anyMatch(location -> municipalityIdWhitelist.contains(location.getAreaCode())))
+				.anyMatch(location -> location.getAreaCode() != null
+					&& municipalityIdWhitelist.contains(location.getAreaCode())))
 			.toList();
 	}
 }
