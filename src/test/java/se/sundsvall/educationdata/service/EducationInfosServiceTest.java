@@ -159,7 +159,7 @@ class EducationInfosServiceTest {
 		final var response = new EducationInfoListResponse().educationInfos(List.of());
 
 		when(jsonRepository.findAllByDateCollected(LocalDate.now())).thenReturn(List.of(page));
-		when(eventEntityRepository.findAllByDistinctEducationInfoId()).thenReturn(Set.of());
+		when(eventEntityRepository.getDistinctEducationInfoId()).thenReturn(Set.of());
 		when(objectMapper.readValue(any(byte[].class), eq(EducationInfoListResponse.class))).thenReturn(response);
 		when(infosMapper.toInfoEntities(any())).thenReturn(List.of());
 

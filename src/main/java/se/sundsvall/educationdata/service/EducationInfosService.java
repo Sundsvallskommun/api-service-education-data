@@ -38,7 +38,7 @@ public class EducationInfosService {
 
 	@Transactional
 	public void saveAllPagesInfoJsonTable(int size) {
-		var municipalityFilteredIds = eventEntityRepository.findAllByDistinctEducationInfoId();
+		var municipalityFilteredIds = eventEntityRepository.getDistinctEducationInfoId();
 
 		int page = 0;
 		var json = susaNavetIntegration.getEducationInfos(page, size);
@@ -64,7 +64,7 @@ public class EducationInfosService {
 	@Transactional
 	public void saveAllJsonDataInfosToEntities() {
 		var pages = infoRepository.findAllByDateCollected(LocalDate.now(ZoneId.systemDefault()));
-		var municipalityFilteredIds = eventEntityRepository.findAllByDistinctEducationInfoId();
+		var municipalityFilteredIds = eventEntityRepository.getDistinctEducationInfoId();
 
 		for (var page : pages) {
 

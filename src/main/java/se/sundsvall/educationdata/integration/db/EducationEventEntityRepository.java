@@ -10,5 +10,5 @@ import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 @CircuitBreaker(name = "educationEventEntityRepository")
 public interface EducationEventEntityRepository extends JpaRepository<EducationEventEntity, String> {
 	@Query("SELECT DISTINCT event.educationInfoId FROM EducationEventEntity event")
-	Set<String> findAllByDistinctEducationInfoId();
+	Set<String> getDistinctEducationInfoId();
 }
