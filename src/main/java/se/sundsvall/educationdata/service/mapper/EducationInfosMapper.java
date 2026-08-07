@@ -6,22 +6,26 @@ import generated.se.sundsvall.susanavet.CSchoolType;
 import generated.se.sundsvall.susanavet.CodeSubject;
 import generated.se.sundsvall.susanavet.ConfigurationCode;
 import generated.se.sundsvall.susanavet.Credits;
+import generated.se.sundsvall.susanavet.EducationInfo;
 import generated.se.sundsvall.susanavet.EducationInfoResponse;
 import generated.se.sundsvall.susanavet.LangString;
 import generated.se.sundsvall.susanavet.LangStringNode;
 import generated.se.sundsvall.susanavet.TimeLength;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
+import se.sundsvall.educationdata.integration.db.model.EducationInfoSubject;
 import se.sundsvall.educationdata.integration.db.model.json.SusaEducationInfoEntity;
 import se.sundsvall.educationdata.util.Util;
 
 import static java.util.Optional.ofNullable;
 import static se.sundsvall.educationdata.service.mapper.MapperUtil.firstOrNull;
-import static se.sundsvall.educationdata.service.mapper.MapperUtil.firstStringValue;
+import static se.sundsvall.educationdata.service.mapper.SusaNavetMapper.firstStringValue;
 
 @Component
 public class EducationInfosMapper {
@@ -38,16 +42,14 @@ public class EducationInfosMapper {
 		if (infos == null) {
 			return List.of();
 		}
-		return infos.stream().map(this::toInfoEntity)
+		return infos.stream().map(response -> response == null ? null : response.getContent())
+			.filter(Objects::nonNull)
+			.map(this::toInfoEntity)
 			.filter(Objects::nonNull)
 			.toList();
 	}
 
-	private EducationInfoEntity toInfoEntity(EducationInfoResponse info) {
-		final var content = info == null ? null : info.getContent();
-		if (content == null) {
-			return null;
-		}
+	private EducationInfoEntity toInfoEntity(EducationInfo content) {
 
 		final var creditNode = content.getCredits();
 
@@ -70,18 +72,16 @@ public class EducationInfosMapper {
 	}
 
 	private List<String> toDegree(final List<LangString> degrees) {
-		return degrees == null ? List.of()
-			: degrees.stream()
-				.map(langString -> firstOrNull(langString.getStrings()))
-				.filter(Objects::nonNull)
-				.map(LangStringNode::getValue)
-				.filter(Objects::nonNull)
-				.toList();
+		return Optional.ofNullable(degrees).orElse(Collections.emptyList()).stream()
+			.map(langString -> firstOrNull(langString.getStrings()))
+			.map(LangStringNode::getValue)
+			.filter(Objects::nonNull)
+			.toList();
 	}
 
-	private static List<EducationInfoEntity.Subject> toSubjects(final List<CodeSubject> subjects) {
+	private static List<EducationInfoSubject> toSubjects(final List<CodeSubject> subjects) {
 		return ofNullable(subjects).orElse(List.of()).stream()
-			.map(subject -> new EducationInfoEntity.Subject(subject.getType(), subject.getCode()))
+			.map(subject -> new EducationInfoSubject(subject.getType(), subject.getCode()))
 			.toList();
 	}
 }

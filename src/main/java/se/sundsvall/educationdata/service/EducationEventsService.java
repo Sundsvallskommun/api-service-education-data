@@ -3,16 +3,20 @@ package se.sundsvall.educationdata.service;
 import generated.se.sundsvall.susanavet.EducationEvent;
 import generated.se.sundsvall.susanavet.EducationEventListResponse;
 import generated.se.sundsvall.susanavet.EducationEventResponse;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.sundsvall.educationdata.integration.db.EducationEventEntityRepository;
 import se.sundsvall.educationdata.integration.db.SusaEducationEventRepository;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 import se.sundsvall.educationdata.service.mapper.EducationEventsMapper;
+import se.sundsvall.educationdata.util.Util;
 import tools.jackson.databind.ObjectMapper;
 
 @Service
@@ -34,17 +38,7 @@ public class EducationEventsService {
 		this.municipalityIdWhitelist = municipalityIdWhitelist;
 	}
 
-	public void savePageEventJsonTable(int page, int size) {
-
-		var json = susaNavetIntegration.getEducationEvents(page, size);
-		eventRepository.save(eventsMapper.toZippedEvents(json, page));
-
-		var response = objectMapper.readValue(json, EducationEventListResponse.class);
-		var susaEvents = getMunicipalityFilteredEvents(response.getEducationEvents(), municipalityIdWhitelist);
-
-		eventEntityRepository.saveAll(eventsMapper.toEventEntities(susaEvents));
-	}
-
+	@Transactional
 	public void saveAllPagesEventsJsonTable(int size) {
 		int page = 0;
 		var json = susaNavetIntegration.getEducationEvents(page, size);
@@ -54,16 +48,23 @@ public class EducationEventsService {
 		var totalPages = (pageInfo == null || pageInfo.getTotalPages() == null) ? 0 : pageInfo.getTotalPages();
 
 		eventRepository.save(eventsMapper.toZippedEvents(json, page));
-		var susaEvents = getMunicipalityFilteredEvents(response.getEducationEvents(), municipalityIdWhitelist);
-		eventEntityRepository.saveAll(eventsMapper.toEventEntities(susaEvents));
 
 		for (page = 1; page < totalPages; page++) {
 			json = susaNavetIntegration.getEducationEvents(page, size);
 			eventRepository.save(eventsMapper.toZippedEvents(json, page));
+		}
+	}
 
-			response = objectMapper.readValue(json, EducationEventListResponse.class);
-			susaEvents = getMunicipalityFilteredEvents(response.getEducationEvents(), municipalityIdWhitelist);
-			eventEntityRepository.saveAll(eventsMapper.toEventEntities(susaEvents));
+	@Transactional
+	public void saveAllJsonDataEventsToEntities() {
+		var pages = eventRepository.findAllByDateCollected(LocalDate.now());
+
+		for (var page : pages) {
+
+			var json = Util.unzip(page.getJsonBody());
+			var response = objectMapper.readValue(json, EducationEventListResponse.class);
+			var events = getMunicipalityFilteredEvents(response.getEducationEvents(), municipalityIdWhitelist);
+			eventEntityRepository.saveAll(eventsMapper.toEventEntities(events));
 		}
 	}
 

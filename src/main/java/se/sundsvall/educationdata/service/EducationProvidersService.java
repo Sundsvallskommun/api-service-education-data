@@ -1,6 +1,7 @@
 package se.sundsvall.educationdata.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.sundsvall.educationdata.integration.db.SusaEducationProviderRepository;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 import se.sundsvall.educationdata.service.mapper.EducationProvidersMapper;
@@ -20,11 +21,7 @@ public class EducationProvidersService {
 		this.providersMapper = providersMapper;
 	}
 
-	public void savePageProviderJsonTable(int page, int size) {
-		var json = susaNavetIntegration.getEducationProviders(page, size);
-		providerRepository.save(providersMapper.toZippedProviders(json, page));
-	}
-
+	@Transactional
 	public void saveAllPagesProviderJsonTable(int size) {
 		int page = 0;
 		var json = susaNavetIntegration.getEducationProviders(page, size);

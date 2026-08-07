@@ -18,8 +18,8 @@ import se.sundsvall.educationdata.util.Util;
 
 import static java.util.Optional.ofNullable;
 import static se.sundsvall.educationdata.service.mapper.MapperUtil.firstOrNull;
-import static se.sundsvall.educationdata.service.mapper.MapperUtil.firstStringValue;
-import static se.sundsvall.educationdata.service.mapper.MapperUtil.firstUrlValue;
+import static se.sundsvall.educationdata.service.mapper.SusaNavetMapper.firstStringValue;
+import static se.sundsvall.educationdata.service.mapper.SusaNavetMapper.firstUrlValue;
 
 @Component
 public class EducationEventsMapper {

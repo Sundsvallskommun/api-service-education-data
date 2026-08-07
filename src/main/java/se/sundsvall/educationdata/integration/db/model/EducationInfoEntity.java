@@ -3,7 +3,6 @@ package se.sundsvall.educationdata.integration.db.model;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -79,19 +78,7 @@ public class EducationInfoEntity {
 	@ElementCollection
 	@CollectionTable(name = "education_info_subject",
 		joinColumns = @JoinColumn(name = "education_info_id"))
-	private List<Subject> subjects;
-
-	@Embeddable
-	@Data
-	@AllArgsConstructor
-	@NoArgsConstructor
-	public static class Subject {
-		@Column(name = "subject_type", length = 32)
-		private String type;
-
-		@Column(name = "subject_code", length = 32)
-		private String code;
-	}
+	private List<EducationInfoSubject> subjects;
 
 	@CreationTimestamp
 	@Column(name = "created_at")

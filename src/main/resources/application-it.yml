@@ -15,12 +15,23 @@ spring:
       ddl-auto: validate
 
 scheduler:
-  import:
-    cron: "-"
-    name: "scheduled-import"
+  import-susa-json:
+    cron: "0 0 2 * * *"
+    name: "scheduled-json-import"
     shedlock-lock-at-most-for: "PT15M"
     maximum-execution-time: "PT15M"
     json-size: 100
+  import-categories:
+    cron: "0 0 3 * * *"
+    name: "scheduled-categories-import"
+    shedlock-lock-at-most-for: "PT15M"
+    maximum-execution-time: "PT15M"
+  generate:
+    cron: "0 0 4 * * *"
+    name: "scheduled-generation"
+    shedlock-lock-at-most-for: "PT15M"
+    maximum-execution-time: "PT15M"
+    municipality-whitelist: 2281
 
 integration:
   planned-education:

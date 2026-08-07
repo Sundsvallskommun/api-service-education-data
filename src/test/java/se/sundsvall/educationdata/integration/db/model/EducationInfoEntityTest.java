@@ -53,7 +53,7 @@ class EducationInfoEntityTest {
 		var degree = List.of("degree");
 		var subjectType = "typeCode";
 		var subjectCode = "1234";
-		var subjects = List.of(new EducationInfoEntity.Subject(subjectType, subjectCode));
+		var subjects = List.of(new EducationInfoSubject(subjectType, subjectCode));
 
 		boolean resultIsDegree = true;
 		var localDateTime = LocalDateTime.of(2025, Month.JUNE, 10, 0, 0, 0);
@@ -95,7 +95,7 @@ class EducationInfoEntityTest {
 		assertThat(education.getDuration()).isEqualTo(duration);
 		assertThat(education.getResultIsDegree()).isEqualTo(resultIsDegree);
 		assertThat(education.getCreatedAt()).isEqualTo(localDate);
-		assertThat(education.getSubjects()).containsExactly(new EducationInfoEntity.Subject(subjectType, subjectCode));
+		assertThat(education.getSubjects()).containsExactly(new EducationInfoSubject(subjectType, subjectCode));
 	}
 
 	@Test

@@ -2,14 +2,18 @@ package se.sundsvall.educationdata.service;
 
 import generated.se.sundsvall.susanavet.EducationInfoListResponse;
 import generated.se.sundsvall.susanavet.EducationInfoResponse;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import se.sundsvall.educationdata.integration.db.EducationEventEntityRepository;
 import se.sundsvall.educationdata.integration.db.EducationInfoEntityRepository;
 import se.sundsvall.educationdata.integration.db.SusaEducationInfoRepository;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 import se.sundsvall.educationdata.service.mapper.EducationInfosMapper;
+import se.sundsvall.educationdata.util.Util;
 import tools.jackson.databind.ObjectMapper;
 
 @Service
@@ -31,20 +35,9 @@ public class EducationInfosService {
 		this.infosMapper = infosMapper;
 	}
 
-	public void savePageInfoJsonTable(int page, int size) {
-		var municipalityFilteredIds = eventEntityRepository.findAllByDistinctId();
-
-		var json = susaNavetIntegration.getEducationInfos(page, size);
-		infoRepository.save(infosMapper.toZippedInfos(json, page));
-
-		var response = objectMapper.readValue(json, EducationInfoListResponse.class);
-		var susaInfos = response.getEducationInfos();
-
-		saveFilteredInfos(susaInfos, municipalityFilteredIds);
-	}
-
+	@Transactional
 	public void saveAllPagesInfoJsonTable(int size) {
-		var municipalityFilteredIds = eventEntityRepository.findAllByDistinctId();
+		var municipalityFilteredIds = eventEntityRepository.findAllByDistinctEducationInfoId();
 
 		int page = 0;
 		var json = susaNavetIntegration.getEducationInfos(page, size);
@@ -64,6 +57,19 @@ public class EducationInfosService {
 			response = objectMapper.readValue(json, EducationInfoListResponse.class);
 			susaInfos = response.getEducationInfos();
 			saveFilteredInfos(susaInfos, municipalityFilteredIds);
+		}
+	}
+
+	@Transactional
+	public void saveAllJsonDataInfosToEntities() {
+		var pages = infoRepository.findAllByDateCollected(LocalDate.now());
+		var municipalityFilteredIds = eventEntityRepository.findAllByDistinctEducationInfoId();
+
+		for (var page : pages) {
+
+			var json = Util.unzip(page.getJsonBody());
+			var response = objectMapper.readValue(json, EducationInfoListResponse.class);
+			saveFilteredInfos(response.getEducationInfos(), municipalityFilteredIds);
 		}
 	}
 

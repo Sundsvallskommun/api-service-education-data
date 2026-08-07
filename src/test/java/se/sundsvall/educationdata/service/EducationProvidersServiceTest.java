@@ -38,24 +38,7 @@ class EducationProvidersServiceTest {
 	private EducationProvidersService service;
 
 	@Test
-	void savePageTest_successful() {
-		final int page = 0;
-		final int size = 1;
-		final byte[] json = "json".getBytes();
-		final var entity = SusaEducationProviderEntity.builder().build();
-
-		when(integration.getEducationProviders(page, size)).thenReturn(json);
-		when(providersMapper.toZippedProviders(json, 0)).thenReturn(entity);
-
-		service.savePageProviderJsonTable(page, size);
-
-		verify(integration).getEducationProviders(page, size);
-		verify(repository).save(entity);
-		verifyNoMoreInteractions(integration, repository);
-	}
-
-	@Test
-	void saveAllPagesTest_succesful() {
+	void saveAllPagesTest_successful() {
 		final var size = 1;
 		final byte[] json1 = "json1".getBytes();
 		final byte[] json2 = "json2".getBytes();
