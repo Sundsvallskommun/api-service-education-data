@@ -5,6 +5,7 @@ import generated.se.sundsvall.susanavet.EducationEventListResponse;
 import generated.se.sundsvall.susanavet.EducationEventResponse;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -57,7 +58,7 @@ public class EducationEventsService {
 
 	@Transactional
 	public void saveAllJsonDataEventsToEntities() {
-		var pages = eventRepository.findAllByDateCollected(LocalDate.now());
+		var pages = eventRepository.findAllByDateCollected(LocalDate.now(ZoneId.systemDefault()));
 
 		for (var page : pages) {
 

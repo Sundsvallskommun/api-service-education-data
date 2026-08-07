@@ -4,6 +4,7 @@ import generated.se.sundsvall.susanavet.EducationInfoListResponse;
 import generated.se.sundsvall.susanavet.EducationInfoResponse;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Set;
 import org.springframework.stereotype.Service;
@@ -62,7 +63,7 @@ public class EducationInfosService {
 
 	@Transactional
 	public void saveAllJsonDataInfosToEntities() {
-		var pages = infoRepository.findAllByDateCollected(LocalDate.now());
+		var pages = infoRepository.findAllByDateCollected(LocalDate.now(ZoneId.systemDefault()));
 		var municipalityFilteredIds = eventEntityRepository.findAllByDistinctEducationInfoId();
 
 		for (var page : pages) {
