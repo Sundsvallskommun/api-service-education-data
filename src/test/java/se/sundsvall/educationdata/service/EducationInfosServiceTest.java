@@ -58,8 +58,7 @@ class EducationInfosServiceTest {
 
 	@Test
 	void saveAllPagesInfoJsonTableTest_successful() {
-		final var size = 1;
-		final byte[] json1 = "json1".getBytes();
+        final byte[] json1 = "json1".getBytes();
 		final byte[] json2 = "json2".getBytes();
 		final byte[] json3 = "json3".getBytes();
 		final var entity1 = SusaEducationInfoPageEntity.builder().build();
@@ -94,8 +93,7 @@ class EducationInfosServiceTest {
 
 	@Test
 	void saveAllPagesInfoJsonTableTest_withOnlyOnePage() {
-		final int size = 1;
-		final int page = 0;
+        final int page = 0;
 		final int nonExistingPage = 1;
 		final byte[] json = "json".getBytes();
 		final var entity = SusaEducationInfoPageEntity.builder().build();
@@ -117,8 +115,7 @@ class EducationInfosServiceTest {
 
 	@Test
 	void saveAllPagesInfoJsonTableTest_pageNull() {
-		final int size = 1;
-		final byte[] json = "json".getBytes();
+        final byte[] json = "json".getBytes();
 		final var entity = SusaEducationInfoPageEntity.builder().build();
 		final var response = new EducationInfoListResponse().educationInfos(List.of());
 
@@ -134,8 +131,7 @@ class EducationInfosServiceTest {
 
 	@Test
 	void saveAllPagesInfoJsonTableTest_totalPagesNull() {
-		final int size = 1;
-		final byte[] json = "json".getBytes();
+        final byte[] json = "json".getBytes();
 		final var entity = SusaEducationInfoPageEntity.builder().build();
 		final var response = new EducationInfoListResponse()
 			.page(new PageMetadata())
