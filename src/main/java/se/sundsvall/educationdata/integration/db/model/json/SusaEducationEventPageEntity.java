@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
 @Entity
-@Table(name = "susa_education_provider_raw")
-public class SusaEducationProviderEntity {
+@Table(name = "susa_education_event_page_raw")
+public class SusaEducationEventPageEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)

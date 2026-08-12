@@ -20,12 +20,21 @@ spring:
       ddl-auto: validate
 
 scheduler:
-  import:
+  import-susa-json:
     cron: "0 0 2 * * *"
-    name: "scheduled-import"
+    name: "scheduled-json-import"
     shedlock-lock-at-most-for: "PT15M"
     maximum-execution-time: "PT15M"
-    json-size: 100
+  import-categories:
+    cron: "0 0 3 * * *"
+    name: "scheduled-categories-import"
+    shedlock-lock-at-most-for: "PT15M"
+    maximum-execution-time: "PT15M"
+  create-entities:
+    cron: "0 0 4 * * *"
+    name: "scheduled-entities-creation"
+    shedlock-lock-at-most-for: "PT15M"
+    maximum-execution-time: "PT15M"
     municipality-whitelist: 2281
 
 integration:

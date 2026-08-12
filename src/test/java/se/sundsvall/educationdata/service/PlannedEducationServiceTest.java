@@ -29,29 +29,29 @@ class PlannedEducationServiceTest {
 	private PlannedEducationService service;
 
 	@Test
-	void getCategoryInfo_updateRows() {
+	void importReferenceCategories_updateRows() {
 		final var rows = List.of(ReferenceCategoryEntity.builder().withCategoryId("1").build());
-		when(integration.getAllAreas()).thenReturn(rows);
+		when(integration.getAllReferenceCategories()).thenReturn(rows);
 
-		service.getCategoryInfo();
+		service.importReferenceCategories();
 
 		final var order = inOrder(repository);
 		order.verify(repository).deleteAllInBatch();
 		order.verify(repository).saveAll(rows);
 
-		verify(integration).getAllAreas();
+		verify(integration).getAllReferenceCategories();
 		verifyNoMoreInteractions(integration, repository);
 	}
 
 	@Test
-	void getCategoryInfo_emptyRows() {
+	void importReferenceCategories_emptyRows() {
 		final List<ReferenceCategoryEntity> rows = List.of();
-		when(integration.getAllAreas()).thenReturn(rows);
+		when(integration.getAllReferenceCategories()).thenReturn(rows);
 
-		assertThatThrownBy(() -> service.getCategoryInfo())
+		assertThatThrownBy(() -> service.importReferenceCategories())
 			.hasMessageContaining("No content");
 
-		verify(integration).getAllAreas();
+		verify(integration).getAllReferenceCategories();
 		verifyNoMoreInteractions(integration);
 	}
 }

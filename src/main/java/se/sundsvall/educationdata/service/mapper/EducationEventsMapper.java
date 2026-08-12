@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import org.springframework.stereotype.Component;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
-import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEventEntity;
+import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEventPageEntity;
 import se.sundsvall.educationdata.util.Util;
 
 import static java.util.Optional.ofNullable;
@@ -24,8 +24,8 @@ import static se.sundsvall.educationdata.service.mapper.SusaNavetMapper.firstUrl
 @Component
 public class EducationEventsMapper {
 
-	public SusaEducationEventEntity toZippedEvents(byte[] json, int page) {
-		return SusaEducationEventEntity.builder()
+	public SusaEducationEventPageEntity toZippedEvents(byte[] json, int page) {
+		return SusaEducationEventPageEntity.builder()
 			.withJsonBody(Util.zip(json))
 			.withPage(page)
 			.withDateCollected(LocalDate.now(ZoneId.systemDefault()))

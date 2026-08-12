@@ -12,9 +12,9 @@ import se.sundsvall.dept44.test.AbstractAppTest;
 import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
 import se.sundsvall.educationdata.Application;
 import se.sundsvall.educationdata.integration.db.ReferenceCategoryRepository;
-import se.sundsvall.educationdata.integration.db.SusaEducationEventRepository;
-import se.sundsvall.educationdata.integration.db.SusaEducationInfoRepository;
-import se.sundsvall.educationdata.integration.db.SusaEducationProviderRepository;
+import se.sundsvall.educationdata.integration.db.SusaEducationEventPageRepository;
+import se.sundsvall.educationdata.integration.db.SusaEducationInfoPageRepository;
+import se.sundsvall.educationdata.integration.db.SusaEducationProviderPageRepository;
 
 import java.time.Duration;
 
@@ -24,11 +24,11 @@ public class SchedulerResourceIT extends AbstractAppTest {
     @Autowired
     private ReferenceCategoryRepository referenceCategoryRepository;
     @Autowired
-    private SusaEducationEventRepository eventRepository;
+    private SusaEducationEventPageRepository eventRepository;
     @Autowired
-    private SusaEducationInfoRepository infoRepository;
+    private SusaEducationInfoPageRepository infoRepository;
     @Autowired
-    private SusaEducationProviderRepository providerRepository;
+    private SusaEducationProviderPageRepository providerRepository;
 
     private static final String MUNICIPALITY = "2281";
     private static final String PATH = "/" + MUNICIPALITY + "/scheduler/trigger";

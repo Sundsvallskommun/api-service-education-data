@@ -1,18 +1,18 @@
-CREATE TABLE susa_education_event_raw (
+CREATE TABLE susa_education_event_page_raw (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
     json_body              LONGBLOB NOT NULL,
     page                   INTEGER(6) NOT NULL,
     date_collected         DATE NOT NULL
 ) ENGINE=InnoDB;
 
-CREATE TABLE susa_education_info_raw (
+CREATE TABLE susa_education_info_page_raw (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
     json_body              LONGBLOB NOT NULL,
     page                   INTEGER(6) NOT NULL,
     date_collected         DATE NOT NULL
 ) ENGINE=InnoDB;
 
-CREATE TABLE susa_education_provider_raw (
+CREATE TABLE susa_education_provider_page_raw (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
     json_body              LONGBLOB NOT NULL,
     page                   INTEGER(6) NOT NULL,

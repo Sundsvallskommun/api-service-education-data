@@ -15,5 +15,5 @@ import static se.sundsvall.educationdata.integration.plannededucation.PlannedEdu
 public interface PlannedEducationClient {
 
 	@GetMapping(value = "/v4/adult-education-events/areas", produces = "application/vnd.skolverket.plannededucations.api.v4.hal+json")
-	ApiResponseAreasRM getAllAreas();
+	ApiResponseAreasRM getAllReferenceCategories();
 }

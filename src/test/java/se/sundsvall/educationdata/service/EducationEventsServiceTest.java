@@ -15,8 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.educationdata.integration.db.EducationEventEntityRepository;
-import se.sundsvall.educationdata.integration.db.SusaEducationEventRepository;
-import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEventEntity;
+import se.sundsvall.educationdata.integration.db.SusaEducationEventPageRepository;
+import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEventPageEntity;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 import se.sundsvall.educationdata.service.mapper.EducationEventsMapper;
 import se.sundsvall.educationdata.util.Util;
@@ -36,22 +36,22 @@ import static org.mockito.Mockito.when;
 class EducationEventsServiceTest {
 
 	@Mock
-	private SusaNavetIntegration integration;
+	private SusaNavetIntegration susaNavetIntegration;
 
 	@Mock
-	private SusaEducationEventRepository repository;
+	private SusaEducationEventPageRepository susaEducationEventPageRepository;
 
 	@Mock
-	private EducationEventEntityRepository entityRepository;
+	private EducationEventEntityRepository educationEventEntityRepository;
 
 	@Mock
-	private EducationEventsMapper eventsMapper;
+	private EducationEventsMapper educationEventsMapper;
 
 	@Mock
 	private ObjectMapper objectMapper;
 
 	@InjectMocks
-	private EducationEventsService service;
+	private EducationEventsService educationEventsService;
 
 	@Test
 	void saveAllPagesEventsJsonTableTest_successful() {
@@ -59,9 +59,9 @@ class EducationEventsServiceTest {
 		final byte[] json1 = "json1".getBytes();
 		final byte[] json2 = "json2".getBytes();
 		final byte[] json3 = "json3".getBytes();
-		final var entity1 = SusaEducationEventEntity.builder().build();
-		final var entity2 = SusaEducationEventEntity.builder().build();
-		final var entity3 = SusaEducationEventEntity.builder().build();
+		final var entity1 = SusaEducationEventPageEntity.builder().build();
+		final var entity2 = SusaEducationEventPageEntity.builder().build();
+		final var entity3 = SusaEducationEventPageEntity.builder().build();
 
 		final var firstResponse = new EducationEventListResponse()
 			.page(new PageMetadata().totalPages(3L))
@@ -69,25 +69,25 @@ class EducationEventsServiceTest {
 		final var otherResponse = new EducationEventListResponse()
 			.educationEvents(List.of());
 
-		when(integration.getEducationEvents(0, size)).thenReturn(json1);
-		when(integration.getEducationEvents(1, size)).thenReturn(json2);
-		when(integration.getEducationEvents(2, size)).thenReturn(json3);
+		when(susaNavetIntegration.getEducationEvents(0)).thenReturn(json1);
+		when(susaNavetIntegration.getEducationEvents(1)).thenReturn(json2);
+		when(susaNavetIntegration.getEducationEvents(2)).thenReturn(json3);
 		when(objectMapper.readValue(any(byte[].class), eq(EducationEventListResponse.class)))
 			.thenReturn(firstResponse, otherResponse, otherResponse);
-		when(eventsMapper.toZippedEvents(json1, 0)).thenReturn(entity1);
-		when(eventsMapper.toZippedEvents(json2, 1)).thenReturn(entity2);
-		when(eventsMapper.toZippedEvents(json3, 2)).thenReturn(entity3);
+		when(educationEventsMapper.toZippedEvents(json1, 0)).thenReturn(entity1);
+		when(educationEventsMapper.toZippedEvents(json2, 1)).thenReturn(entity2);
+		when(educationEventsMapper.toZippedEvents(json3, 2)).thenReturn(entity3);
 
-		service.saveAllPagesEventsJsonTable(size);
+		educationEventsService.saveAllPagesEventsJsonTable();
 
-		final var captor = ArgumentCaptor.forClass(SusaEducationEventEntity.class);
-		verify(repository, times(3)).save(captor.capture());
+		final var captor = ArgumentCaptor.forClass(SusaEducationEventPageEntity.class);
+		verify(susaEducationEventPageRepository, times(3)).save(captor.capture());
 		assertThat(captor.getAllValues()).containsExactly(entity1, entity2, entity3);
 
-		verify(integration).getEducationEvents(0, size);
-		verify(integration).getEducationEvents(1, size);
-		verify(integration).getEducationEvents(2, size);
-		verifyNoMoreInteractions(integration, repository);
+		verify(susaNavetIntegration).getEducationEvents(0);
+		verify(susaNavetIntegration).getEducationEvents(1);
+		verify(susaNavetIntegration).getEducationEvents(2);
+		verifyNoMoreInteractions(susaNavetIntegration, susaEducationEventPageRepository);
 	}
 
 	@Test
@@ -96,84 +96,84 @@ class EducationEventsServiceTest {
 		final int page = 0;
 		final int nonExistingPage = 1;
 		final byte[] json = "json".getBytes();
-		final var entity = SusaEducationEventEntity.builder().build();
+		final var entity = SusaEducationEventPageEntity.builder().build();
 
 		final var response = new EducationEventListResponse()
 			.page(new PageMetadata().totalPages(1L))
 			.educationEvents(List.of());
 
-		when(integration.getEducationEvents(page, size)).thenReturn(json);
+		when(susaNavetIntegration.getEducationEvents(page)).thenReturn(json);
 		when(objectMapper.readValue(json, EducationEventListResponse.class)).thenReturn(response);
-		when(eventsMapper.toZippedEvents(json, 0)).thenReturn(entity);
+		when(educationEventsMapper.toZippedEvents(json, 0)).thenReturn(entity);
 
-		service.saveAllPagesEventsJsonTable(size);
+		educationEventsService.saveAllPagesEventsJsonTable();
 
-		verify(integration).getEducationEvents(page, size);
-		verify(integration, never()).getEducationEvents(nonExistingPage, size);
-		verify(repository).save(entity);
-		verifyNoMoreInteractions(integration, repository);
+		verify(susaNavetIntegration).getEducationEvents(page);
+		verify(susaNavetIntegration, never()).getEducationEvents(nonExistingPage);
+		verify(susaEducationEventPageRepository).save(entity);
+		verifyNoMoreInteractions(susaNavetIntegration, susaEducationEventPageRepository);
 	}
 
 	@Test
 	void saveAllPagesEventsJsonTableTest_pageNull() {
 		final int size = 1;
 		final byte[] json = "json".getBytes();
-		final var entity = SusaEducationEventEntity.builder().build();
+		final var entity = SusaEducationEventPageEntity.builder().build();
 		final var response = new EducationEventListResponse().educationEvents(List.of());
 
-		when(integration.getEducationEvents(0, size)).thenReturn(json);
+		when(susaNavetIntegration.getEducationEvents(0)).thenReturn(json);
 		when(objectMapper.readValue(json, EducationEventListResponse.class)).thenReturn(response);
-		when(eventsMapper.toZippedEvents(json, 0)).thenReturn(entity);
-		service.saveAllPagesEventsJsonTable(size);
+		when(educationEventsMapper.toZippedEvents(json, 0)).thenReturn(entity);
+		educationEventsService.saveAllPagesEventsJsonTable();
 
-		verify(integration).getEducationEvents(0, size);
-		verify(integration, never()).getEducationEvents(1, size);
+		verify(susaNavetIntegration).getEducationEvents(0);
+		verify(susaNavetIntegration, never()).getEducationEvents(1);
 	}
 
 	@Test
 	void saveAllPagesEventsJsonTableTest_totalPagesNull() {
 		final int size = 1;
 		final byte[] json = "json".getBytes();
-		final var entity = SusaEducationEventEntity.builder().build();
+		final var entity = SusaEducationEventPageEntity.builder().build();
 		final var response = new EducationEventListResponse()
 			.page(new PageMetadata())
 			.educationEvents(List.of());
 
-		when(integration.getEducationEvents(0, size)).thenReturn(json);
+		when(susaNavetIntegration.getEducationEvents(0)).thenReturn(json);
 		when(objectMapper.readValue(json, EducationEventListResponse.class)).thenReturn(response);
-		when(eventsMapper.toZippedEvents(json, 0)).thenReturn(entity);
+		when(educationEventsMapper.toZippedEvents(json, 0)).thenReturn(entity);
 
-		service.saveAllPagesEventsJsonTable(size);
+		educationEventsService.saveAllPagesEventsJsonTable();
 
-		verify(integration).getEducationEvents(0, size);
-		verify(integration, never()).getEducationEvents(1, size);
+		verify(susaNavetIntegration).getEducationEvents(0);
+		verify(susaNavetIntegration, never()).getEducationEvents(1);
 	}
 
 	@Test
-	void saveAllJsonDataEventsToEntitiesTest() {
+	void createEventEntitiesFromJsonTest() {
 		final byte[] json = "json".getBytes();
 		final var zipped = Util.zip(json);
-		final var page = SusaEducationEventEntity.builder().withJsonBody(zipped).build();
+		final var page = SusaEducationEventPageEntity.builder().withJsonBody(zipped).build();
 		final var response = new EducationEventListResponse().educationEvents(List.of());
 
-		when(repository.findAllByDateCollected(LocalDate.now())).thenReturn(List.of(page));
+		when(susaEducationEventPageRepository.findAllByDateCollected(LocalDate.now())).thenReturn(List.of(page));
 		when(objectMapper.readValue(any(byte[].class), eq(EducationEventListResponse.class))).thenReturn(response);
-		when(eventsMapper.toEventEntities(any())).thenReturn(List.of());
+		when(educationEventsMapper.toEventEntities(any())).thenReturn(List.of());
 
-		service.saveAllJsonDataEventsToEntities();
+		educationEventsService.createEventEntitiesFromJson();
 
-		verify(repository).findAllByDateCollected(LocalDate.now());
-		verify(entityRepository).saveAll(List.of());
+		verify(susaEducationEventPageRepository).findAllByDateCollected(LocalDate.now());
+		verify(educationEventEntityRepository).saveAll(List.of());
 	}
 
 	@Test
-	void saveAllJsonDataEventsToEntities_noPages() {
-		when(repository.findAllByDateCollected(LocalDate.now())).thenReturn(List.of());
+	void createEventEntitiesFromJsonTest_noPages() {
+		when(susaEducationEventPageRepository.findAllByDateCollected(LocalDate.now())).thenReturn(List.of());
 
-		service.saveAllJsonDataEventsToEntities();
+		educationEventsService.createEventEntitiesFromJson();
 
-		verify(repository).findAllByDateCollected(LocalDate.now());
-		verifyNoInteractions(entityRepository, eventsMapper, objectMapper);
+		verify(susaEducationEventPageRepository).findAllByDateCollected(LocalDate.now());
+		verifyNoInteractions(educationEventEntityRepository, educationEventsMapper, objectMapper);
 	}
 
 	@Test
@@ -188,7 +188,7 @@ class EducationEventsServiceTest {
 			new Address().areaCode(null))));
 		final var nullLocations = new EducationEventResponse().content(new EducationEvent().locations(null));
 
-		final var result = service.getMunicipalityFilteredEvents(List.of(
+		final var result = educationEventsService.getMunicipalityFilteredEvents(List.of(
 			matching, wrongMunicipality, nullMunicipality, nullLocations), whitelist);
 
 		assertThat(result).hasSize(1);

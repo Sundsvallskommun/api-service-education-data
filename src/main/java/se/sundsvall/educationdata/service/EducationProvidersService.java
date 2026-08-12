@@ -2,7 +2,7 @@ package se.sundsvall.educationdata.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import se.sundsvall.educationdata.integration.db.SusaEducationProviderRepository;
+import se.sundsvall.educationdata.integration.db.SusaEducationProviderPageRepository;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 import se.sundsvall.educationdata.service.mapper.EducationProvidersMapper;
 import tools.jackson.databind.ObjectMapper;
@@ -10,28 +10,28 @@ import tools.jackson.databind.ObjectMapper;
 @Service
 public class EducationProvidersService {
 	private final SusaNavetIntegration susaNavetIntegration;
-	private final SusaEducationProviderRepository providerRepository;
+	private final SusaEducationProviderPageRepository susaEducationProviderPageRepository;
 	private final ObjectMapper objectMapper;
-	private final EducationProvidersMapper providersMapper;
+	private final EducationProvidersMapper educationProvidersMapper;
 
-	public EducationProvidersService(SusaNavetIntegration susaNavetIntegration, SusaEducationProviderRepository providerRepository, ObjectMapper objectMapper, EducationProvidersMapper providersMapper) {
+	public EducationProvidersService(SusaNavetIntegration susaNavetIntegration, SusaEducationProviderPageRepository susaEducationProviderPageRepository, ObjectMapper objectMapper, EducationProvidersMapper educationProvidersMapper) {
 		this.susaNavetIntegration = susaNavetIntegration;
-		this.providerRepository = providerRepository;
+		this.susaEducationProviderPageRepository = susaEducationProviderPageRepository;
 		this.objectMapper = objectMapper;
-		this.providersMapper = providersMapper;
+		this.educationProvidersMapper = educationProvidersMapper;
 	}
 
 	@Transactional
-	public void saveAllPagesProviderJsonTable(int size) {
+	public void saveAllPagesProviderJsonTable() {
 		int page = 0;
-		var json = susaNavetIntegration.getEducationProviders(page, size);
+		var json = susaNavetIntegration.getEducationProviders(page);
 		int totalPages = objectMapper.readTree(json).path("page").path("totalPages").asInt();
-		providerRepository.save(providersMapper.toZippedProviders(json, page));
+		susaEducationProviderPageRepository.save(educationProvidersMapper.toZippedProviders(json, page));
 
 		for (page = 1; page < totalPages; page++) {
-			json = susaNavetIntegration.getEducationProviders(page, size);
-			final var entity = providersMapper.toZippedProviders(json, page);
-			providerRepository.save(entity);
+			json = susaNavetIntegration.getEducationProviders(page);
+			final var entity = educationProvidersMapper.toZippedProviders(json, page);
+			susaEducationProviderPageRepository.save(entity);
 		}
 	}
 }

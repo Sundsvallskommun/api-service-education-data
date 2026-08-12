@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.sundsvall.educationdata.integration.db.EducationEventEntityRepository;
 import se.sundsvall.educationdata.integration.db.EducationInfoEntityRepository;
-import se.sundsvall.educationdata.integration.db.SusaEducationInfoRepository;
+import se.sundsvall.educationdata.integration.db.SusaEducationInfoPageRepository;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 import se.sundsvall.educationdata.service.mapper.EducationInfosMapper;
 import se.sundsvall.educationdata.util.Util;
@@ -20,40 +20,42 @@ import tools.jackson.databind.ObjectMapper;
 @Service
 public class EducationInfosService {
 	private final SusaNavetIntegration susaNavetIntegration;
-	private final SusaEducationInfoRepository infoRepository;
-	private final EducationInfoEntityRepository infoEntityRepository;
-	private final EducationEventEntityRepository eventEntityRepository;
+	private final SusaEducationInfoPageRepository susaEducationInfoPageRepository;
+	private final EducationInfoEntityRepository educationInfoEntityRepository;
+	private final EducationEventEntityRepository educationEventEntityRepository;
 	private final ObjectMapper objectMapper;
-	private final EducationInfosMapper infosMapper;
+	private final EducationInfosMapper educationInfosMapper;
 
-	public EducationInfosService(SusaNavetIntegration susaNavetIntegration, SusaEducationInfoRepository infoRepository, EducationInfoEntityRepository infoEntityRepository, EducationEventEntityRepository eventEntityRepository, ObjectMapper objectMapper,
-		EducationInfosMapper infosMapper) {
+	public EducationInfosService(SusaNavetIntegration susaNavetIntegration, SusaEducationInfoPageRepository susaEducationInfoPageRepository, EducationInfoEntityRepository educationInfoEntityRepository,
+		EducationEventEntityRepository educationEventEntityRepository,
+		ObjectMapper objectMapper,
+		EducationInfosMapper educationInfosMapper) {
 		this.susaNavetIntegration = susaNavetIntegration;
-		this.infoRepository = infoRepository;
-		this.infoEntityRepository = infoEntityRepository;
-		this.eventEntityRepository = eventEntityRepository;
+		this.susaEducationInfoPageRepository = susaEducationInfoPageRepository;
+		this.educationInfoEntityRepository = educationInfoEntityRepository;
+		this.educationEventEntityRepository = educationEventEntityRepository;
 		this.objectMapper = objectMapper;
-		this.infosMapper = infosMapper;
+		this.educationInfosMapper = educationInfosMapper;
 	}
 
 	@Transactional
-	public void saveAllPagesInfoJsonTable(int size) {
-		var municipalityFilteredIds = eventEntityRepository.getDistinctEducationInfoId();
+	public void saveAllPagesInfoJsonTable() {
+		var municipalityFilteredIds = educationEventEntityRepository.getDistinctEducationInfoId();
 
 		int page = 0;
-		var json = susaNavetIntegration.getEducationInfos(page, size);
+		var json = susaNavetIntegration.getEducationInfos(page);
 		var response = objectMapper.readValue(json, EducationInfoListResponse.class);
 
 		var pageInfo = response.getPage();
 		var totalPages = (pageInfo == null || pageInfo.getTotalPages() == null) ? 0 : pageInfo.getTotalPages();
 
-		infoRepository.save(infosMapper.toZippedInfos(json, page));
+		susaEducationInfoPageRepository.save(educationInfosMapper.toZippedInfos(json, page));
 		var susaInfos = response.getEducationInfos();
 		saveFilteredInfos(susaInfos, municipalityFilteredIds);
 
 		for (page = 1; page < totalPages; page++) {
-			json = susaNavetIntegration.getEducationInfos(page, size);
-			infoRepository.save(infosMapper.toZippedInfos(json, page));
+			json = susaNavetIntegration.getEducationInfos(page);
+			susaEducationInfoPageRepository.save(educationInfosMapper.toZippedInfos(json, page));
 
 			response = objectMapper.readValue(json, EducationInfoListResponse.class);
 			susaInfos = response.getEducationInfos();
@@ -62,11 +64,11 @@ public class EducationInfosService {
 	}
 
 	@Transactional
-	public void saveAllJsonDataInfosToEntities() {
-		var pages = infoRepository.findAllByDateCollected(LocalDate.now(ZoneId.systemDefault()));
-		var municipalityFilteredIds = eventEntityRepository.getDistinctEducationInfoId();
+	public void createInfoEntitiesFromJson() {
+		var jsonPageList = susaEducationInfoPageRepository.findAllByDateCollected(LocalDate.now(ZoneId.systemDefault()));
+		var municipalityFilteredIds = educationEventEntityRepository.getDistinctEducationInfoId();
 
-		for (var page : pages) {
+		for (var page : jsonPageList) {
 
 			var json = Util.unzip(page.getJsonBody());
 			var response = objectMapper.readValue(json, EducationInfoListResponse.class);
@@ -77,6 +79,6 @@ public class EducationInfosService {
 	public void saveFilteredInfos(List<EducationInfoResponse> infos, Set<String> filteredIds) {
 		var filtered = infos.stream().filter(i -> i.getContent() != null
 			&& filteredIds.contains(i.getContent().getIdentifier())).toList();
-		infoEntityRepository.saveAll(infosMapper.toInfoEntities(filtered));
+		educationInfoEntityRepository.saveAll(educationInfosMapper.toInfoEntities(filtered));
 	}
 }

@@ -20,7 +20,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoSubject;
-import se.sundsvall.educationdata.integration.db.model.json.SusaEducationInfoEntity;
+import se.sundsvall.educationdata.integration.db.model.json.SusaEducationInfoPageEntity;
 import se.sundsvall.educationdata.util.Util;
 
 import static java.util.Optional.ofNullable;
@@ -30,8 +30,8 @@ import static se.sundsvall.educationdata.service.mapper.SusaNavetMapper.firstStr
 @Component
 public class EducationInfosMapper {
 
-	public SusaEducationInfoEntity toZippedInfos(byte[] json, int page) {
-		return SusaEducationInfoEntity.builder()
+	public SusaEducationInfoPageEntity toZippedInfos(byte[] json, int page) {
+		return SusaEducationInfoPageEntity.builder()
 			.withJsonBody(Util.zip(json))
 			.withPage(page)
 			.withDateCollected(LocalDate.now(ZoneId.systemDefault()))

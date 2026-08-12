@@ -24,7 +24,7 @@ class SusaNavetIntegrationTest {
 	private SusaNavetIntegration integration;
 
 	private static final int PAGE = 1;
-	private static final int SIZE = 1;
+	private static final int SIZE = 2000;
 
 	@Test
 	void getEducationEvents() {
@@ -32,7 +32,7 @@ class SusaNavetIntegrationTest {
 
 		when(clientMock.getAllEducationEvents(PAGE, SIZE)).thenReturn(json);
 
-		assertThat(integration.getEducationEvents(1, 1)).isSameAs(json);
+		assertThat(integration.getEducationEvents(1)).isSameAs(json);
 
 		verify(clientMock).getAllEducationEvents(PAGE, SIZE);
 	}
@@ -43,7 +43,7 @@ class SusaNavetIntegrationTest {
 
 		when(clientMock.getAllEducationInfos(PAGE, SIZE)).thenReturn(json);
 
-		assertThat(integration.getEducationInfos(PAGE, SIZE)).isSameAs(json);
+		assertThat(integration.getEducationInfos(PAGE)).isSameAs(json);
 
 		verify(clientMock).getAllEducationInfos(PAGE, SIZE);
 		verifyNoMoreInteractions(clientMock);
@@ -56,7 +56,7 @@ class SusaNavetIntegrationTest {
 
 		when(clientMock.getAllEducationProviders(PAGE, SIZE)).thenReturn(json);
 
-		assertThat(integration.getEducationProviders(PAGE, SIZE)).isSameAs(json);
+		assertThat(integration.getEducationProviders(PAGE)).isSameAs(json);
 
 		verify(clientMock).getAllEducationProviders(PAGE, SIZE);
 		verifyNoMoreInteractions(clientMock);
@@ -66,7 +66,7 @@ class SusaNavetIntegrationTest {
 	void getEducationEventsThrowsWhenNull() {
 		when(clientMock.getAllEducationEvents(PAGE, SIZE)).thenReturn(null);
 
-		assertThatThrownBy(() -> integration.getEducationEvents(PAGE, SIZE))
+		assertThatThrownBy(() -> integration.getEducationEvents(PAGE))
 			.isInstanceOf(ThrowableProblem.class)
 			.hasMessageContaining("Empty body");
 
@@ -77,7 +77,7 @@ class SusaNavetIntegrationTest {
 	void getEducationEventsThrowsWhenEmpty() {
 		when(clientMock.getAllEducationEvents(PAGE, SIZE)).thenReturn(new byte[0]);
 
-		assertThatThrownBy(() -> integration.getEducationEvents(PAGE, SIZE))
+		assertThatThrownBy(() -> integration.getEducationEvents(PAGE))
 			.isInstanceOf(ThrowableProblem.class)
 			.hasMessageContaining("Empty body");
 
@@ -88,7 +88,7 @@ class SusaNavetIntegrationTest {
 	void getEducationInfosThrowsWhenNull() {
 		when(clientMock.getAllEducationInfos(PAGE, SIZE)).thenReturn(null);
 
-		assertThatThrownBy(() -> integration.getEducationInfos(PAGE, SIZE))
+		assertThatThrownBy(() -> integration.getEducationInfos(PAGE))
 			.isInstanceOf(ThrowableProblem.class)
 			.hasMessageContaining("Empty body");
 
@@ -99,7 +99,7 @@ class SusaNavetIntegrationTest {
 	void getEducationInfosThrowsWhenEmpty() {
 		when(clientMock.getAllEducationInfos(PAGE, SIZE)).thenReturn(new byte[0]);
 
-		assertThatThrownBy(() -> integration.getEducationInfos(PAGE, SIZE))
+		assertThatThrownBy(() -> integration.getEducationInfos(PAGE))
 			.isInstanceOf(ThrowableProblem.class)
 			.hasMessageContaining("Empty body");
 
@@ -110,7 +110,7 @@ class SusaNavetIntegrationTest {
 	void getEducationProvidersThrowsWhenNull() {
 		when(clientMock.getAllEducationProviders(PAGE, SIZE)).thenReturn(null);
 
-		assertThatThrownBy(() -> integration.getEducationProviders(PAGE, SIZE))
+		assertThatThrownBy(() -> integration.getEducationProviders(PAGE))
 			.isInstanceOf(ThrowableProblem.class)
 			.hasMessageContaining("Empty body");
 
@@ -121,7 +121,7 @@ class SusaNavetIntegrationTest {
 	void getEducationProvidersThrowsWhenEmpty() {
 		when(clientMock.getAllEducationProviders(PAGE, SIZE)).thenReturn(new byte[0]);
 
-		assertThatThrownBy(() -> integration.getEducationProviders(PAGE, SIZE))
+		assertThatThrownBy(() -> integration.getEducationProviders(PAGE))
 			.isInstanceOf(ThrowableProblem.class)
 			.hasMessageContaining("Empty body");
 

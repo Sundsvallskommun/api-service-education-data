@@ -19,8 +19,8 @@ public class PlannedEducationIntegration {
 		this.mapper = mapper;
 	}
 
-	public List<ReferenceCategoryEntity> getAllAreas() {
-		final var response = client.getAllAreas();
+	public List<ReferenceCategoryEntity> getAllReferenceCategories() {
+		final var response = client.getAllReferenceCategories();
 		if (response == null || response.getBody() == null || response.getBody().getAreas() == null
 			|| response.getBody().getAreas().isEmpty()) {
 			throw badGateway("Empty body");

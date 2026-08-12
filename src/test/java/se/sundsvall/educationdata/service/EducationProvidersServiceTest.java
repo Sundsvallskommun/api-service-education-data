@@ -6,8 +6,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.sundsvall.educationdata.integration.db.SusaEducationProviderRepository;
-import se.sundsvall.educationdata.integration.db.model.json.SusaEducationProviderEntity;
+import se.sundsvall.educationdata.integration.db.SusaEducationProviderPageRepository;
+import se.sundsvall.educationdata.integration.db.model.json.SusaEducationProviderPageEntity;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 import se.sundsvall.educationdata.service.mapper.EducationProvidersMapper;
 import tools.jackson.databind.ObjectMapper;
@@ -23,69 +23,68 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class EducationProvidersServiceTest {
 	@Mock
-	private SusaNavetIntegration integration;
+	private SusaNavetIntegration susaNavetIntegration;
 
 	@Mock
-	private SusaEducationProviderRepository repository;
+	private SusaEducationProviderPageRepository susaEducationProviderPageRepository;
 
 	@Mock
-	private EducationProvidersMapper providersMapper;
+	private EducationProvidersMapper educationProvidersMapper;
 
 	@Mock
 	private ObjectMapper objectMapper;
 
 	@InjectMocks
-	private EducationProvidersService service;
+	private EducationProvidersService educationProvidersService;
 
 	@Test
-	void saveAllPagesTest_successful() {
+	void saveAllPagesProviderJsonTableTest_successful() {
 		final var size = 1;
 		final byte[] json1 = "json1".getBytes();
 		final byte[] json2 = "json2".getBytes();
 		final byte[] json3 = "json3".getBytes();
-		final var entity1 = SusaEducationProviderEntity.builder().build();
-		final var entity2 = SusaEducationProviderEntity.builder().build();
-		final var entity3 = SusaEducationProviderEntity.builder().build();
+		final var entity1 = SusaEducationProviderPageEntity.builder().build();
+		final var entity2 = SusaEducationProviderPageEntity.builder().build();
+		final var entity3 = SusaEducationProviderPageEntity.builder().build();
 		final var firstPage = JsonMapper.builder().build().readTree("{\"page\":{\"totalPages\":3}}");
 
-		when(integration.getEducationProviders(0, size)).thenReturn(json1);
-		when(integration.getEducationProviders(1, size)).thenReturn(json2);
-		when(integration.getEducationProviders(2, size)).thenReturn(json3);
+		when(susaNavetIntegration.getEducationProviders(0)).thenReturn(json1);
+		when(susaNavetIntegration.getEducationProviders(1)).thenReturn(json2);
+		when(susaNavetIntegration.getEducationProviders(2)).thenReturn(json3);
 		when(objectMapper.readTree(json1)).thenReturn(firstPage);
-		when(providersMapper.toZippedProviders(json1, 0)).thenReturn(entity1);
-		when(providersMapper.toZippedProviders(json2, 1)).thenReturn(entity2);
-		when(providersMapper.toZippedProviders(json3, 2)).thenReturn(entity3);
+		when(educationProvidersMapper.toZippedProviders(json1, 0)).thenReturn(entity1);
+		when(educationProvidersMapper.toZippedProviders(json2, 1)).thenReturn(entity2);
+		when(educationProvidersMapper.toZippedProviders(json3, 2)).thenReturn(entity3);
 
-		service.saveAllPagesProviderJsonTable(size);
+		educationProvidersService.saveAllPagesProviderJsonTable();
 
-		final var captor = ArgumentCaptor.forClass(SusaEducationProviderEntity.class);
-		verify(repository, times(3)).save(captor.capture());
+		final var captor = ArgumentCaptor.forClass(SusaEducationProviderPageEntity.class);
+		verify(susaEducationProviderPageRepository, times(3)).save(captor.capture());
 		assertThat(captor.getAllValues()).containsExactly(entity1, entity2, entity3);
 
-		verify(integration).getEducationProviders(0, size);
-		verify(integration).getEducationProviders(1, size);
-		verify(integration).getEducationProviders(2, size);
-		verifyNoMoreInteractions(integration, repository);
+		verify(susaNavetIntegration).getEducationProviders(0);
+		verify(susaNavetIntegration).getEducationProviders(1);
+		verify(susaNavetIntegration).getEducationProviders(2);
+		verifyNoMoreInteractions(susaNavetIntegration, susaEducationProviderPageRepository);
 	}
 
 	@Test
-	void saveAllPagesTest_withOnlyOnePage() {
-		final int size = 1;
+	void saveAllPagesProviderJsonTableTest_withOnlyOnePage() {
 		final int page = 0;
 		final int nonExistingPage = 1;
 		final byte[] json = "{page:{totalPages:1}}".getBytes();
 		final var firstPage = JsonMapper.builder().build().readTree("{\"page\":{\"totalPages\":1}}");
-		final var entity = SusaEducationProviderEntity.builder().build();
+		final var entity = SusaEducationProviderPageEntity.builder().build();
 
-		when(integration.getEducationProviders(page, size)).thenReturn(json);
+		when(susaNavetIntegration.getEducationProviders(page)).thenReturn(json);
 		when(objectMapper.readTree(json)).thenReturn(firstPage);
-		when(providersMapper.toZippedProviders(json, 0)).thenReturn(entity);
+		when(educationProvidersMapper.toZippedProviders(json, 0)).thenReturn(entity);
 
-		service.saveAllPagesProviderJsonTable(size);
+		educationProvidersService.saveAllPagesProviderJsonTable();
 
-		verify(integration).getEducationProviders(page, size);
-		verify(integration, never()).getEducationProviders(nonExistingPage, size);
-		verify(repository).save(entity);
-		verifyNoMoreInteractions(integration, repository);
+		verify(susaNavetIntegration).getEducationProviders(page);
+		verify(susaNavetIntegration, never()).getEducationProviders(nonExistingPage);
+		verify(susaEducationProviderPageRepository).save(entity);
+		verifyNoMoreInteractions(susaNavetIntegration, susaEducationProviderPageRepository);
 	}
 }

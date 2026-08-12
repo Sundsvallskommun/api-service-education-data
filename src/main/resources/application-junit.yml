@@ -20,15 +20,14 @@ scheduler:
     name: "scheduled-json-import"
     shedlock-lock-at-most-for: "PT15M"
     maximum-execution-time: "PT15M"
-    json-size: 100
   import-categories:
     cron: "-"
     name: "scheduled-categories-import"
     shedlock-lock-at-most-for: "PT15M"
     maximum-execution-time: "PT15M"
-  generate:
+  create-entities:
     cron: "-"
-    name: "scheduled-generation"
+    name: "scheduled-entities-creation"
     shedlock-lock-at-most-for: "PT15M"
     maximum-execution-time: "PT15M"
     municipality-whitelist: 2281
