@@ -39,7 +39,6 @@ class EducationProvidersServiceTest {
 
 	@Test
 	void saveAllPagesProviderJsonTableTest_successful() {
-		final var size = 1;
 		final byte[] json1 = "json1".getBytes();
 		final byte[] json2 = "json2".getBytes();
 		final byte[] json3 = "json3".getBytes();
