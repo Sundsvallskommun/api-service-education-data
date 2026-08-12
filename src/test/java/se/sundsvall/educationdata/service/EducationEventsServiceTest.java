@@ -55,7 +55,7 @@ class EducationEventsServiceTest {
 
 	@Test
 	void saveAllPagesEventsJsonTableTest_successful() {
-        final byte[] json1 = "json1".getBytes();
+		final byte[] json1 = "json1".getBytes();
 		final byte[] json2 = "json2".getBytes();
 		final byte[] json3 = "json3".getBytes();
 		final var entity1 = SusaEducationEventPageEntity.builder().build();
@@ -91,7 +91,7 @@ class EducationEventsServiceTest {
 
 	@Test
 	void saveAllPagesEventsJsonTableTest_withOnlyOnePage() {
-        final int page = 0;
+		final int page = 0;
 		final int nonExistingPage = 1;
 		final byte[] json = "json".getBytes();
 		final var entity = SusaEducationEventPageEntity.builder().build();
@@ -114,7 +114,7 @@ class EducationEventsServiceTest {
 
 	@Test
 	void saveAllPagesEventsJsonTableTest_pageNull() {
-        final byte[] json = "json".getBytes();
+		final byte[] json = "json".getBytes();
 		final var entity = SusaEducationEventPageEntity.builder().build();
 		final var response = new EducationEventListResponse().educationEvents(List.of());
 
@@ -129,7 +129,7 @@ class EducationEventsServiceTest {
 
 	@Test
 	void saveAllPagesEventsJsonTableTest_totalPagesNull() {
-        final byte[] json = "json".getBytes();
+		final byte[] json = "json".getBytes();
 		final var entity = SusaEducationEventPageEntity.builder().build();
 		final var response = new EducationEventListResponse()
 			.page(new PageMetadata())
