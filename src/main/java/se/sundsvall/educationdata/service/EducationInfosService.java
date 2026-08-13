@@ -2,7 +2,6 @@ package se.sundsvall.educationdata.service;
 
 import generated.se.sundsvall.susanavet.EducationInfoListResponse;
 import generated.se.sundsvall.susanavet.EducationInfoResponse;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
@@ -16,6 +15,8 @@ import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 import se.sundsvall.educationdata.service.mapper.EducationInfosMapper;
 import se.sundsvall.educationdata.util.Util;
 import tools.jackson.databind.ObjectMapper;
+
+import static java.util.Objects.nonNull;
 
 @Service
 public class EducationInfosService {
@@ -77,8 +78,11 @@ public class EducationInfosService {
 	}
 
 	public void saveFilteredInfos(List<EducationInfoResponse> infos, Set<String> filteredIds) {
-		var filtered = infos.stream().filter(i -> i.getContent() != null
-			&& filteredIds.contains(i.getContent().getIdentifier())).toList();
+		var filtered = infos.stream()
+			.filter(info -> nonNull(info.getContent()))
+			.filter(info -> filteredIds.contains(info.getContent().getIdentifier()))
+			.toList();
+
 		educationInfoEntityRepository.saveAll(educationInfosMapper.toInfoEntities(filtered));
 	}
 }

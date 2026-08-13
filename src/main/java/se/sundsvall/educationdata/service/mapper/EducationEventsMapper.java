@@ -9,8 +9,10 @@ import generated.se.sundsvall.susanavet.PaceOfStudy;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEventPageEntity;
@@ -33,16 +35,13 @@ public class EducationEventsMapper {
 	}
 
 	public List<EducationEventEntity> toEventEntities(List<EducationEvent> events) {
-		if (events == null) {
-			return List.of();
-		}
-		return events.stream().map(this::toEventEntity).filter(Objects::nonNull).toList();
+		return Optional.ofNullable(events).orElse(Collections.emptyList()).stream()
+			.filter(Objects::nonNull)
+			.map(this::toEventEntity)
+			.toList();
 	}
 
 	private EducationEventEntity toEventEntity(final EducationEvent event) {
-		if (event == null) {
-			return null;
-		}
 
 		final var location = firstOrNull(event.getLocations());
 		final var fee = firstOrNull(event.getFees());

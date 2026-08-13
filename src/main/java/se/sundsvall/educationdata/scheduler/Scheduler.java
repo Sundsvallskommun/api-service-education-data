@@ -2,7 +2,6 @@ package se.sundsvall.educationdata.scheduler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import se.sundsvall.dept44.scheduling.Dept44Scheduled;
 import se.sundsvall.educationdata.service.EducationEventsService;
@@ -25,25 +24,6 @@ public class Scheduler {
 		this.educationInfosService = educationInfosService;
 		this.educationProvidersService = educationProvidersService;
 		this.plannedEducationService = plannedEducationService;
-	}
-
-	@Async
-	public void triggerAsyncImport() {
-		try {
-			importSusaJson();
-		} catch (Exception e) {
-			log.error("Manually triggered Susa import job failed", e);
-		}
-		try {
-			importPlannedEducationCategories();
-		} catch (Exception e) {
-			log.error("Manually triggered planned education job failed", e);
-		}
-		try {
-			createEntitiesFromJson();
-		} catch (Exception e) {
-			log.error("Manually triggered generation job failed", e);
-		}
 	}
 
 	@Dept44Scheduled(

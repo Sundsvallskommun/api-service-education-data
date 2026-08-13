@@ -39,13 +39,11 @@ public class EducationInfosMapper {
 	}
 
 	public List<EducationInfoEntity> toInfoEntities(List<EducationInfoResponse> infos) {
-		if (infos == null) {
-			return List.of();
-		}
-		return infos.stream().map(response -> response == null ? null : response.getContent())
+		return Optional.ofNullable(infos).orElse(Collections.emptyList()).stream()
+			.filter(Objects::nonNull)
+			.map(EducationInfoResponse::getContent)
 			.filter(Objects::nonNull)
 			.map(this::toInfoEntity)
-			.filter(Objects::nonNull)
 			.toList();
 	}
 

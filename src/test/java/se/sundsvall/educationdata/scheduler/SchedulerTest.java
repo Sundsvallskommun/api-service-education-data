@@ -10,8 +10,6 @@ import se.sundsvall.educationdata.service.EducationInfosService;
 import se.sundsvall.educationdata.service.EducationProvidersService;
 import se.sundsvall.educationdata.service.PlannedEducationService;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -60,61 +58,4 @@ public class SchedulerTest {
 		verifyNoMoreInteractions(educationEventsService, educationInfosService);
 		verifyNoInteractions(educationProvidersService, plannedEducationService);
 	}
-
-	@Test
-	void triggerAsyncImportTest() {
-		scheduler.triggerAsyncImport();
-
-		verify(educationEventsService).saveAllPagesEventsJsonTable();
-		verify(educationInfosService).saveAllPagesInfoJsonTable();
-		verify(educationProvidersService).saveAllPagesProviderJsonTable();
-		verify(plannedEducationService).importReferenceCategories();
-		verify(educationEventsService).createEventEntitiesFromJson();
-		verify(educationInfosService).createInfoEntitiesFromJson();
-		verifyNoMoreInteractions(educationEventsService, educationInfosService, educationProvidersService, plannedEducationService);
-	}
-
-	@Test
-	void triggerAsyncImportTest_susaFails_catchException() {
-		doThrow(new RuntimeException("boom")).when(educationEventsService).saveAllPagesEventsJsonTable();
-
-		assertDoesNotThrow(() -> scheduler.triggerAsyncImport());
-
-		verify(educationEventsService).saveAllPagesEventsJsonTable();
-		verify(plannedEducationService).importReferenceCategories();
-		verify(educationEventsService).createEventEntitiesFromJson();
-		verify(educationInfosService).createInfoEntitiesFromJson();
-		verifyNoInteractions(educationProvidersService);
-		verifyNoMoreInteractions(educationEventsService, plannedEducationService, educationInfosService);
-	}
-
-	@Test
-	void triggerAsyncImportTest_plannedEducationFails_catchException() {
-		doThrow(new RuntimeException("boom")).when(plannedEducationService).importReferenceCategories();
-
-		assertDoesNotThrow(() -> scheduler.triggerAsyncImport());
-
-		verify(educationEventsService).saveAllPagesEventsJsonTable();
-		verify(educationInfosService).saveAllPagesInfoJsonTable();
-		verify(educationProvidersService).saveAllPagesProviderJsonTable();
-		verify(plannedEducationService).importReferenceCategories();
-		verify(educationEventsService).createEventEntitiesFromJson();
-		verify(educationInfosService).createInfoEntitiesFromJson();
-		verifyNoMoreInteractions(educationEventsService, plannedEducationService, educationInfosService);
-	}
-
-	@Test
-	void triggerAsyncImportTest_generation_catchException() {
-		doThrow(new RuntimeException("boom")).when(educationEventsService).createEventEntitiesFromJson();
-
-		assertDoesNotThrow(() -> scheduler.triggerAsyncImport());
-
-		verify(educationEventsService).saveAllPagesEventsJsonTable();
-		verify(educationInfosService).saveAllPagesInfoJsonTable();
-		verify(educationProvidersService).saveAllPagesProviderJsonTable();
-		verify(plannedEducationService).importReferenceCategories();
-		verify(educationEventsService).createEventEntitiesFromJson();
-		verifyNoMoreInteractions(educationEventsService, plannedEducationService, educationInfosService);
-	}
-
 }
