@@ -1,18 +1,18 @@
-CREATE TABLE susa_education_event_raw (
+CREATE TABLE susa_education_event_page_raw (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
     json_body              LONGBLOB NOT NULL,
     page                   INTEGER(6) NOT NULL,
     date_collected         DATE NOT NULL
 ) ENGINE=InnoDB;
 
-CREATE TABLE susa_education_info_raw (
+CREATE TABLE susa_education_info_page_raw (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
     json_body              LONGBLOB NOT NULL,
     page                   INTEGER(6) NOT NULL,
     date_collected         DATE NOT NULL
 ) ENGINE=InnoDB;
 
-CREATE TABLE susa_education_provider_raw (
+CREATE TABLE susa_education_provider_page_raw (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
     json_body              LONGBLOB NOT NULL,
     page                   INTEGER(6) NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE susa_education_provider_raw (
 
 CREATE TABLE education_event (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
-    title                  VARCHAR(100),
+    title                  VARCHAR(255),
     education_event_id     VARCHAR(64),
     education_info_id      VARCHAR(64),
     education_provider_id  VARCHAR(64),
@@ -39,8 +39,7 @@ CREATE TABLE education_event (
     application_start_date DATE,
     application_end_date   DATE,
     created_at             DATE,
-    outdated_at            DATE,
-    deleted                BOOLEAN,
+    cancelled                BOOLEAN,
     INDEX idx_education_event_edu_id (education_event_id),
     INDEX idx_education_event_info_id (education_info_id)
 ) ENGINE=InnoDB;
@@ -48,25 +47,18 @@ CREATE TABLE education_event (
 CREATE TABLE education_info (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
     education_info_id      VARCHAR(64),
-    title                  VARCHAR(100),
+    title                  VARCHAR(255),
     school_type            VARCHAR(32),
-    education_type         VARCHAR(32),
-    code                   VARCHAR(50),
+    education_type         VARCHAR(100),
     description            TEXT,
     education_eligibility  TEXT,
     recommended_prior_knowledge TEXT,
     credit_type            VARCHAR(10),
-    credits                VARCHAR(10),
+    credits                DOUBLE(10,2),
     duration               VARCHAR(10),
     result_is_degree       BOOLEAN,
-    degree                 VARCHAR(50),
-    content_url            VARCHAR(255),
     expires                DATETIME,
-    student_aid_eligibility VARCHAR(10),
-    subjects               VARCHAR(32),
-    created_at             DATE,
-    outdated_at            DATE,
-    deleted                BOOLEAN
+    created_at             DATE
 ) ENGINE=InnoDB;
 
 CREATE TABLE reference_category (
@@ -95,4 +87,21 @@ CREATE TABLE gy_program_category (
     category               VARCHAR(32),
     vocational             BOOLEAN,
 CONSTRAINT uq_gy_program_code UNIQUE (program_code)
+) ENGINE=InnoDB;
+
+CREATE TABLE education_info_subject (
+    education_info_id      VARCHAR(36) NOT NULL,
+    subject_type           VARCHAR(32),
+    subject_code           VARCHAR(32),
+CONSTRAINT fk_education_info_subject
+    FOREIGN KEY (education_info_id) REFERENCES education_info (id),
+    INDEX idx_education_info_subject (education_info_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE education_info_degree (
+    education_info_id      VARCHAR(36) NOT NULL,
+    degree                 VARCHAR(255),
+CONSTRAINT fk_education_info_degree
+    FOREIGN KEY (education_info_id) REFERENCES education_info (id),
+    INDEX idx_education_info_degree (education_info_id)
 ) ENGINE=InnoDB;

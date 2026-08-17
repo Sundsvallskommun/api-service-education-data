@@ -10,8 +10,6 @@ import se.sundsvall.educationdata.service.EducationInfosService;
 import se.sundsvall.educationdata.service.EducationProvidersService;
 import se.sundsvall.educationdata.service.PlannedEducationService;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -22,52 +20,42 @@ public class SchedulerTest {
 	@Mock
 	private PlannedEducationService plannedEducationService;
 	@Mock
-	private EducationEventsService eventsService;
+	private EducationEventsService educationEventsService;
 	@Mock
-	private EducationInfosService infosService;
+	private EducationInfosService educationInfosService;
 	@Mock
-	private EducationProvidersService providersService;
+	private EducationProvidersService educationProvidersService;
 
 	private Scheduler scheduler;
 
-	private static final int SIZE = 100;
-
 	@BeforeEach
 	void setUp() {
-		scheduler = new Scheduler(eventsService, infosService, providersService, plannedEducationService, SIZE);
+		scheduler = new Scheduler(educationEventsService, educationInfosService, educationProvidersService, plannedEducationService);
 	}
 
 	@Test
-	void importDataTest() {
-		scheduler.importData();
+	void importSusaJsonTest() {
+		scheduler.importSusaJson();
 
-		verify(plannedEducationService).getCategoryInfo();
-		verify(eventsService).saveAllPagesEventsJsonTable(SIZE);
-		verify(infosService).saveAllPagesInfoJsonTable(SIZE);
-		verify(providersService).saveAllPagesProviderJsonTable(SIZE);
-		verifyNoMoreInteractions(plannedEducationService, eventsService, infosService, providersService);
+		verify(educationEventsService).saveAllPagesEventsJsonTable();
+		verify(educationInfosService).saveAllPagesInfoJsonTable();
+		verify(educationProvidersService).saveAllPagesProviderJsonTable();
+		verifyNoMoreInteractions(educationEventsService, educationInfosService, educationProvidersService);
 	}
 
 	@Test
-	void triggerAsyncSchedulerTest() {
-		scheduler.triggerAsyncImport();
-
-		verify(eventsService).saveAllPagesEventsJsonTable(SIZE);
-		verify(infosService).saveAllPagesInfoJsonTable(SIZE);
-		verify(providersService).saveAllPagesProviderJsonTable(SIZE);
-		verify(plannedEducationService).getCategoryInfo();
-		verifyNoMoreInteractions(eventsService, infosService, providersService, plannedEducationService);
+	void importPlannedEducationCategoriesTest() {
+		scheduler.importPlannedEducationCategories();
+		verify(plannedEducationService).importReferenceCategories();
+		verifyNoInteractions(educationEventsService, educationInfosService, educationProvidersService);
 	}
 
 	@Test
-	void triggerAsyncSchedulerTest_catchException() {
-		doThrow(new RuntimeException("boom")).when(eventsService).saveAllPagesEventsJsonTable(SIZE);
-
-		assertDoesNotThrow(() -> scheduler.triggerAsyncImport());
-
-		verify(eventsService).saveAllPagesEventsJsonTable(SIZE);
-		verifyNoInteractions(infosService, providersService, plannedEducationService);
-		verifyNoMoreInteractions(eventsService);
+	void createEntitiesFromJsonTest() {
+		scheduler.createEntitiesFromJson();
+		verify(educationEventsService).createEventEntitiesFromJson();
+		verify(educationInfosService).createInfoEntitiesFromJson();
+		verifyNoMoreInteractions(educationEventsService, educationInfosService);
+		verifyNoInteractions(educationProvidersService, plannedEducationService);
 	}
-
 }

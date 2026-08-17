@@ -1,0 +1,1911 @@
+openapi: 3.0.3
+info:
+  version: '3.0.2'
+  title: Skolverket - Susa-navets öppna API
+  description: <p>Skolverkets öppna API för Susa-navet tillhandahåller information om utbildningserbjudanden, utbildningsanordnare och utbildningsinformation.<br>
+    API:et erbjuder funktioner för att söka, lista och visa detaljerad information om de hanterade resurserna.<br>
+    Den information som returneras är en JSON-representation av EMIL-dokument som följer EMIL 3-standarden.</p>
+
+servers:
+  - url: https://api.skolverket.se/susa-navet/emil3
+
+tags:
+  - name: Api Info
+    description: Information om api
+  - name: EducationEvent
+    description: Information om utbildningserbjudanden
+  - name: EducationInfo
+    description: Information om utbildningens innehåll
+  - name: EducationProvider
+    description: Information om anordnare av utbildningar
+
+paths:
+  /api-info:
+    get:
+      tags:
+        - Api Info
+      summary: 'Hämta information om detta api'
+      description: 'Hämta information om detta api'
+      operationId: getApiInfo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiInfoResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundApiInfo'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /educationEvents:
+    get:
+      tags:
+        - EducationEvent
+      summary: Hämtar en lista med utbildningstillfällen. Med möjlighet till filtering
+      operationId: getEducationEvents
+      parameters:
+        - $ref: '#/components/parameters/schoolType'
+        - $ref: '#/components/parameters/providerId'
+        - $ref: '#/components/parameters/updatedSince'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationEventListResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  '/educationEvents/{id}':
+    get:
+      tags:
+        - EducationEvent
+      summary: Hämtar information om ett utbildningstillfälle
+      operationId: getEducationEvent
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationEventResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  /educationProviders:
+    get:
+      tags:
+        - EducationProvider
+      summary: Hämtar en lista med utbildningsanordnare. Med möjlighet till filtering
+      operationId: getEducationProviders
+      parameters:
+        - $ref: '#/components/parameters/schoolType'
+        - $ref: '#/components/parameters/updatedSince'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationProviderListResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  '/educationProviders/{id}':
+    get:
+      tags:
+        - EducationProvider
+      summary: Hämtar information om en utbildningsanordnare
+      operationId: getEducationProvider
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationProviderResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  /educationInfos:
+    get:
+      tags:
+        - EducationInfo
+      summary: Hämtar en lista med utbildningar. Med möjlighet till filtering
+      operationId: getEducationInfos
+      parameters:
+        - $ref: '#/components/parameters/schoolType'
+        - $ref: '#/components/parameters/updatedSince'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationInfoListResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  '/educationInfos/{id}':
+    get:
+      tags:
+        - EducationInfo
+      summary: Hämtar information om en utbildning
+      operationId: getEducationInfo
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationInfoResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+components:
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    schoolType:
+      name: schoolType
+      in: query
+      description: |
+        Begränsa urvalet till de resurser som har en eller flera av de angivna skolformerna.  
+        Tillåtna värden:
+
+        <small>
+          - **AU** – Annan undervisning  
+          - **AUB** – Arbetsmarknadsutbildning  
+          - **FHS** – Folkhögskola  
+          - **FKLASS** – Förskoleklass  
+          - **FTH** – Fritidshem  
+          - **GR** – Grundskola  
+          - **GRAN** – Anpassad grundskola  
+          - **GY** – Gymnasieskola  
+          - **GYAN** – Anpassad gymnasieskola  
+          - **HS** – Högskola  
+          - **KKU** – Konst- och kulturutbildning  
+          - **KU** – Kulturskola  
+          - **NY** – Nationell yrkesutbildning  
+          - **OPPFTH** – Öppen fritidsverksamhet  
+          - **SAM** – Sameskola  
+          - **SP** – Specialskola  
+          - **STF** – Studieförbund  
+          - **VUX** – Kommunal vuxenutbildning  
+          - **VUXGR** – Kommunal vuxenutbildning på grundläggande nivå  
+          - **VUXGRAN** – Kommunal vuxenutbildning som anpassad utbildning på grundläggande nivå  
+          - **VUXGY** – Kommunal vuxenutbildning på gymnasial nivå  
+          - **VUXGYAN** – Kommunal vuxenutbildning som anpassad utbildning på gymnasial nivå  
+          - **VUXSFI** – Kommunal vuxenutbildning i svenska för invandrare  
+          - **YH** – Yrkeshögskola  
+        </small>
+      schema:
+        type: array
+        items:
+          $ref: "#/components/schemas/SchoolTypeCode"
+    providerId:
+      name: providerId
+      in: query
+      description: identifier för provider. t.ex. "p.x.abc"
+      schema:
+        type: string
+    updatedSince:
+      name: updatedSince
+      in: query
+      description: |
+        &nbsp;&nbsp;Endast resurser som är nya, har uppdaterats eller tagits bort vid en visst tidpunkt eller senare, t.ex. "2025-04-24" eller "2025-04-24T11:39:21".<br> 
+        &nbsp;&nbsp;Om endast datum anges används midnatt som starttid, t.ex. "2025-04-24T00:00:00".<br>
+      schema:
+        type: string
+    page:
+      name: page
+      in: query
+      description: Används för att paginera svaret. Sidnumreringen börjar på 0.
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+        example: 0
+    size:
+      name: size
+      in: query
+      description: Används för att ändra mängden resurser i svaret. Maxantalet är 2000.
+      schema:
+        type: integer
+        default: 100
+        minimum: 1
+        maximum: 2000
+        example: 100
+  schemas:
+    Address:
+      type: object
+      properties:
+        country:
+          type: string
+        areaCode:
+          type: string
+        town:
+          type: string
+        postalCode:
+          type: string
+        postBox:
+          type: string
+        streetAddress:
+          type: string
+        organization:
+          $ref: '#/components/schemas/LangString'
+        department:
+          $ref: '#/components/schemas/LangString'
+        wgs84:
+          type: string
+        sweref99:
+          type: string
+        studyLocation:
+          $ref: '#/components/schemas/LangString'
+    ApiErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
+    ApiInfoResponse:
+      type: object
+      properties:
+        apiPublisher:
+          type: string
+          example: Skolverket
+        apiName:
+          type: string
+          example: susa-navet
+        apiVersion:
+          type: string
+          example: 1.0.0
+        emilSchemaVersion:
+          type: string
+          example: 1.0.0
+        apiReleased:
+          type: string
+          format: date
+          example: 2025-10-07
+        apiDocumentation:
+          type: string
+          example: https://www.skolverket.se/om-skolverket/webbplatser-och-tjanster/oppna-data/api-for-utbildningstillfallen-susa-navet
+        apiStatus:
+          type: string
+          example: beta
+    Application:
+      type: object
+      properties:
+        code:
+          type: string
+        instruction:
+          $ref: '#/components/schemas/LangString'
+        url:
+          $ref: '#/components/schemas/LangUrl'
+        first:
+          type: string
+          format: date
+        last:
+          type: string
+          format: date
+        email:
+          type: string
+          format: email
+        address:
+          $ref: '#/components/schemas/Address'
+        continuous:
+          type: boolean
+          nullable: true
+    Code_Audience:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          C_Audience: '#/components/schemas/C_Audience'
+      oneOf:
+        - $ref: '#/components/schemas/C_Audience'
+    C_Audience:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          $ref: '#/components/schemas/AudienceCode'
+    AudienceCode:
+      type: string
+      enum:
+        - rektorer
+        - lärare
+        - förskolelärare
+        - yrkeslärare
+    Code_Body:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          C_Body: '#/components/schemas/C_Body'
+      oneOf:
+        - $ref: '#/components/schemas/C_Body'
+    C_Body:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+          enum:
+            - kommunal
+            - region
+            - statlig
+            - enskild
+            - annan
+    Code_Configuration:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          C_Configuration: '#/components/schemas/C_Configuration'
+      oneOf:
+        - $ref: '#/components/schemas/C_Configuration'
+    C_Configuration:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          $ref: '#/components/schemas/ConfigurationCode'
+    ConfigurationCode:
+      type: string
+      enum:
+        - kurs
+        - kurspaket
+        - program
+    SchoolTypeCode:
+      type: string
+      description: |
+        Följande värden används för att beskriva skolform:
+        | Kod      | Beskrivning |
+        |----------|-------------|
+        | AU       | Annan undervisning |
+        | AUB      | Arbetsmarknadsutbildning |
+        | FHS      | Folkhögskola |
+        | FKLASS   | Förskoleklass |
+        | FTH      | Fritidshem |
+        | GR       | Grundskola |
+        | GRAN     | Anpassad grundskola |
+        | GY       | Gymnasieskola |
+        | GYAN     | Anpassad gymnasieskola |
+        | HS       | Högskola |
+        | KKU      | Konst- och Kulturutbildning |
+        | KU       | Kulturskola |
+        | NY       | Nationell yrkesutbildning |
+        | OPPFTH   | Öppen fritidsverksamhet |
+        | SAM      | Sameskola |
+        | SP       | Specialskola |
+        | STF      | Studieförbund |
+        | VUX      | Kommunal vuxenutbildning |
+        | VUXGR    | Kommunal vuxenutbildning på grundläggande nivå |
+        | VUXGRAN  | Kommunal vuxenutbildning som anpassad utbildning på grundläggande nivå |
+        | VUXGY    | Kommunal vuxenutbildning på gymnasial nivå |
+        | VUXGYAN  | Kommunal vuxenutbildning som anpassad utbildning på gymnasial nivå |
+        | VUXSFI   | Kommunal vuxenutbildning i svenska för invandrare |
+        | YH       | Yrkeshögskola |
+      enum:
+        - AU
+        - AUB
+        - FHS
+        - FKLASS
+        - FTH
+        - GR
+        - GRAN
+        - GY
+        - GYAN
+        - HS
+        - KKU
+        - KU
+        - NY
+        - OPPFTH
+        - SAM
+        - SP
+        - STF
+        - VUX
+        - VUXGR
+        - VUXGRAN
+        - VUXGY
+        - VUXGYAN
+        - VUXSFI
+        - YH
+    Credits:
+      required:
+        - system
+        - credits
+      type: object
+      properties:
+        system:
+          $ref: '#/components/schemas/Code_Credits'
+        credits:
+          type: number
+          format: double
+        min:
+          type: number
+          format: double
+    DistanceEducation:
+      type: object
+      properties:
+        noOfMandatorySessions:
+          type: integer
+          format: int32
+        noOfOptionalSessions:
+          type: integer
+          format: int32
+        noOfMandatoryRemoteSessions:
+          type: integer
+          format: int32
+        noOfOptionalRemoteSessions:
+          type: integer
+          format: int32
+        description:
+          $ref: '#/components/schemas/LangString'
+    EducationEvent:
+      required:
+        - identifier
+        - education
+        - providers
+        - lastEdited
+        - expires
+        - execution
+      type: object
+      properties:
+        identifier:
+          type: string
+        education:
+          type: string
+        providers:
+          type: array
+          minItems: 1
+          items:
+            type: string
+        examiningBodies:
+          type: array
+          items:
+            type: string
+        orderers:
+          type: array
+          items:
+            type: string
+        lastEdited:
+          type: string
+          format: date-time-local
+        expires:
+          type: string
+          format: date-time-local
+        title:
+          $ref: '#/components/schemas/LangString'
+        description:
+          $ref: '#/components/schemas/LangString'
+        url:
+          $ref: '#/components/schemas/LangUrl'
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        languageOfInstructions:
+          type: array
+          items:
+            type: string
+        execution:
+          $ref: '#/components/schemas/Execution'
+        isCancelled:
+          type: boolean
+          nullable: true
+        fees:
+          type: array
+          items:
+            $ref: '#/components/schemas/Fee'
+        places:
+          type: integer
+          format: int32
+        timeOfStudy:
+          $ref: '#/components/schemas/CodeTimeOfStudy'
+        paceOfStudy:
+          $ref: '#/components/schemas/PaceOfStudy'
+        isApprenticeship:
+          type: boolean
+          nullable: true
+        distance:
+          $ref: '#/components/schemas/DistanceEducation'
+        application:
+          $ref: '#/components/schemas/Application'
+        keywords:
+          type: array
+          items:
+            $ref: '#/components/schemas/LangString'
+        extensions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Extension_E'
+    EducationEventResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        content:
+          $ref: '#/components/schemas/EducationEvent'
+    EducationEventListResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+        educationEvents:
+          type: array
+          items:
+            $ref: '#/components/schemas/EducationEventResponse'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+    EducationInfo:
+      required:
+        - identifier
+        - code
+        - lastEdited
+        - title
+        - type
+        - subject
+        - resultIsDegree
+      type: object
+      properties:
+        identifier:
+          type: string
+        educationBase:
+          type: string
+        code:
+          type: string
+        lastEdited:
+          type: string
+          format: date-time-local
+        expires:
+          type: string
+          format: date-time-local
+        title:
+          $ref: '#/components/schemas/LangString'
+        description:
+          $ref: '#/components/schemas/LangString'
+        url:
+          $ref: '#/components/schemas/LangUrl'
+        type:
+          $ref: '#/components/schemas/Code_SchoolType'
+        educationLevels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Code_EducationLevel'
+        orientation:
+          $ref: '#/components/schemas/Code_Orientation'
+        audience:
+          $ref: '#/components/schemas/Code_Audience'
+        configuration:
+          $ref: '#/components/schemas/Code_Configuration'
+        subjects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Code_Subject'
+        isVocational:
+          type: boolean
+          nullable: true
+        resultIsDegree:
+          type: boolean
+        degrees:
+          type: array
+          items:
+            $ref: '#/components/schemas/LangString'
+        qualificationLevel:
+          $ref: '#/components/schemas/Code_Qualification'
+        credits:
+          $ref: '#/components/schemas/Credits'
+        extent:
+          $ref: '#/components/schemas/TimeLength'
+        eligibility:
+          $ref: '#/components/schemas/LangString'
+        recommendedPriorKnowledge:
+          $ref: '#/components/schemas/LangString'
+        eligibleForStudentAid:
+          $ref: '#/components/schemas/Code_StudentAid'
+        extensions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Extension_I'
+    EducationInfoResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        content:
+          $ref: '#/components/schemas/EducationInfo'
+    EducationInfoListResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+        educationInfos:
+          type: array
+          items:
+            $ref: '#/components/schemas/EducationInfoResponse'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+    Code_EducationLevel:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          YH_EducationLevel: '#/components/schemas/YH_EducationLevel'
+          C_EducationLevel: '#/components/schemas/C_EducationLevel'
+          UH_EducationLevel: '#/components/schemas/UH_EducationLevel'
+      oneOf:
+        - $ref: '#/components/schemas/YH_EducationLevel'
+        - $ref: '#/components/schemas/C_EducationLevel'
+        - $ref: '#/components/schemas/UH_EducationLevel'
+    YH_EducationLevel:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+    C_EducationLevel:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          $ref: '#/components/schemas/EducationLevelCode'
+    UH_EducationLevel:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+    EducationLevelCode:
+      type: string
+      enum:
+        - ISCED_01
+        - ISCED_02
+        - ISCED_1
+        - ISCED_2
+        - ISCED_3
+        - ISCED_4
+        - ISCED_5
+        - ISCED_6
+        - ISCED_7
+        - ISCED_8
+    EducationProvider:
+      required:
+        - identifier
+        - lastEdited
+        - name
+        - url
+        - contactAddress
+        - emailAddress
+        - responsibleBody
+      type: object
+      properties:
+        identifier:
+          type: string
+        lastEdited:
+          type: string
+          format: date-time-local
+        expires:
+          type: string
+          format: date-time-local
+        name:
+          $ref: '#/components/schemas/LangString'
+        description:
+          $ref: '#/components/schemas/LangString'
+        url:
+          $ref: '#/components/schemas/LangUrl'
+        visitAddresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        contactAddress:
+          $ref: '#/components/schemas/Address'
+        emailAddresses:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            format: email
+        phones:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneNumber'
+        responsibleBody:
+          $ref: '#/components/schemas/ResponsibleBody'
+        years:
+          type: array
+          items:
+            $ref: '#/components/schemas/Code_SchoolYear'
+        owner:
+          $ref: '#/components/schemas/LangString'
+        organisationNumber:
+          type: string
+    EducationProviderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        content:
+          $ref: '#/components/schemas/EducationProvider'
+    EducationProviderListResponse:
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+        educationProviders:
+          type: array
+          items:
+            $ref: '#/components/schemas/EducationProviderResponse'
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+    Code_StudentAid:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          C_StudentAid: '#/components/schemas/C_StudentAid'
+      oneOf:
+        - $ref: '#/components/schemas/C_StudentAid'
+    C_StudentAid:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          $ref: '#/components/schemas/StudentAidCode'
+    StudentAidCode:
+      type: string
+      enum:
+        - saknas
+        - nej
+        - ja
+        - "A 1"
+        - "A 1 gr"
+        - "A 1 gy"
+        - "A 2"
+        - "A 3"
+        - "B 1"
+        - "B 2"
+    Execution:
+      required:
+        - condition
+      type: object
+      properties:
+        condition:
+          $ref: '#/components/schemas/Code_ExecutionCondition'
+        start:
+          type: string
+          format: date
+        end:
+          type: string
+          format: date
+    Extension_E:
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          KVEventExtension: '#/components/schemas/KVEventExtension'
+          UHEventExtension: '#/components/schemas/UHEventExtension'
+      oneOf:
+        - $ref: '#/components/schemas/KVEventExtension'
+        - $ref: '#/components/schemas/UHEventExtension'
+    KVEventExtension:
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        contractor:
+          type: string
+    UHEventExtension:
+      type: object
+      required:
+        - type
+        - id
+        - startPeriod
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        applicationDetails:
+          $ref: '#/components/schemas/ApplicationDetailsType'
+        admissionDetails:
+          $ref: '#/components/schemas/AdmissionDetailsType'
+        startPeriod:
+          $ref: '#/components/schemas/StartDateType'
+        stopWeek:
+          $ref: '#/components/schemas/StopDateType'
+        tuitionFee:
+          $ref: '#/components/schemas/TuitionFee'
+        itdistance:
+          type: boolean
+        eligibilityExemption:
+          type: boolean
+        textualDescription:
+          $ref: '#/components/schemas/LangString'
+        keywords:
+          $ref: '#/components/schemas/KeywordDescriptionType'
+        assignedEducation:
+          $ref: '#/components/schemas/AssignedEducationType'
+        department:
+          type: string
+        courseRound:
+          type: integer
+          format: int32
+        formOfFunding:
+          type: string
+        eventPackageReferences:
+          $ref: '#/components/schemas/PackageReferencesType'
+        genericReference:
+          $ref: '#/components/schemas/GenericReferenceType'
+    TuitionFee:
+      type: object
+      properties:
+        value:
+          type: boolean
+        first:
+          type: integer
+          format: int32
+        total:
+          type: integer
+          format: int32
+    GenericReferenceType:
+      type: object
+      properties:
+        uniqueIdentifier:
+          type: string
+    PackageReferencesType:
+      type: object
+      required:
+        - educationEventRefs
+      properties:
+        educationEventRefs:
+          type: array
+          items:
+            $ref: '#/components/schemas/EducationEventRef'
+    EducationEventRef:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+    ApplicationDetailsType:
+      type: object
+      properties:
+        closeDate:
+          type: string
+          format: date
+        applicationModel:
+          type: string
+        onlyAsPartOfPackage:
+          type: boolean
+        onlyAsPartOfProgram:
+          type: boolean
+        visibleToInternationalApplicants:
+          type: boolean
+        visibleToSwedishApplicants:
+          type: boolean
+    AdmissionDetailsType:
+      type: object
+      properties:
+        eligibilityModelSB:
+          $ref: '#/components/schemas/EligibilityModelSB'
+        eligibilityModelGBA:
+          type: string
+        credentialRatingModel:
+          $ref: '#/components/schemas/CredentialRatingModel'
+        selectionModel:
+          type: string
+        assessmentPackage:
+          type: string
+        distributionOfCredits:
+          $ref: '#/components/schemas/DistributionOfCreditsType'
+        admissionNumbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdmissionNumberType'
+        admissionRoundId:
+          type: string
+    EligibilityModelSB:
+      type: object
+      properties:
+        value:
+          type: string
+        useNoModel:
+          type: boolean
+    CredentialRatingModel:
+      type: object
+      properties:
+        value:
+          type: string
+        useNoModel:
+          type: boolean
+    DistributionOfCreditsType:
+      type: object
+      required:
+        - credits
+      properties:
+        credits:
+          type: array
+          items:
+            $ref: '#/components/schemas/Credit'
+    Credit:
+      type: object
+      required:
+        - semester
+        - year
+      properties:
+        value:
+          type: number
+          format: double
+          minimum: 0
+        semester:
+          $ref: '#/components/schemas/SemesterType'
+        year:
+          type: string
+        startWeek:
+          type: integer
+          format: int32
+        stopWeek:
+          type: integer
+          format: int32
+    AdmissionNumberType:
+      type: object
+      required:
+        - selectionRound
+      properties:
+        value:
+          type: integer
+          format: int32
+        selectionRound:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 3
+    StartDateType:
+      type: object
+      properties:
+        week:
+          type: integer
+          format: int32
+        period:
+          $ref: '#/components/schemas/PeriodType'
+    StopDateType:
+      type: object
+      properties:
+        week:
+          type: integer
+          format: int32
+    PeriodType:
+      type: object
+      required:
+        - year
+        - periodNumber
+      properties:
+        year:
+          type: string
+        periodNumber:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 5
+        semester:
+          $ref: '#/components/schemas/SemesterType'
+    SemesterType:
+      type: string
+      enum:
+        - vt
+        - ht
+    KeywordDescriptionType:
+      type: object
+      required:
+        - words
+      properties:
+        words:
+          type: array
+          items:
+            $ref: '#/components/schemas/KeywordWords'
+    KeywordWords:
+      type: object
+      required:
+        - lang
+      properties:
+        lang:
+          type: string
+        strings:
+          type: array
+          items:
+            type: string
+    AssignedEducationType:
+      type: object
+      required:
+        - id
+        - code
+        - description
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        description:
+          $ref: '#/components/schemas/LangString'
+    Extension_I:
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          AUBInfoExtension: '#/components/schemas/AUBInfoExtension'
+          UHInfoExtension: '#/components/schemas/UHInfoExtension'
+      oneOf:
+        - $ref: '#/components/schemas/AUBInfoExtension'
+        - $ref: '#/components/schemas/UHInfoExtension'
+    AUBInfoExtension:
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        aubType:
+          type: string
+    UHInfoExtension:
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        focusIdentifier:
+          type: string
+    Fee:
+      type: object
+      properties:
+        totalAmount:
+          type: number
+          format: double
+        currency:
+          type: string
+        condition:
+          $ref: '#/components/schemas/LangString'
+        firstInstallment:
+          type: number
+          format: double
+    LangString:
+      type: object
+      properties:
+        strings:
+          type: array
+          items:
+            $ref: '#/components/schemas/LangStringNode'
+    LangStringNode:
+      type: object
+      properties:
+        lang:
+          type: string
+        content:
+          type: string
+        value:
+          type: string
+    Link:
+      type: object
+      properties:
+        rel:
+          type: string
+        href:
+          type: string
+    Code_Orientation:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          C_Orientation: '#/components/schemas/C_Orientation'
+      oneOf:
+        - $ref: '#/components/schemas/C_Orientation'
+    C_Orientation:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          $ref: '#/components/schemas/OrientationCode'
+    OrientationCode:
+      type: string
+      enum:
+        - "1"
+        - "2"
+        - "3"
+    PageMetadata:
+      type: object
+      properties:
+        size:
+          type: integer
+          format: int64
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int64
+        pageNumber:
+          type: integer
+          format: int64
+    PaceOfStudy:
+      type: object
+      properties:
+        percentage:
+          type: number
+          format: double
+        individual:
+          type: boolean
+          nullable: true
+        note:
+          $ref: '#/components/schemas/LangString'
+    PhoneNumber:
+      required:
+        - number
+      type: object
+      properties:
+        function:
+          $ref: '#/components/schemas/LangString'
+        number:
+          $ref: '#/components/schemas/LangString'
+    Code_Qualification:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          C_Qualification: '#/components/schemas/C_Qualification'
+      oneOf:
+        - $ref: '#/components/schemas/C_Qualification'
+    C_Qualification:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          $ref: '#/components/schemas/QualificationCode'
+    QualificationCode:
+      type: string
+      enum:
+        - "1"
+        - "2"
+        - "3"
+        - "4"
+        - "5"
+        - "6"
+        - "7"
+        - "8"
+    ResponsibleBody:
+      required:
+        - type
+        - name
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/Code_Body'
+        name:
+          $ref: '#/components/schemas/LangString'
+    Code_SchoolType:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          C_SchoolType: '#/components/schemas/C_SchoolType'
+      oneOf:
+        - $ref: '#/components/schemas/C_SchoolType'
+    C_SchoolType:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          $ref: '#/components/schemas/SchoolTypeCode'
+    Code_SchoolYear:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          C_SchoolYear: '#/components/schemas/C_SchoolYear'
+      oneOf:
+        - $ref: '#/components/schemas/C_SchoolYear'
+    C_SchoolYear:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+          enum:
+            - "0"
+            - "1"
+            - "2"
+            - "3"
+            - "4"
+            - "5"
+            - "6"
+            - "7"
+            - "8"
+            - "9"
+            - "10"
+    Code_Subject:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+    UH_Subject:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+    AUB_Subject:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+    FH_Subject:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+    SV_Subject:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+    F_Subject:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+    C_Subject_SUN:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+    C_Subject_ISCED97:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+    C_Subject_ISCED2013:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+    SubjectISCED97Code:
+      type: string
+      enum:
+        - "01"
+        - "0101"
+        - "08"
+        - "080"
+        - "09"
+        - "090"
+        - "14"
+        - "142"
+        - "143"
+        - "144"
+        - "145"
+        - "146"
+        - "21"
+        - "213"
+        - "214"
+        - "211"
+        - "215"
+        - "212"
+        - "22"
+        - "221"
+        - "225"
+        - "226"
+        - "222"
+        - "227"
+        - "223"
+        - "31"
+        - "314"
+        - "313"
+        - "311"
+        - "312"
+        - "32"
+        - "321"
+        - "322"
+        - "34"
+        - "344"
+        - "343"
+        - "345"
+        - "342"
+        - "346"
+        - "341"
+        - "347"
+        - "38"
+        - "380"
+        - "42"
+        - "421"
+        - "422"
+        - "852"
+        - "44"
+        - "442"
+        - "443"
+        - "441"
+        - "46"
+        - "461"
+        - "462"
+        - "48"
+        - "482"
+        - "481"
+        - "52"
+        - "524"
+        - "85"
+        - "851"
+        - "522"
+        - "523"
+        - "521"
+        - "525"
+        - "54"
+        - "541"
+        - "543"
+        - "542"
+        - "544"
+        - "58"
+        - "581"
+        - "582"
+        - "62"
+        - "621"
+        - "622"
+        - "623"
+        - "624"
+        - "64"
+        - "641"
+        - "72"
+        - "724"
+        - "721"
+        - "723"
+        - "725"
+        - "726"
+        - "727"
+        - "76"
+        - "761"
+        - "762"
+        - "81"
+        - "814"
+        - "815"
+        - "811"
+        - "813"
+        - "812"
+        - "853"
+        - "862"
+        - "86"
+        - "863"
+        - "861"
+        - "84"
+        - "840"
+    SubjectISCED2013Code:
+      type: string
+      enum:
+        - "001"
+        - "0011"
+        - "002"
+        - "0021"
+        - "003"
+        - "0031"
+        - "011"
+        - "0111"
+        - "0112"
+        - "0113"
+        - "0114"
+        - "021"
+        - "0211"
+        - "0212"
+        - "0213"
+        - "0214"
+        - "0215"
+        - "022"
+        - "0221"
+        - "0222"
+        - "0223"
+        - "023"
+        - "0231"
+        - "0232"
+        - "031"
+        - "0311"
+        - "0312"
+        - "0313"
+        - "0314"
+        - "032"
+        - "0321"
+        - "0322"
+        - "041"
+        - "0411"
+        - "0412"
+        - "0413"
+        - "0414"
+        - "0415"
+        - "0416"
+        - "0417"
+        - "042"
+        - "0421"
+        - "051"
+        - "0511"
+        - "0512"
+        - "052"
+        - "0521"
+        - "0522"
+        - "053"
+        - "0531"
+        - "0532"
+        - "0533"
+        - "054"
+        - "0541"
+        - "0542"
+        - "061"
+        - "0611"
+        - "0612"
+        - "0613"
+        - "071"
+        - "0711"
+        - "0712"
+        - "0713"
+        - "0714"
+        - "0715"
+        - "0716"
+        - "072"
+        - "0721"
+        - "0722"
+        - "0723"
+        - "0724"
+        - "073"
+        - "0731"
+        - "0732"
+        - "081"
+        - "0811"
+        - "0812"
+        - "082"
+        - "0821"
+        - "083"
+        - "0831"
+        - "084"
+        - "0841"
+        - "091"
+        - "0911"
+        - "0912"
+        - "0913"
+        - "0914"
+        - "0915"
+        - "0916"
+        - "0917"
+        - "092"
+        - "0921"
+        - "0922"
+        - "0923"
+        - "101"
+        - "1011"
+        - "1012"
+        - "1013"
+        - "1014"
+        - "1015"
+        - "102"
+        - "1021"
+        - "1022"
+        - "103"
+        - "1031"
+        - "1032"
+        - "104"
+        - "1041"
+    Code_Credits:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          C_Credits: '#/components/schemas/C_Credits'
+      oneOf:
+        - $ref: '#/components/schemas/C_Credits'
+    C_Credits:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          $ref: '#/components/schemas/CreditsCode'
+    CreditsCode:
+      type: string
+      enum:
+        - hp
+        - yh
+        - gy
+        - fup
+        - vp
+        - nyp
+    TimeLength:
+      required:
+        - length
+        - unit
+      type: object
+      properties:
+        length:
+          type: integer
+          format: int32
+        max:
+          type: integer
+          format: int32
+        unit:
+          $ref: '#/components/schemas/Code_TimeType'
+        note:
+          $ref: '#/components/schemas/LangString'
+    CodeTimeOfStudy:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          C_TimeOfStudy: '#/components/schemas/C_TimeOfStudy'
+      oneOf:
+        - $ref: '#/components/schemas/C_TimeOfStudy'
+    C_TimeOfStudy:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+        code:
+          type: string
+    Code_TimeType:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          C_TimeType: '#/components/schemas/C_TimeType'
+      oneOf:
+        - $ref: '#/components/schemas/C_TimeType'
+    C_TimeType:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          $ref: '#/components/schemas/TimeTypeCode'
+    TimeTypeCode:
+      type: string
+      enum:
+        - hours
+        - days
+        - weeks
+        - months
+        - years
+        - semesters
+    LangUrl:
+      type: object
+      properties:
+        urls:
+          type: array
+          items:
+            $ref: '#/components/schemas/UrlNode'
+    UrlNode:
+      type: object
+      properties:
+        lang:
+          type: string
+        value:
+          type: string
+    Code_ExecutionCondition:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          C_ExecutionCondition: '#/components/schemas/C_ExecutionCondition'
+      oneOf:
+        - $ref: '#/components/schemas/C_ExecutionCondition'
+    C_ExecutionCondition:
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          type: string
+        code:
+          $ref: '#/components/schemas/ExecutionConditionCode'
+    ExecutionConditionCode:
+      type: string
+      enum:
+        - "0"
+        - "1"
+        - "2"
+        - "3"
+  responses:
+    InternalServerError:
+      description: Internal Error Server
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+          example:
+            timestamp: 2025-02-18T15:57:56+01:00
+            status : 500
+            type: Internal Server Error
+            message : An unexpected error occurred on our side. Please try again later or contact support at susa@skolverket.se if the problem persists.
+    InvalidRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+          example:
+            timestamp: 2025-02-18T15:57:56+01:00
+            status: 400
+            type: Bad Request
+            message: Constraint violation. 'size' must be greater than or equal to 1
+    ServiceUnavailable:
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+          example:
+            timestamp: 2025-02-18T15:57:56+01:00
+            status: 503
+            type: Service Unavailable
+            message: The system is currently updating education resources. Please try again later.
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+          example:
+            timestamp: 2025-02-18T15:57:56+01:00
+            status: 404
+            type: Not Found
+            message: EducationEvent/Info/Provider with id 'id' not found
+    NotFoundApiInfo:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiErrorResponse'
+          example:
+            timestamp: 2025-02-18T15:57:56+01:00
+            status: 404
+            type: Not Found
+            message: Api Info with version 'apiVersion' not found

@@ -95,6 +95,16 @@
 							</configOptions>
 						</configuration>
 					</execution>
+					<execution>
+						<id>susa-navet</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/integration/susa-navet-emil3.yaml</inputSpec>
+							<modelPackage>generated.se.sundsvall.susanavet</modelPackage>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>

@@ -1,13 +1,19 @@
 package se.sundsvall.educationdata.integration.db.model;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,18 +36,14 @@ public class EducationInfoEntity {
 	@Column(name = "education_info_id", length = 64)
 	private String educationInfoId;
 
-	@Column(name = "title", length = 100)
+	@Column(name = "title", length = 255)
 	private String title;
 
 	@Column(name = "school_type", length = 32)
 	private String schoolType;
 
-	// Ex. program or course
-	@Column(name = "education_type", length = 32)
+	@Column(name = "education_type", columnDefinition = "TEXT")
 	private String educationType;
-
-	@Column(name = "code", length = 50)
-	private String code;
 
 	@Column(name = "description", columnDefinition = "TEXT")
 	private String description;
@@ -56,7 +58,7 @@ public class EducationInfoEntity {
 	private String creditType;
 
 	@Column(name = "credits", length = 10)
-	private String credits;
+	private Double credits;
 
 	@Column(name = "duration", length = 10)
 	private String duration;
@@ -64,28 +66,21 @@ public class EducationInfoEntity {
 	@Column(name = "result_is_degree")
 	private Boolean resultIsDegree;
 
-	@Column(name = "degree", length = 50)
-	private String degree;
-
-	@Column(name = "content_url")
-	private String contentUrl;
+	@ElementCollection
+	@CollectionTable(name = "education_info_degree",
+		joinColumns = @JoinColumn(name = "education_info_id"))
+	@Column(name = "degree", length = 255)
+	private List<String> degree;
 
 	@Column(name = "expires")
 	private LocalDateTime expires;
 
-	@Column(name = "student_aid_eligibility", length = 10)
-	private String studentAidEligibility;
-
-	@Column(name = "subjects", length = 32)
-	private String subjects;
+	@ElementCollection
+	@CollectionTable(name = "education_info_subject",
+		joinColumns = @JoinColumn(name = "education_info_id"))
+	private List<EducationInfoSubject> subjects;
 
 	@CreationTimestamp
 	@Column(name = "created_at")
 	private LocalDate createdAt;
-
-	@Column(name = "outdated_at")
-	private LocalDate outdatedAt;
-
-	@Column(name = "deleted")
-	private Boolean deleted;
 }

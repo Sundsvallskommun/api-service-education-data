@@ -2,8 +2,6 @@ package se.sundsvall.educationdata.scheduler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import se.sundsvall.dept44.scheduling.Dept44Scheduled;
 import se.sundsvall.educationdata.service.EducationEventsService;
@@ -14,45 +12,61 @@ import se.sundsvall.educationdata.service.PlannedEducationService;
 @Component
 public class Scheduler {
 
-	private final EducationEventsService eventsService;
-	private final EducationInfosService infosService;
-	private final EducationProvidersService providersService;
-	private final PlannedEducationService educationService;
-
-	private final int jsonSize;
+	private final EducationEventsService educationEventsService;
+	private final EducationInfosService educationInfosService;
+	private final EducationProvidersService educationProvidersService;
+	private final PlannedEducationService plannedEducationService;
 
 	private static final Logger log = LoggerFactory.getLogger(Scheduler.class);
 
-	public Scheduler(EducationEventsService eventsService, EducationInfosService infosService, EducationProvidersService providersService, PlannedEducationService educationService, @Value("${scheduler.import.json-size}") int jsonSize) {
-		this.eventsService = eventsService;
-		this.infosService = infosService;
-		this.providersService = providersService;
-		this.educationService = educationService;
-		this.jsonSize = jsonSize;
-	}
-
-	@Async
-	public void triggerAsyncImport() {
-		try {
-			importData();
-		} catch (Exception e) {
-			log.error("Manually triggered import failed", e);
-		}
+	public Scheduler(EducationEventsService educationEventsService, EducationInfosService educationInfosService, EducationProvidersService educationProvidersService, PlannedEducationService plannedEducationService) {
+		this.educationEventsService = educationEventsService;
+		this.educationInfosService = educationInfosService;
+		this.educationProvidersService = educationProvidersService;
+		this.plannedEducationService = plannedEducationService;
 	}
 
 	@Dept44Scheduled(
-		cron = "${scheduler.import.cron}",
-		name = "${scheduler.import.name}",
-		lockAtMostFor = "${scheduler.import.shedlock-lock-at-most-for}",
-		maximumExecutionTime = "${scheduler.import.maximum-execution-time}")
-	public void importData() {
+		cron = "${scheduler.import-susa-json.cron}",
+		name = "${scheduler.import-susa-json.name}",
+		lockAtMostFor = "${scheduler.import-susa-json.shedlock-lock-at-most-for}",
+		maximumExecutionTime = "${scheduler.import-susa-json.maximum-execution-time}")
+	public void importSusaJson() {
 
-		eventsService.saveAllPagesEventsJsonTable(jsonSize);
+		educationEventsService.saveAllPagesEventsJsonTable();
 
-		infosService.saveAllPagesInfoJsonTable(jsonSize);
+		educationInfosService.saveAllPagesInfoJsonTable();
 
-		providersService.saveAllPagesProviderJsonTable(jsonSize);
+		educationProvidersService.saveAllPagesProviderJsonTable();
+	}
 
-		educationService.getCategoryInfo();
+	@Dept44Scheduled(
+		cron = "${scheduler.import-categories.cron}",
+		name = "${scheduler.import-categories.name}",
+		lockAtMostFor = "${scheduler.import-categories.shedlock-lock-at-most-for}",
+		maximumExecutionTime = "${scheduler.import-categories.maximum-execution-time}")
+	public void importPlannedEducationCategories() {
+
+		plannedEducationService.importReferenceCategories();
+	}
+
+	/**
+	 * Creates and stores event and info entities found in SUSA JSON
+	 * snapshots imported that day. Only events matching the configured
+	 * municipality whitelist and information related to stored events
+	 * are included.
+	 * <p>
+	 * The SUSA snapshot import should complete before this method runs.
+	 */
+	@Dept44Scheduled(
+		cron = "${scheduler.create-entities.cron}",
+		name = "${scheduler.create-entities.name}",
+		lockAtMostFor = "${scheduler.create-entities.shedlock-lock-at-most-for}",
+		maximumExecutionTime = "${scheduler.create-entities.maximum-execution-time}")
+	public void createEntitiesFromJson() {
+
+		educationEventsService.createEventEntitiesFromJson();
+
+		educationInfosService.createInfoEntitiesFromJson();
 	}
 }

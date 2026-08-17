@@ -33,60 +33,60 @@ class PlannedEducationIntegrationTest {
 	void getAreas() {
 		final var response = new ApiResponseAreasRM().body(new AreasRM().areas(List.of(new AreaRM().areaId(1L).name("Bygg"))));
 		final var rows = List.of(ReferenceCategoryEntity.builder().withCategoryId("1").build());
-		when(clientMock.getAllAreas()).thenReturn(response);
+		when(clientMock.getAllReferenceCategories()).thenReturn(response);
 		when(mapper.toReferenceCategory(response)).thenReturn(rows);
 
-		final var result = integration.getAllAreas();
+		final var result = integration.getAllReferenceCategories();
 
 		assertThat(result).isSameAs(rows);
-		verify(clientMock).getAllAreas();
+		verify(clientMock).getAllReferenceCategories();
 		verify(mapper).toReferenceCategory(response);
 		verifyNoMoreInteractions(clientMock, mapper);
 	}
 
 	@Test
 	void getAreas_nullResponse() {
-		when(clientMock.getAllAreas()).thenReturn(null);
+		when(clientMock.getAllReferenceCategories()).thenReturn(null);
 
-		assertThatThrownBy(() -> integration.getAllAreas())
+		assertThatThrownBy(() -> integration.getAllReferenceCategories())
 			.isInstanceOf(ThrowableProblem.class)
 			.hasMessageContaining("Empty body");
 
-		verify(clientMock).getAllAreas();
+		verify(clientMock).getAllReferenceCategories();
 		verifyNoInteractions(mapper);
 	}
 
 	@Test
-	void getAllAreas_emptyAreas() {
+	void getAllAreas_emptyReferenceCategories() {
 		final var response = new ApiResponseAreasRM().body(new AreasRM().areas(List.of()));
-		when(clientMock.getAllAreas()).thenReturn(response);
+		when(clientMock.getAllReferenceCategories()).thenReturn(response);
 
-		assertThatThrownBy(() -> integration.getAllAreas())
+		assertThatThrownBy(() -> integration.getAllReferenceCategories())
 			.isInstanceOf(ThrowableProblem.class)
 			.hasMessageContaining("Empty body");
 
-		verify(clientMock).getAllAreas();
+		verify(clientMock).getAllReferenceCategories();
 		verifyNoInteractions(mapper);
 	}
 
 	@Test
-	void getAllAreas_bodyIsNull() {
-		when(clientMock.getAllAreas()).thenReturn(new ApiResponseAreasRM());
-		assertThatThrownBy(() -> integration.getAllAreas())
+	void getAllReferenceCategories_bodyIsNull() {
+		when(clientMock.getAllReferenceCategories()).thenReturn(new ApiResponseAreasRM());
+		assertThatThrownBy(() -> integration.getAllReferenceCategories())
 			.isInstanceOf(ThrowableProblem.class)
 			.hasMessageContaining("Empty body");
-		verify(clientMock).getAllAreas();
+		verify(clientMock).getAllReferenceCategories();
 		verifyNoInteractions(mapper);
 	}
 
 	@Test
-	void getAllAreas_areasIsNull() {
+	void getAllAreas_referenceCategoriesIsNull() {
 		final var response = new ApiResponseAreasRM().body(new AreasRM().areas(null));
-		when(clientMock.getAllAreas()).thenReturn(response);
-		assertThatThrownBy(() -> integration.getAllAreas())
+		when(clientMock.getAllReferenceCategories()).thenReturn(response);
+		assertThatThrownBy(() -> integration.getAllReferenceCategories())
 			.isInstanceOf(ThrowableProblem.class)
 			.hasMessageContaining("Empty body");
-		verify(clientMock).getAllAreas();
+		verify(clientMock).getAllReferenceCategories();
 		verifyNoInteractions(mapper);
 	}
 }
