@@ -86,7 +86,7 @@ public class PlannedEducationService {
 
 		long totalPages = Optional.ofNullable(result.getBody())
 			.map(ListedAdultEducationEventsRM::getPage)
-			.map(PageMetadataRM::getTotalPages).orElse(1L);
+			.map(PageMetadataRM::getTotalPages).orElse(1L).intValue();
 
 		var eventIds = new ArrayList<>(plannedEducationMapper.toEventIdList(result));
 
