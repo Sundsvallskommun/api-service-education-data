@@ -68,5 +68,21 @@ public class Scheduler {
 		educationEventsService.createEventEntitiesFromJson();
 
 		educationInfosService.createInfoEntitiesFromJson();
+
+	}
+
+	/**
+	 * Sets the relations between an education and the category of that education.
+	 * <p>
+	 * Needs both the Educations and Categories to have been imported before running.
+	 */
+	@Dept44Scheduled(
+		cron = "${scheduler.refresh-category-relations.cron}",
+		name = "${scheduler.refresh-category-relations.name}",
+		lockAtMostFor = "${scheduler.refresh-category-relations.shedlock-lock-at-most-for}",
+		maximumExecutionTime = "${scheduler.refresh-category-relations.maximum-execution-time}")
+	public void refreshCategoryRelations() {
+
+		plannedEducationService.refreshEventCategoryRelations();
 	}
 }

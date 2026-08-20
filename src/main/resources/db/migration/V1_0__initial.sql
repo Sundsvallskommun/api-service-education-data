@@ -48,6 +48,7 @@ CREATE TABLE education_info (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
     education_info_id      VARCHAR(64),
     title                  VARCHAR(255),
+    code                   VARCHAR(32),
     school_type            VARCHAR(32),
     education_type         VARCHAR(100),
     description            TEXT,

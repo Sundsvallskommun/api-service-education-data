@@ -42,6 +42,7 @@ class EducationInfoEntityTest {
 		var id = UUID.randomUUID().toString();
 		var educationInfoId = "education_info_id";
 		var title = "title";
+		var code = "code";
 		var schoolType = "schoolType";
 		var educationType = "educationType";
 		var description = "description";
@@ -64,6 +65,7 @@ class EducationInfoEntityTest {
 			.withId(id)
 			.withEducationInfoId(educationInfoId)
 			.withTitle(title)
+			.withCode(code)
 			.withSchoolType(schoolType)
 			.withEducationType(educationType)
 			.withDescription(description)
@@ -86,6 +88,7 @@ class EducationInfoEntityTest {
 		assertThat(education.getDegree()).isEqualTo(degree);
 		assertThat(education.getExpires()).isEqualTo(localDateTime);
 		assertThat(education.getTitle()).isEqualTo(title);
+		assertThat(education.getCode()).isEqualTo(code);
 		assertThat(education.getDescription()).isEqualTo(description);
 		assertThat(education.getSchoolType()).isEqualTo(schoolType);
 		assertThat(education.getCredits()).isEqualTo(credits);

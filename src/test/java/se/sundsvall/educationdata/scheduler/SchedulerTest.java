@@ -58,4 +58,12 @@ public class SchedulerTest {
 		verifyNoMoreInteractions(educationEventsService, educationInfosService);
 		verifyNoInteractions(educationProvidersService, plannedEducationService);
 	}
+
+	@Test
+	void refreshCategoryRelations() {
+		scheduler.refreshCategoryRelations();
+		verify(plannedEducationService).refreshEventCategoryRelations();
+		verifyNoMoreInteractions(plannedEducationService);
+		verifyNoInteractions(educationEventsService, educationInfosService, educationProvidersService);
+	}
 }

@@ -50,6 +50,7 @@ class EducationInfosMapperTest {
 				.strings(List.of(new LangStringNode()
 					.lang("swe")
 					.value("Mekaniker"))))
+			.code("FT")
 			.description(new LangString()
 				.strings(List.of(new LangStringNode()
 					.lang("swe")
@@ -93,6 +94,7 @@ class EducationInfosMapperTest {
 		assertThat(row.getEducationInfoId()).isEqualTo("info-123");
 		assertThat(row.getSchoolType()).isEqualTo("YH");
 		assertThat(row.getTitle()).isEqualTo("Mekaniker");
+		assertThat(row.getCode()).isEqualTo("FT");
 		assertThat(row.getDescription()).isEqualTo("Laga bilar");
 		assertThat(row.getEducationEligibility()).isEqualTo("Grundläggande behörighet");
 		assertThat(row.getRecommendedPriorKnowledge()).isEqualTo("no knowledge needed");

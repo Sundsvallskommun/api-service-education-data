@@ -56,6 +56,7 @@ public class EducationInfosMapper {
 			.withResultIsDegree(content.getResultIsDegree())
 			.withExpires(content.getExpires())
 			.withTitle(firstStringValue(content.getTitle()))
+			.withCode(content.getCode())
 			.withDescription(firstStringValue(content.getDescription()))
 			.withEducationEligibility(firstStringValue(content.getEligibility()))
 			.withRecommendedPriorKnowledge(firstStringValue(content.getRecommendedPriorKnowledge()))

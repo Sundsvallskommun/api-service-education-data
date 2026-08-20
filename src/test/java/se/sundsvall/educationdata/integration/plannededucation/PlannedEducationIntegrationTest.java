@@ -1,8 +1,10 @@
 package se.sundsvall.educationdata.integration.plannededucation;
 
 import generated.se.sundsvall.plannededucation.ApiResponseAreasRM;
+import generated.se.sundsvall.plannededucation.ApiResponseListedAdultEducationEvents;
 import generated.se.sundsvall.plannededucation.AreaRM;
 import generated.se.sundsvall.plannededucation.AreasRM;
+import generated.se.sundsvall.plannededucation.ListedAdultEducationEventsRM;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -88,5 +90,34 @@ class PlannedEducationIntegrationTest {
 			.hasMessageContaining("Empty body");
 		verify(clientMock).getAllReferenceCategories();
 		verifyNoInteractions(mapper);
+	}
+
+	@Test
+	void getByReferenceId() {
+		final var response = new ApiResponseListedAdultEducationEvents().body(new ListedAdultEducationEventsRM());
+		when(clientMock.getEventsByDirection("e.1", "2281", 0, 200)).thenReturn(response);
+
+		final var result = integration.getByReferenceId("e.1", "2281", 0);
+
+		assertThat(result).isSameAs(response);
+		verify(clientMock).getEventsByDirection("e.1", "2281", 0, 200);
+	}
+
+	@Test
+	void getByReferenceId_nullResponse() {
+		when(clientMock.getEventsByDirection("e.1", "2281", 0, 200)).thenReturn(null);
+
+		assertThatThrownBy(() -> integration.getByReferenceId("e.1", "2281", 0))
+			.isInstanceOf(ThrowableProblem.class)
+			.hasMessageContaining("Empty body");
+	}
+
+	@Test
+	void getByReferenceId_nullBody() {
+		when(clientMock.getEventsByDirection("e.1", "2281", 0, 200)).thenReturn(new ApiResponseListedAdultEducationEvents());
+
+		assertThatThrownBy(() -> integration.getByReferenceId("e.1", "2281", 0))
+			.isInstanceOf(ThrowableProblem.class)
+			.hasMessageContaining("Empty body");
 	}
 }
