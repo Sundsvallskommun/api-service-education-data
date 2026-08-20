@@ -27,7 +27,7 @@ public class PlannedEducationIntegration {
 		final var response = client.getAllReferenceCategories();
 		if (response == null || response.getBody() == null || response.getBody().getAreas() == null
 			|| response.getBody().getAreas().isEmpty()) {
-			throw badGateway("Empty body");
+			throw badGateway(EMPTY_BODY);
 		}
 		return mapper.toReferenceCategory(response);
 	}
