@@ -84,7 +84,7 @@ public class PlannedEducationService {
 		int page = 0;
 		var result = plannedEducationIntegration.getByReferenceId(directionId, municipality, page);
 
-		long totalPages = Optional.ofNullable(result.getBody())
+		var totalPages = Optional.ofNullable(result.getBody())
 			.map(ListedAdultEducationEventsRM::getPage)
 			.map(PageMetadataRM::getTotalPages).orElse(1L).intValue();
 
