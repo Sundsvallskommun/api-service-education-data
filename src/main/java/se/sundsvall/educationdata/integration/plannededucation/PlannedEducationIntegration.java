@@ -2,6 +2,7 @@ package se.sundsvall.educationdata.integration.plannededucation;
 
 import generated.se.sundsvall.plannededucation.ApiResponseListedAdultEducationEvents;
 import java.util.List;
+import java.util.Set;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 import se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity;
@@ -32,7 +33,7 @@ public class PlannedEducationIntegration {
 		return mapper.toReferenceCategory(response);
 	}
 
-	public ApiResponseListedAdultEducationEvents getByReferenceId(String directionId, String municipalityId, int page) {
+	public ApiResponseListedAdultEducationEvents getEducationEventsByReferenceId(String directionId, Set<String> municipalityId, int page) {
 		final var response = client.getEventsByDirection(directionId, municipalityId, page, PAGE_SIZE);
 		if (response == null || response.getBody() == null) {
 			throw badGateway(EMPTY_BODY);

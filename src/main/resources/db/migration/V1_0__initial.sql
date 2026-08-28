@@ -76,6 +76,7 @@ CREATE TABLE event_category (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
     education_event_id     VARCHAR(64) NOT NULL,
     direction_id           VARCHAR(64) NOT NULL,
+    updated_at             DATETIME,
 CONSTRAINT uq_event_category UNIQUE (education_event_id, direction_id),
     INDEX idx_event_category_event (education_event_id),
     INDEX idx_event_category_direction (direction_id)

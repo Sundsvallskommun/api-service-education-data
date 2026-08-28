@@ -6,6 +6,7 @@ import generated.se.sundsvall.plannededucation.AreaRM;
 import generated.se.sundsvall.plannededucation.AreasRM;
 import generated.se.sundsvall.plannededucation.ListedAdultEducationEventsRM;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -93,30 +94,30 @@ class PlannedEducationIntegrationTest {
 	}
 
 	@Test
-	void getByReferenceId() {
+	void getEducationEventsByReferenceId() {
 		final var response = new ApiResponseListedAdultEducationEvents().body(new ListedAdultEducationEventsRM());
-		when(clientMock.getEventsByDirection("e.1", "2281", 0, 200)).thenReturn(response);
+		when(clientMock.getEventsByDirection("e.1", Set.of("2281"), 0, 200)).thenReturn(response);
 
-		final var result = integration.getByReferenceId("e.1", "2281", 0);
+		final var result = integration.getEducationEventsByReferenceId("e.1", Set.of("2281"), 0);
 
 		assertThat(result).isSameAs(response);
-		verify(clientMock).getEventsByDirection("e.1", "2281", 0, 200);
+		verify(clientMock).getEventsByDirection("e.1", Set.of("2281"), 0, 200);
 	}
 
 	@Test
-	void getByReferenceId_nullResponse() {
-		when(clientMock.getEventsByDirection("e.1", "2281", 0, 200)).thenReturn(null);
+	void getEducationEventsByReferenceId_nullResponse() {
+		when(clientMock.getEventsByDirection("e.1", Set.of("2281"), 0, 200)).thenReturn(null);
 
-		assertThatThrownBy(() -> integration.getByReferenceId("e.1", "2281", 0))
+		assertThatThrownBy(() -> integration.getEducationEventsByReferenceId("e.1", Set.of("2281"), 0))
 			.isInstanceOf(ThrowableProblem.class)
 			.hasMessageContaining("Empty body");
 	}
 
 	@Test
-	void getByReferenceId_nullBody() {
-		when(clientMock.getEventsByDirection("e.1", "2281", 0, 200)).thenReturn(new ApiResponseListedAdultEducationEvents());
+	void getEducationEventsByReferenceId_nullBody() {
+		when(clientMock.getEventsByDirection("e.1", Set.of("2281"), 0, 200)).thenReturn(new ApiResponseListedAdultEducationEvents());
 
-		assertThatThrownBy(() -> integration.getByReferenceId("e.1", "2281", 0))
+		assertThatThrownBy(() -> integration.getEducationEventsByReferenceId("e.1", Set.of("2281"), 0))
 			.isInstanceOf(ThrowableProblem.class)
 			.hasMessageContaining("Empty body");
 	}

@@ -1,6 +1,8 @@
 package se.sundsvall.educationdata.integration.db;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,4 +13,6 @@ public interface ReferenceCategoryRepository extends JpaRepository<ReferenceCate
 
 	@Query("SELECT DISTINCT r.directionId FROM ReferenceCategoryEntity r")
 	Set<String> findDistinctDirectionIds();
+
+	Optional<ReferenceCategoryEntity> findByCategoryIdAndDirectionId(String categoryId, String directionId);
 }

@@ -6,19 +6,24 @@ import generated.se.sundsvall.plannededucation.ListedAdultEducationEventRM;
 import generated.se.sundsvall.plannededucation.ListedAdultEducationEventsRM;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(MockitoExtension.class)
-public class PlannedEducationMapperTest {
+class PlannedEducationMapperTest {
 
 	private final PlannedEducationMapper mapper = new PlannedEducationMapper();
 
 	@Test
 	void toEventCategory() {
 		final var result = mapper.toEventCategory("1", "e.myh.yh.123");
+
+		assertThat(result.getDirectionId()).isEqualTo("1");
+		assertThat(result.getEducationEventId()).isEqualTo("e.myh.yh.123");
+	}
+
+	@Test
+	void toEventCategoryStaging() {
+		final var result = mapper.toEventCategoryStaging("1", "e.myh.yh.123");
 
 		assertThat(result.getDirectionId()).isEqualTo("1");
 		assertThat(result.getEducationEventId()).isEqualTo("e.myh.yh.123");

@@ -4,17 +4,26 @@ import generated.se.sundsvall.plannededucation.ApiResponseListedAdultEducationEv
 import generated.se.sundsvall.plannededucation.EmbeddedAdultEducationEventsRM;
 import generated.se.sundsvall.plannededucation.ListedAdultEducationEventRM;
 import generated.se.sundsvall.plannededucation.ListedAdultEducationEventsRM;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 import se.sundsvall.educationdata.integration.db.model.EventCategoryEntity;
+import se.sundsvall.educationdata.integration.db.model.EventCategoryStagingEntity;
 
 @Component
 public class PlannedEducationMapper {
 
 	public EventCategoryEntity toEventCategory(String directionId, String educationEventId) {
 		return EventCategoryEntity.builder()
+			.withDirectionId(directionId)
+			.withEducationEventId(educationEventId)
+			.build();
+	}
+
+	public EventCategoryStagingEntity toEventCategoryStaging(String directionId, String educationEventId) {
+		return EventCategoryStagingEntity.builder()
 			.withDirectionId(directionId)
 			.withEducationEventId(educationEventId)
 			.build();
