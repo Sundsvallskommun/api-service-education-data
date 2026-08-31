@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
-public class SchedulerTest {
+class SchedulerTest {
 
 	@Mock
 	private PlannedEducationService plannedEducationService;
