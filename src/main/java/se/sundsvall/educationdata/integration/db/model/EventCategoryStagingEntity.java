@@ -13,6 +13,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+/**
+ * Temporary table for holding relations between event and directions during a refresh.
+ * Rows are staged per direction as they are fetched and then gets merged into
+ * EventCategoryEntity once every direction has been fetched successfully. This means a failed run cant
+ * partially update the data, with an updated event having lost the relation to its previous direction
+ * without getting assigned the new ones.
+ * <p>
+ * A table is used rather than an in-memory list so that the relations won't have to be buffered until
+ * all directions are fetched.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
