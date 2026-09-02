@@ -10,23 +10,17 @@ import se.sundsvall.educationdata.integration.db.model.EventCategoryEntity;
 @CircuitBreaker(name = "eventCategoryRepository")
 public interface EventCategoryRepository extends JpaRepository<EventCategoryEntity, String> {
 	@Modifying
-	@Query(value = """
-		DELETE ec
-		FROM event_category ec
-		INNER JOIN (
-		    SELECT DISTINCT education_event_id
-		    FROM event_category_staging
-		) staged
-		    ON staged.education_event_id = ec.education_event_id
-		""", nativeQuery = true)
+	@Query("""
+		DELETE FROM EventCategoryEntity e
+				WHERE e.educationEventId IN (SELECT s.educationEventId FROM EventCategoryStagingEntity s)
+		""")
 	void deleteEventRelationsForStagedEventIds();
 
 	@Modifying
-	@Query(value = """
-		INSERT INTO event_category (id, education_event_id, direction_id)
-		SELECT UUID(), s.education_event_id, s.direction_id
-		FROM event_category_staging s
-		GROUP BY s.education_event_id, s.direction_id
-		""", nativeQuery = true)
+	@Query("""
+		INSERT INTO EventCategoryEntity (id, educationEventId, directionId)
+		SELECT s.id, s.educationEventId, s.directionId
+		FROM EventCategoryStagingEntity s
+		""")
 	void saveStagedToEventCategory();
 }
