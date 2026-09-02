@@ -12,7 +12,7 @@ public interface EventCategoryRepository extends JpaRepository<EventCategoryEnti
 	@Modifying
 	@Query("""
 		DELETE FROM EventCategoryEntity e
-				WHERE e.educationEventId IN (SELECT s.educationEventId FROM EventCategoryStagingEntity s)
+		WHERE e.educationEventId IN (SELECT s.educationEventId FROM EventCategoryStagingEntity s)
 		""")
 	void deleteEventRelationsForStagedEventIds();
 
