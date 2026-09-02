@@ -13,7 +13,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 /**
  * Temporary table for holding relations between event and directions during a refresh.
  * Rows are staged per direction as they are fetched and then gets merged into

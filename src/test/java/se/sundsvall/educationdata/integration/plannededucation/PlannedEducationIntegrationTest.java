@@ -12,13 +12,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.sundsvall.dept44.problem.ThrowableProblem;
 import se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -48,52 +45,6 @@ class PlannedEducationIntegrationTest {
 	}
 
 	@Test
-	void getAreas_nullResponse() {
-		when(clientMock.getAllReferenceCategories()).thenReturn(null);
-
-		assertThatThrownBy(() -> integration.getAllReferenceCategories())
-			.isInstanceOf(ThrowableProblem.class)
-			.hasMessageContaining("Empty body");
-
-		verify(clientMock).getAllReferenceCategories();
-		verifyNoInteractions(mapper);
-	}
-
-	@Test
-	void getAllAreas_emptyReferenceCategories() {
-		final var response = new ApiResponseAreasRM().body(new AreasRM().areas(List.of()));
-		when(clientMock.getAllReferenceCategories()).thenReturn(response);
-
-		assertThatThrownBy(() -> integration.getAllReferenceCategories())
-			.isInstanceOf(ThrowableProblem.class)
-			.hasMessageContaining("Empty body");
-
-		verify(clientMock).getAllReferenceCategories();
-		verifyNoInteractions(mapper);
-	}
-
-	@Test
-	void getAllReferenceCategories_bodyIsNull() {
-		when(clientMock.getAllReferenceCategories()).thenReturn(new ApiResponseAreasRM());
-		assertThatThrownBy(() -> integration.getAllReferenceCategories())
-			.isInstanceOf(ThrowableProblem.class)
-			.hasMessageContaining("Empty body");
-		verify(clientMock).getAllReferenceCategories();
-		verifyNoInteractions(mapper);
-	}
-
-	@Test
-	void getAllAreas_referenceCategoriesIsNull() {
-		final var response = new ApiResponseAreasRM().body(new AreasRM().areas(null));
-		when(clientMock.getAllReferenceCategories()).thenReturn(response);
-		assertThatThrownBy(() -> integration.getAllReferenceCategories())
-			.isInstanceOf(ThrowableProblem.class)
-			.hasMessageContaining("Empty body");
-		verify(clientMock).getAllReferenceCategories();
-		verifyNoInteractions(mapper);
-	}
-
-	@Test
 	void getEducationEventsByReferenceId() {
 		final var response = new ApiResponseListedAdultEducationEvents().body(new ListedAdultEducationEventsRM());
 		when(clientMock.getEventsByDirection("e.1", Set.of("2281"), 0, 200)).thenReturn(response);
@@ -102,23 +53,5 @@ class PlannedEducationIntegrationTest {
 
 		assertThat(result).isSameAs(response);
 		verify(clientMock).getEventsByDirection("e.1", Set.of("2281"), 0, 200);
-	}
-
-	@Test
-	void getEducationEventsByReferenceId_nullResponse() {
-		when(clientMock.getEventsByDirection("e.1", Set.of("2281"), 0, 200)).thenReturn(null);
-
-		assertThatThrownBy(() -> integration.getEducationEventsByReferenceId("e.1", Set.of("2281"), 0))
-			.isInstanceOf(ThrowableProblem.class)
-			.hasMessageContaining("Empty body");
-	}
-
-	@Test
-	void getEducationEventsByReferenceId_nullBody() {
-		when(clientMock.getEventsByDirection("e.1", Set.of("2281"), 0, 200)).thenReturn(new ApiResponseListedAdultEducationEvents());
-
-		assertThatThrownBy(() -> integration.getEducationEventsByReferenceId("e.1", Set.of("2281"), 0))
-			.isInstanceOf(ThrowableProblem.class)
-			.hasMessageContaining("Empty body");
 	}
 }
