@@ -35,7 +35,14 @@ scheduler:
     name: "scheduled-entities-creation"
     shedlock-lock-at-most-for: "PT15M"
     maximum-execution-time: "PT15M"
-    municipality-whitelist: 2281
+  refresh-category-relations:
+    cron: ${ENV_SCHEDULER_REFRESH_CATEGORY_RELATIONS_CRON}
+    name: "scheduled-refresh-category-relations"
+    shedlock-lock-at-most-for: "PT15M"
+    maximum-execution-time: "PT15M"
+
+municipality-whitelist: 2281
+
 
 integration:
   planned-education:

@@ -32,7 +32,7 @@ public class GyProgramCategoryEntity {
 	private String programName;
 
 	@Column(name = "category", length = 32)
-	private String category; // Lista med flera?
+	private String category;
 
 	@Column(name = "vocational")
 	private Boolean vocational;

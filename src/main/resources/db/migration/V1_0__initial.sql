@@ -48,6 +48,7 @@ CREATE TABLE education_info (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
     education_info_id      VARCHAR(64),
     title                  VARCHAR(255),
+    code                   VARCHAR(32),
     school_type            VARCHAR(32),
     education_type         VARCHAR(100),
     description            TEXT,
@@ -75,6 +76,7 @@ CREATE TABLE event_category (
     id                     VARCHAR(36) NOT NULL PRIMARY KEY,
     education_event_id     VARCHAR(64) NOT NULL,
     direction_id           VARCHAR(64) NOT NULL,
+    updated_at             DATETIME,
 CONSTRAINT uq_event_category UNIQUE (education_event_id, direction_id),
     INDEX idx_event_category_event (education_event_id),
     INDEX idx_event_category_direction (direction_id)

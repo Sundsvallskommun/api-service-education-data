@@ -31,7 +31,7 @@ public class EducationEventsService {
 
 	public EducationEventsService(SusaNavetIntegration susaNavetIntegration, SusaEducationEventPageRepository susaEducationEventPageRepository,
 		EducationEventEntityRepository educationEventEntityRepository, ObjectMapper objectMapper, EducationEventsMapper educationEventsMapper,
-		@Value("${scheduler.create-entities.municipality-whitelist}") Set<String> municipalityIdWhitelist) {
+		@Value("${municipality-whitelist}") Set<String> municipalityIdWhitelist) {
 		this.susaNavetIntegration = susaNavetIntegration;
 		this.susaEducationEventPageRepository = susaEducationEventPageRepository;
 		this.educationEventEntityRepository = educationEventEntityRepository;

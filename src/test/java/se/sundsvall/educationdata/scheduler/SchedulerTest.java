@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
-public class SchedulerTest {
+class SchedulerTest {
 
 	@Mock
 	private PlannedEducationService plannedEducationService;
@@ -57,5 +57,13 @@ public class SchedulerTest {
 		verify(educationInfosService).createInfoEntitiesFromJson();
 		verifyNoMoreInteractions(educationEventsService, educationInfosService);
 		verifyNoInteractions(educationProvidersService, plannedEducationService);
+	}
+
+	@Test
+	void refreshCategoryRelations() {
+		scheduler.refreshCategoryRelations();
+		verify(plannedEducationService).refreshEventCategoryRelations();
+		verifyNoMoreInteractions(plannedEducationService);
+		verifyNoInteractions(educationEventsService, educationInfosService, educationProvidersService);
 	}
 }

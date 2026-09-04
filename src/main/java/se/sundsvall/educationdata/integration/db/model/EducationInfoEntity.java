@@ -42,6 +42,9 @@ public class EducationInfoEntity {
 	@Column(name = "school_type", length = 32)
 	private String schoolType;
 
+	@Column(name = "code", length = 32)
+	private String code;
+
 	@Column(name = "education_type", columnDefinition = "TEXT")
 	private String educationType;
 
