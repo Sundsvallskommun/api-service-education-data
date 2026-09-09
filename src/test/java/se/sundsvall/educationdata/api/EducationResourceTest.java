@@ -114,8 +114,9 @@ class EducationResourceTest {
 			.expectBody(String.class)
 			.returnResult().getResponseBody();
 
-		assertThat(response).isNotNull();
-		assertThat(response).contains("Sundsvall", "Örnsköldsvik");
+		assertThat(response)
+			.isNotNull()
+			.contains("Sundsvall", "Örnsköldsvik");
 	}
 
 	@Test
@@ -128,8 +129,9 @@ class EducationResourceTest {
 			.expectBody(String.class)
 			.returnResult().getResponseBody();
 
-		assertThat(response).isNotNull();
-		assertThat(response).contains("Classroom", "Distance");
+		assertThat(response)
+			.isNotNull()
+			.contains("Classroom", "Distance");
 	}
 
 	@Test
@@ -142,8 +144,9 @@ class EducationResourceTest {
 			.expectBody(String.class)
 			.returnResult().getResponseBody();
 
-		assertThat(response).isNotNull();
-		assertThat(response).contains("100.0", "75.0", "50.0", "25.0");
+		assertThat(response)
+			.isNotNull()
+			.contains("100.0", "75.0", "50.0", "25.0");
 	}
 
 	@Test
@@ -156,7 +159,7 @@ class EducationResourceTest {
 			.expectBody(String.class)
 			.returnResult().getResponseBody();
 
-		assertThat(response).isNotNull();
-		assertThat(response).contains("swe", "eng");
+		assertThat(response).isNotNull()
+			.contains("swe", "eng");
 	}
 }

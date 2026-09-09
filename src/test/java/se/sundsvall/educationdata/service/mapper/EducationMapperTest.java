@@ -2,6 +2,7 @@ package se.sundsvall.educationdata.service.mapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -34,10 +35,10 @@ class EducationMapperTest {
 			.withLectureType("Distance")
 			.withStudyPace("100.0")
 			.withLanguageOfInstructions("swe")
-			.withStartDate(LocalDate.of(2026, 10, 12))
-			.withEndDate(LocalDate.of(2026, 12, 18))
-			.withApplicationDateStart(LocalDate.of(2026, 3, 15))
-			.withApplicationDateEnd(LocalDate.of(2026, 4, 15))
+			.withStartDate(LocalDate.of(2026, Month.OCTOBER, 12))
+			.withEndDate(LocalDate.of(2026, Month.DECEMBER, 18))
+			.withApplicationDateStart(LocalDate.of(2026, Month.MARCH, 15))
+			.withApplicationDateEnd(LocalDate.of(2026, Month.APRIL, 15))
 			.withCancelled(false)
 			.build();
 		final var educationInfo = EducationInfoEntity.builder()
@@ -62,8 +63,8 @@ class EducationMapperTest {
 		assertThat(result.getLectureType()).isEqualTo("Distance");
 		assertThat(result.getStudyPace()).isEqualTo("100.0");
 		assertThat(result.getLanguageOfInstructions()).isEqualTo("swe");
-		assertThat(result.getStart()).isEqualTo(LocalDate.of(2026, 10, 12));
-		assertThat(result.getEnd()).isEqualTo(LocalDate.of(2026, 12, 18));
+		assertThat(result.getStart()).isEqualTo(LocalDate.of(2026, Month.OCTOBER, 12));
+		assertThat(result.getEnd()).isEqualTo(LocalDate.of(2026, Month.DECEMBER, 18));
 		assertThat(result.getCancelled()).isFalse();
 
 		assertThat(result.getCode()).isEqualTo("MATE1A00X");
@@ -90,10 +91,10 @@ class EducationMapperTest {
 			.withLectureType("Distance")
 			.withStudyPace("100.0")
 			.withLanguageOfInstructions("swe")
-			.withStartDate(LocalDate.of(2026, 10, 12))
-			.withEndDate(LocalDate.of(2026, 12, 18))
-			.withApplicationDateStart(LocalDate.of(2026, 3, 15))
-			.withApplicationDateEnd(LocalDate.of(2026, 4, 15))
+			.withStartDate(LocalDate.of(2026, Month.OCTOBER, 12))
+			.withEndDate(LocalDate.of(2026, Month.DECEMBER, 18))
+			.withApplicationDateStart(LocalDate.of(2026, Month.MARCH, 15))
+			.withApplicationDateEnd(LocalDate.of(2026, Month.APRIL, 15))
 			.withCancelled(false)
 			.build();
 
@@ -124,10 +125,10 @@ class EducationMapperTest {
 			.withLectureType("Distance")
 			.withStudyPace("100.0")
 			.withLanguageOfInstructions("swe")
-			.withStartDate(LocalDate.of(2026, 10, 12))
-			.withEndDate(LocalDate.of(2026, 12, 18))
-			.withApplicationDateStart(LocalDate.of(2026, 3, 15))
-			.withApplicationDateEnd(LocalDate.of(2026, 4, 15))
+			.withStartDate(LocalDate.of(2026, Month.OCTOBER, 12))
+			.withEndDate(LocalDate.of(2026, Month.DECEMBER, 18))
+			.withApplicationDateStart(LocalDate.of(2026, Month.MARCH, 15))
+			.withApplicationDateEnd(LocalDate.of(2026, Month.APRIL, 15))
 			.withCancelled(false)
 			.build();
 		final var educationInfo = EducationInfoEntity.builder()
@@ -169,10 +170,10 @@ class EducationMapperTest {
 			.withLectureType("Distance")
 			.withStudyPace("100.0")
 			.withLanguageOfInstructions("swe")
-			.withStartDate(LocalDate.of(2026, 10, 12))
-			.withEndDate(LocalDate.of(2026, 12, 18))
-			.withApplicationDateStart(LocalDate.of(2026, 3, 15))
-			.withApplicationDateEnd(LocalDate.of(2026, 4, 15))
+			.withStartDate(LocalDate.of(2026, Month.OCTOBER, 12))
+			.withEndDate(LocalDate.of(2026, Month.DECEMBER, 18))
+			.withApplicationDateStart(LocalDate.of(2026, Month.MARCH, 15))
+			.withApplicationDateEnd(LocalDate.of(2026, Month.APRIL, 15))
 			.withCancelled(false)
 			.build();
 
