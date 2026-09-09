@@ -2,9 +2,13 @@ package se.sundsvall.educationdata.integration.db.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -85,5 +89,12 @@ public class EducationEventEntity {
 
 	@Column(name = "cancelled")
 	private Boolean cancelled;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumns({
+		@JoinColumn(name = "education_info_id", referencedColumnName = "education_info_id", insertable = false, updatable = false),
+		@JoinColumn(name = "created_at", referencedColumnName = "created_at", insertable = false, updatable = false)
+	})
+	private EducationInfoEntity educationInfo;
 
 }
