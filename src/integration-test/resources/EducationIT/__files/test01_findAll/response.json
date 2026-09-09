@@ -1,0 +1,42 @@
+{
+	"educations": [
+		{
+			"id": "e.1",
+			"studyLocation": "Sundsvall",
+			"municipalityId": "2281",
+			"lectureType": "Distance",
+			"code": "MATE1A00X",
+			"schoolType": "VUXGY",
+			"educationType": "kurs",
+			"credits": 100.0,
+			"creditType": "vp",
+			"eligibility": "Grundläggande behörighet",
+			"degree": []
+		},
+		{
+			"id": "e.2",
+			"name": "Energiingenjör",
+			"studyLocation": "Härnösand",
+			"municipalityId": "2281",
+			"lectureType": "Distance",
+			"code": "TEING",
+			"schoolType": "HS",
+			"educationType": "kurspaket",
+			"credits": 180.0,
+			"creditType": "hp",
+			"eligibility": "Fysik 2, Kemi 1",
+			"degree": []
+		}
+	],
+	"_meta": {
+		"count": 2,
+		"limit": 2,
+		"page": 1,
+		"sortBy": [
+			"id"
+		],
+		"sortDirection": "ASC",
+		"totalPages": 2,
+		"totalRecords": 3
+	}
+}

@@ -1,0 +1,28 @@
+{
+	"educations": [
+		{
+			"id": "e.1",
+			"studyLocation": "Sundsvall",
+			"municipalityId": "2281",
+			"lectureType": "Distance",
+			"code": "MATE1A00X",
+			"schoolType": "VUXGY",
+			"educationType": "kurs",
+			"credits": 100.0,
+			"creditType": "vp",
+			"eligibility": "Grundläggande behörighet",
+			"degree": []
+		}
+	],
+	"_meta": {
+		"count": 1,
+		"limit": 2,
+		"page": 1,
+		"sortBy": [
+			"id"
+		],
+		"sortDirection": "ASC",
+		"totalPages": 1,
+		"totalRecords": 1
+	}
+}
