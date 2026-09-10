@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import org.springframework.data.jpa.domain.Specification;
 
 import static java.util.Objects.nonNull;
+import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.END_DATE;
+import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.START_DATE;
 
 public class SpecificationBuilder {
 
@@ -48,6 +50,12 @@ public class SpecificationBuilder {
 	 */
 	public static <T> Specification<T> buildDateIsEqualOrAfterFilter(final String attribute, final LocalDate value) {
 		return (entity, cq, cb) -> nonNull(value) ? cb.greaterThanOrEqualTo(entity.get(attribute), value) : cb.and();
+	}
+
+	public static <T>Specification<T> withinPeriod(final LocalDate from, final LocalDate to) {
+		return (entity, cq, cb) -> cb.and(
+				cb.lessThanOrEqualTo(entity.get(START_DATE), to),
+				cb.greaterThanOrEqualTo(entity.get(END_DATE), from));
 	}
 
 	/**

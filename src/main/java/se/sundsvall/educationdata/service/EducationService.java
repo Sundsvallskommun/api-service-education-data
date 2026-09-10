@@ -32,7 +32,6 @@ import static se.sundsvall.educationdata.api.model.ApiConstants.LANGUAGE_OF_INST
 import static se.sundsvall.educationdata.api.model.ApiConstants.LECTURE_TYPE;
 import static se.sundsvall.educationdata.api.model.ApiConstants.STUDY_LOCATION;
 import static se.sundsvall.educationdata.api.model.ApiConstants.STUDY_PACE;
-import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.CITY;
 
 @Service
 public class EducationService {
