@@ -2,6 +2,8 @@ package se.sundsvall.educationdata.api;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,34 +17,31 @@ import se.sundsvall.educationdata.api.model.Statistics;
 import se.sundsvall.educationdata.api.model.StatisticsParameters;
 import se.sundsvall.educationdata.service.StatisticsService;
 
-import java.time.LocalDate;
-import java.util.List;
-
 import static org.springframework.http.ResponseEntity.ok;
 
 @RequestMapping(path = "/{municipalityId}/statistics")
 @RestController
 public class StatisticsResource {
 
-    private final StatisticsService statisticsService;
+	private final StatisticsService statisticsService;
 
-    public StatisticsResource(StatisticsService statisticsService) {
-        this.statisticsService = statisticsService;
-    }
+	public StatisticsResource(StatisticsService statisticsService) {
+		this.statisticsService = statisticsService;
+	}
 
-    @GetMapping
-    ResponseEntity<Statistics> getStatistics(
-            @Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @ValidMunicipalityId @PathVariable final String municipalityId,
-            @ParameterObject @Valid final StatisticsParameters parameters,
-            @Parameter @RequestParam(required = false) LocalDate date){
-        return ok(statisticsService.getStatisticsByParameters(parameters, date));
-    }
+	@GetMapping
+	ResponseEntity<Statistics> getStatistics(
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @ValidMunicipalityId @PathVariable final String municipalityId,
+		@ParameterObject @Valid final StatisticsParameters parameters,
+		@Parameter @RequestParam(required = false) LocalDate date) {
+		return ok(statisticsService.getStatisticsByParameters(municipalityId, parameters, date));
+	}
 
-    @GetMapping(path = "filters/{filterAttribute}/values")
-    ResponseEntity<List<String>> findFilerValue(
-            @Parameter @ValidMunicipalityId @PathVariable final String municipalityId,
-            @Parameter @Validated String filterAttribute,
-            @Parameter @RequestParam(required = false) LocalDate date){
-        return ok(statisticsService.findStatisticsFilterValues(filterAttribute, date));
-    }
+	@GetMapping(path = "filters/{filterAttribute}/values")
+	ResponseEntity<List<String>> findFilerValue(
+		@Parameter @ValidMunicipalityId @PathVariable final String municipalityId,
+		@Parameter @Validated @PathVariable final String filterAttribute,
+		@Parameter @RequestParam(required = false) LocalDate date) {
+		return ok(statisticsService.findStatisticsFilterValues(filterAttribute, date));
+	}
 }

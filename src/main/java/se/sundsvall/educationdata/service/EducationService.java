@@ -19,9 +19,9 @@ import se.sundsvall.educationdata.integration.db.EducationInfoEntityRepository;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity_;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
-import se.sundsvall.educationdata.integration.db.model.projection.CityProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LanguageOfInstructionsProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LectureTypeProjection;
+import se.sundsvall.educationdata.integration.db.model.projection.StudyLocationProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.StudyPaceProjection;
 import se.sundsvall.educationdata.integration.db.specification.EducationSpecification;
 import se.sundsvall.educationdata.service.mapper.EducationMapper;
@@ -81,8 +81,8 @@ public class EducationService {
 				.map(LanguageOfInstructionsProjection::getLanguageOfInstructions)
 				.filter(Objects::nonNull)
 				.toList();
-			case STUDY_LOCATION -> educationEventEntityRepository.findDistinctByCreatedAt(CityProjection.class, date, Sort.by(EducationEventEntity_.CITY)).stream()
-				.map(CityProjection::getCity)
+			case STUDY_LOCATION -> educationEventEntityRepository.findDistinctByCreatedAt(StudyLocationProjection.class, date, Sort.by(EducationEventEntity_.CITY)).stream()
+				.map(StudyLocationProjection::getCity)
 				.filter(Objects::nonNull)
 				.toList();
 			case STUDY_PACE -> educationEventEntityRepository.findDistinctByCreatedAt(StudyPaceProjection.class, date, Sort.by(EducationEventEntity_.STUDY_PACE)).stream()

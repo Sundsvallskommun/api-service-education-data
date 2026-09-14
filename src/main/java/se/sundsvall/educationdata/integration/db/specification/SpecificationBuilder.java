@@ -4,7 +4,17 @@ import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.JoinType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
+import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
+import se.sundsvall.educationdata.integration.db.model.EducationEventEntity_;
+import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_;
+import se.sundsvall.educationdata.integration.db.model.EventCategoryEntity;
+import se.sundsvall.educationdata.integration.db.model.EventCategoryEntity_;
+import se.sundsvall.educationdata.integration.db.model.GyProgramCategoryEntity;
+import se.sundsvall.educationdata.integration.db.model.GyProgramCategoryEntity_;
+import se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity;
+import se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity_;
 
 import static java.util.Objects.nonNull;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.END_DATE;
@@ -52,10 +62,13 @@ public class SpecificationBuilder {
 		return (entity, cq, cb) -> nonNull(value) ? cb.greaterThanOrEqualTo(entity.get(attribute), value) : cb.and();
 	}
 
-	public static <T>Specification<T> withinPeriod(final LocalDate from, final LocalDate to) {
-		return (entity, cq, cb) -> cb.and(
+	public static <T> Specification<T> buildWithinPeriodFilter(final LocalDate from, final LocalDate to) {
+		return (entity, cq, cb) -> cb.or(
+			cb.isNull(entity.get(START_DATE)),
+			cb.isNull(entity.get(END_DATE)),
+			cb.and(
 				cb.lessThanOrEqualTo(entity.get(START_DATE), to),
-				cb.greaterThanOrEqualTo(entity.get(END_DATE), from));
+				cb.greaterThanOrEqualTo(entity.get(END_DATE), from)));
 	}
 
 	/**
@@ -113,5 +126,100 @@ public class SpecificationBuilder {
 			.map(existing -> (From<?, ?>) existing)
 			.findFirst()
 			.orElseGet(() -> from.join(joinAttribute, JoinType.LEFT));
+	}
+
+	public static <T> Specification<T> buildIgnoreCaseFilterWithList(final String attribute, List<String> values) {
+
+		return (entity, cq, cb) -> (values == null || values.isEmpty())
+			? cb.and()
+			: cb.lower(entity.get(attribute)).in(values.stream()
+				.map(value -> value.strip().toLowerCase())
+				.distinct()
+				.toList());
+	}
+
+	public static Specification<EducationEventEntity> buildCategoryFilter(final List<String> categories) {
+		return (entity, cq, cb) -> {
+			if (categories == null || categories.isEmpty()) {
+				return cb.and();
+			}
+
+			final var sub = cq.subquery(String.class);
+			final var eventCategory = sub.from(EventCategoryEntity.class);
+			final var referenceCategory = sub.from(ReferenceCategoryEntity.class);
+
+			final var normalizedCategories = categories.stream()
+				.map(value -> value.strip().toLowerCase())
+				.distinct()
+				.toList();
+
+			sub.select(eventCategory.get(EventCategoryEntity_.EDUCATION_EVENT_ID))
+				.where(
+					cb.equal(
+						eventCategory.get(EventCategoryEntity_.DIRECTION_ID),
+						referenceCategory.get(ReferenceCategoryEntity_.DIRECTION_ID)),
+					cb.lower(
+						referenceCategory.get(ReferenceCategoryEntity_.CATEGORY_NAME)).in(normalizedCategories));
+			return entity.get(EducationEventEntity_.EDUCATION_EVENT_ID).in(sub);
+		};
+	}
+
+	public static Specification<EducationEventEntity> buildDirectionFilter(final List<String> direction) {
+		return (entity, cq, cb) -> {
+			if (direction == null || direction.isEmpty()) {
+				return cb.and();
+			}
+
+			final var sub = cq.subquery(String.class);
+			final var eventCategory = sub.from(EventCategoryEntity.class);
+			final var referenceCategory = sub.from(ReferenceCategoryEntity.class);
+
+			final var normalizedDirections = direction.stream()
+				.map(value -> value.strip().toLowerCase())
+				.distinct()
+				.toList();
+
+			sub.select(eventCategory.get(EventCategoryEntity_.EDUCATION_EVENT_ID))
+				.where(
+					cb.equal(
+						eventCategory.get(EventCategoryEntity_.DIRECTION_ID),
+						referenceCategory.get(ReferenceCategoryEntity_.DIRECTION_ID)),
+					cb.lower(
+						referenceCategory.get(ReferenceCategoryEntity_.DIRECTION_NAME)).in(normalizedDirections));
+			return entity.get(EducationEventEntity_.EDUCATION_EVENT_ID).in(sub);
+		};
+	}
+
+	public static Specification<EducationEventEntity> buildGyCategoryFilter(
+		final List<String> categories) {
+
+		return (entity, cq, cb) -> {
+			if (categories == null || categories.isEmpty()) {
+				return cb.and();
+			}
+
+			final var info = joinOf(
+				entity, EducationEventEntity_.EDUCATION_INFO);
+
+			final var sub = cq.subquery(Integer.class);
+			final var gyProgramCategory = sub.from(GyProgramCategoryEntity.class);
+
+			final var normalizedCategories = categories.stream()
+				.map(value -> value.strip().toLowerCase())
+				.distinct()
+				.toList();
+
+			sub.select(cb.literal(1))
+				.where(
+					cb.equal(
+						info.get(EducationInfoEntity_.SCHOOL_TYPE), "GY"),
+					cb.equal(
+						cb.substring(info.get(EducationInfoEntity_.CODE), 1, 2),
+						gyProgramCategory.get(GyProgramCategoryEntity_.PROGRAM_CODE)),
+					cb.lower(
+						gyProgramCategory.get(GyProgramCategoryEntity_.CATEGORY)).in(normalizedCategories));
+
+			return cb.exists(sub);
+		};
 	}
 }

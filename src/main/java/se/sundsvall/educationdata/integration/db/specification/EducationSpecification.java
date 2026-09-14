@@ -150,8 +150,4 @@ public interface EducationSpecification {
 	static Specification<EducationEventEntity> withCancelledStatus(Boolean cancelledStatus) {
 		return SpecificationBuilder.buildEqualFilter(CANCELLED, cancelledStatus);
 	}
-
-	static Specification<EducationEventEntity> withinPeriod(final LocalDate startDate, final LocalDate endDate) {
-		return SpecificationBuilder.withinPeriod(startDate, endDate);
-	}
 }
