@@ -1,0 +1,17 @@
+{
+	"onGoingEducations": 1,
+	"plannedEducations": 1,
+	"finishedEducations": 1,
+	"missingStartDateEducations": 1,
+	"missingEndDateEducations": 1,
+	"missingStartAndEndDateEducations": 1,
+	"totalEducations": 6,
+	"availableSeats": 35,
+	"totalCapacity": 65,
+	"schoolType": {
+		"VUXGY": 3,
+		"HS": 1
+	},
+	"startDate": "2026-05-01",
+	"endDate": "2026-11-01"
+}

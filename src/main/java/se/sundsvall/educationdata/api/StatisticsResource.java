@@ -17,6 +17,7 @@ import se.sundsvall.educationdata.api.model.Statistics;
 import se.sundsvall.educationdata.api.model.StatisticsParameters;
 import se.sundsvall.educationdata.service.StatisticsService;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RequestMapping(path = "/{municipalityId}/statistics")
@@ -29,7 +30,7 @@ public class StatisticsResource {
 		this.statisticsService = statisticsService;
 	}
 
-	@GetMapping
+	@GetMapping(produces = APPLICATION_JSON_VALUE)
 	ResponseEntity<Statistics> getStatistics(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @ValidMunicipalityId @PathVariable final String municipalityId,
 		@ParameterObject @Valid final StatisticsParameters parameters,
@@ -37,7 +38,7 @@ public class StatisticsResource {
 		return ok(statisticsService.getStatisticsByParameters(municipalityId, parameters, date));
 	}
 
-	@GetMapping(path = "filters/{filterAttribute}/values")
+	@GetMapping(path = "filters/{filterAttribute}/values", produces = APPLICATION_JSON_VALUE)
 	ResponseEntity<List<String>> findFilerValue(
 		@Parameter @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter @Validated @PathVariable final String filterAttribute,

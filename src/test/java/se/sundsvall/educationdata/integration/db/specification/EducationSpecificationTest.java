@@ -55,7 +55,7 @@ class EducationSpecificationTest {
 		final var result = educationEventEntityRepository.findAll(specification)
 			.stream().map(EducationEventEntity::getEducationEventId)
 			.toList();
-		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.4");
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.4", "e.5", "e.6", "e.7", "e.8", "e.9");
 
 	}
 
@@ -64,7 +64,7 @@ class EducationSpecificationTest {
 		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withTitle("ENERGI"))).stream()
 			.map(EducationEventEntity::getEducationEventId)
 			.toList();
-		assertThat(result).containsExactly("e.2");
+		assertThat(result).containsExactlyInAnyOrder("e.2");
 	}
 
 	@Test
@@ -73,7 +73,8 @@ class EducationSpecificationTest {
 		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withEligibility("GRUNDLÄGGANDE")))
 			.stream().map(EducationEventEntity::getEducationEventId)
 			.toList();
-		assertThat(result).containsExactly("e.1");
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.5", "e.6", "e.8");
+
 	}
 
 	@Test
@@ -111,7 +112,7 @@ class EducationSpecificationTest {
 			.stream().map(EducationEventEntity::getEducationEventId)
 			.toList();
 
-		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2", "e.3");
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.5", "e.6", "e.7", "e.8");
 	}
 
 	@Test
@@ -123,6 +124,6 @@ class EducationSpecificationTest {
 		final var result = educationEventEntityRepository.findAll(specification)
 			.stream().map(EducationEventEntity::getEducationEventId)
 			.toList();
-		assertThat(result).containsExactly("e.1");
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.5", "e.6", "e.8");
 	}
 }

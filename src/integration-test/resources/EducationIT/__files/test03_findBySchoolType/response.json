@@ -4,7 +4,25 @@
 			"id": "e.1",
 			"studyLocation": "Sundsvall",
 			"municipalityId": "2281",
+			"numberOfSeats": 20,
 			"lectureType": "Distance",
+			"start": "2026-04-01",
+			"end": "2026-12-01",
+			"code": "MATE1A00X",
+			"schoolType": "VUXGY",
+			"educationType": "kurs",
+			"credits": 100.0,
+			"creditType": "vp",
+			"eligibility": "Grundläggande behörighet",
+			"degree": []
+		},
+		{
+			"id": "e.5",
+			"studyLocation": "Sundsvall",
+			"municipalityId": "2281",
+			"numberOfSeats": 5,
+			"lectureType": "Distance",
+			"start": "2026-06-01",
 			"code": "MATE1A00X",
 			"schoolType": "VUXGY",
 			"educationType": "kurs",
@@ -15,14 +33,14 @@
 		}
 	],
 	"_meta": {
-		"count": 1,
+		"count": 2,
 		"limit": 2,
 		"page": 1,
 		"sortBy": [
 			"id"
 		],
 		"sortDirection": "ASC",
-		"totalPages": 1,
-		"totalRecords": 1
+		"totalPages": 2,
+		"totalRecords": 3
 	}
 }

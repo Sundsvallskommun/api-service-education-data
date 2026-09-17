@@ -4,7 +4,10 @@
 			"id": "e.1",
 			"studyLocation": "Sundsvall",
 			"municipalityId": "2281",
+			"numberOfSeats": 20,
 			"lectureType": "Distance",
+			"start": "2026-04-01",
+			"end": "2026-12-01",
 			"code": "MATE1A00X",
 			"schoolType": "VUXGY",
 			"educationType": "kurs",
@@ -18,7 +21,10 @@
 			"name": "Energiingenjör",
 			"studyLocation": "Härnösand",
 			"municipalityId": "2281",
+			"numberOfSeats": 30,
 			"lectureType": "Distance",
+			"start": "2026-05-01",
+			"end": "2026-12-01",
 			"code": "TEING",
 			"schoolType": "HS",
 			"educationType": "kurspaket",
@@ -36,7 +42,7 @@
 			"id"
 		],
 		"sortDirection": "ASC",
-		"totalPages": 2,
-		"totalRecords": 3
+		"totalPages": 3,
+		"totalRecords": 6
 	}
 }
