@@ -41,8 +41,6 @@ public class EducationInfosService {
 
 	@Transactional
 	public void saveAllPagesInfoJsonTable() {
-		var municipalityFilteredIds = educationEventEntityRepository.getDistinctEducationInfoId();
-
 		int page = 0;
 		var json = susaNavetIntegration.getEducationInfos(page);
 		var response = objectMapper.readValue(json, EducationInfoListResponse.class);
@@ -51,16 +49,10 @@ public class EducationInfosService {
 		var totalPages = (pageInfo == null || pageInfo.getTotalPages() == null) ? 0 : pageInfo.getTotalPages();
 
 		susaEducationInfoPageRepository.save(educationInfosMapper.toZippedInfos(json, page));
-		var susaInfos = response.getEducationInfos();
-		saveFilteredInfos(susaInfos, municipalityFilteredIds);
 
 		for (page = 1; page < totalPages; page++) {
 			json = susaNavetIntegration.getEducationInfos(page);
 			susaEducationInfoPageRepository.save(educationInfosMapper.toZippedInfos(json, page));
-
-			response = objectMapper.readValue(json, EducationInfoListResponse.class);
-			susaInfos = response.getEducationInfos();
-			saveFilteredInfos(susaInfos, municipalityFilteredIds);
 		}
 	}
 
