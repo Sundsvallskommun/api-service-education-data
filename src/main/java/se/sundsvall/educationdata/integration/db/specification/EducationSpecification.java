@@ -32,13 +32,13 @@ import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntit
 
 public interface EducationSpecification {
 
-	static Specification<EducationEventEntity> createSpecification(final EducationParameters parameters, final LocalDate date) {
+	static Specification<EducationEventEntity> createSpecification(String municipalityId, final EducationParameters parameters, final LocalDate date) {
 		return Specification.allOf(
 			withCreated(date),
 			withEducationEventId(parameters.getEducationEventId()),
 			withTitle(parameters.getName()),
 			withInfoTitle(parameters.getTitle()),
-			withMunicipalityId(parameters.getMunicipalityId()),
+			withMunicipalityId(municipalityId),
 			withCity(parameters.getStudyLocation()),
 			withLectureType(parameters.getLectureType()),
 			withLanguageOfInstructions(parameters.getLanguageOfInstructions()),

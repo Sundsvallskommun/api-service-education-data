@@ -28,11 +28,9 @@ import se.sundsvall.educationdata.service.mapper.EducationMapper;
 
 import static java.util.function.UnaryOperator.identity;
 import static java.util.stream.Collectors.toMap;
-import static se.sundsvall.educationdata.api.model.ApiConstants.LANGUAGE_OF_INSTRUCTIONS;
-import static se.sundsvall.educationdata.api.model.ApiConstants.LECTURE_TYPE;
-import static se.sundsvall.educationdata.api.model.ApiConstants.STUDY_LOCATION;
-import static se.sundsvall.educationdata.api.model.ApiConstants.STUDY_PACE;
-import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.CITY;
+import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LANGUAGE_OF_INSTRUCTIONS;
+import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LECTURE_TYPE;
+import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.STUDY_PACE;
 
 @Service
 public class EducationService {
@@ -40,6 +38,8 @@ public class EducationService {
 	private final EducationEventEntityRepository educationEventEntityRepository;
 	private final EducationInfoEntityRepository educationInfoEntityRepository;
 	private final EducationMapper educationMapper;
+
+	private static final String STUDY_LOCATION = "studyLocation";
 
 	public EducationService(EducationEventEntityRepository educationEventEntityRepository, EducationInfoEntityRepository educationInfoEntityRepository, EducationMapper educationMapper) {
 		this.educationEventEntityRepository = educationEventEntityRepository;
@@ -56,10 +56,10 @@ public class EducationService {
 		return educationMapper.toEducation(event, info);
 	}
 
-	public PagedEducationResponse find(EducationParameters parameters, LocalDate date) {
+	public PagedEducationResponse find(String municipalityId, EducationParameters parameters, LocalDate date) {
 		date = defaultLatestDateIfNull(date);
 		final var pageable = PageRequest.of(parameters.getPage() - 1, parameters.getLimit(), parameters.sort());
-		final var specification = EducationSpecification.createSpecification(parameters, date);
+		final var specification = EducationSpecification.createSpecification(municipalityId, parameters, date);
 		final var result = educationEventEntityRepository.findAll(specification, pageable);
 		return educationMapper.toPagedEducationResponse(result, getInfos(result.getContent(), date));
 	}
@@ -74,21 +74,21 @@ public class EducationService {
 		date = defaultLatestDateIfNull(date);
 		return switch (attribute) {
 
-			case LECTURE_TYPE -> educationEventEntityRepository.findDistinctByCreatedAt(LectureTypeProjection.class, date, Sort.by(EducationEventEntity_.LECTURE_TYPE)).stream()
+			case LECTURE_TYPE -> educationEventEntityRepository.findDistinctByCreatedAt(LectureTypeProjection.class, date, Sort.by(LECTURE_TYPE)).stream()
+				.filter(Objects::nonNull)
 				.map(LectureTypeProjection::getLectureType)
-				.filter(Objects::nonNull)
 				.toList();
-			case LANGUAGE_OF_INSTRUCTIONS -> educationEventEntityRepository.findDistinctByCreatedAt(LanguageOfInstructionsProjection.class, date, Sort.by(EducationEventEntity_.LANGUAGE_OF_INSTRUCTIONS)).stream()
-				.map(LanguageOfInstructionsProjection::getLanguageOfInstructions)
+			case LANGUAGE_OF_INSTRUCTIONS -> educationEventEntityRepository.findDistinctByCreatedAt(LanguageOfInstructionsProjection.class, date, Sort.by(LANGUAGE_OF_INSTRUCTIONS)).stream()
 				.filter(Objects::nonNull)
+				.map(LanguageOfInstructionsProjection::getLanguageOfInstructions)
 				.toList();
 			case STUDY_LOCATION -> educationEventEntityRepository.findDistinctByCreatedAt(CityProjection.class, date, Sort.by(EducationEventEntity_.CITY)).stream()
+				.filter(Objects::nonNull)
 				.map(CityProjection::getCity)
-				.filter(Objects::nonNull)
 				.toList();
-			case STUDY_PACE -> educationEventEntityRepository.findDistinctByCreatedAt(StudyPaceProjection.class, date, Sort.by(EducationEventEntity_.STUDY_PACE)).stream()
-				.map(StudyPaceProjection::getStudyPace)
+			case STUDY_PACE -> educationEventEntityRepository.findDistinctByCreatedAt(StudyPaceProjection.class, date, Sort.by(STUDY_PACE)).stream()
 				.filter(Objects::nonNull)
+				.map(StudyPaceProjection::getStudyPace)
 				.toList();
 			default -> List.of();
 		};

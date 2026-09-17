@@ -16,14 +16,11 @@ import se.sundsvall.educationdata.service.EducationService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static se.sundsvall.educationdata.api.model.ApiConstants.LANGUAGE_OF_INSTRUCTIONS;
-import static se.sundsvall.educationdata.api.model.ApiConstants.LECTURE_TYPE;
-import static se.sundsvall.educationdata.api.model.ApiConstants.STUDY_LOCATION;
-import static se.sundsvall.educationdata.api.model.ApiConstants.STUDY_PACE;
 
 @AutoConfigureWebTestClient
 @SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
@@ -31,6 +28,11 @@ import static se.sundsvall.educationdata.api.model.ApiConstants.STUDY_PACE;
 class EducationResourceTest {
 
 	private static final String EVENT_ID = "e.2281.123";
+	private static final String LANGUAGE_OF_INSTRUCTIONS = "languageOfInstructions";
+	private static final String LECTURE_TYPE = "lectureType";
+	private static final String STUDY_LOCATION = "studyLocation";
+	private static final String STUDY_PACE = "studyPace";
+	private static final String MUNICIPALITY_ID = "2281";
 
 	@Autowired
 	private WebTestClient webTestClient;
@@ -40,7 +42,7 @@ class EducationResourceTest {
 
 	@Test
 	void search() {
-		when(educationService.find(any(EducationParameters.class), isNull()))
+		when(educationService.find(eq(MUNICIPALITY_ID), any(EducationParameters.class), isNull()))
 			.thenReturn(PagedEducationResponse.builder()
 				.withEducations(List.of(Education.builder().withId(EVENT_ID).build()))
 				.build());
@@ -59,7 +61,7 @@ class EducationResourceTest {
 
 	@Test
 	void searchWithNoResult() {
-		when(educationService.find(any(EducationParameters.class), isNull()))
+		when(educationService.find(eq(MUNICIPALITY_ID), any(EducationParameters.class), isNull()))
 			.thenReturn(PagedEducationResponse.builder()
 				.withEducations(List.of())
 				.build());
@@ -75,7 +77,7 @@ class EducationResourceTest {
 
 	@Test
 	void searchWithInvalidMunicipalityId() {
-		when(educationService.find(any(EducationParameters.class), isNull()))
+		when(educationService.find(eq(MUNICIPALITY_ID), any(EducationParameters.class), isNull()))
 			.thenReturn(PagedEducationResponse.builder()
 				.withEducations(List.of(Education.builder().withId(EVENT_ID).build()))
 				.build());
@@ -161,5 +163,16 @@ class EducationResourceTest {
 
 		assertThat(response).isNotNull()
 			.contains("swe", "eng");
+	}
+
+	@Test
+	void findFilterValuesBadRequest() {
+		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "invalid")
+			.exchange()
+			.expectStatus().isBadRequest()
+			.expectBody(String.class)
+			.returnResult().getResponseBody();
+
+		assertThat(response).contains("given value invalid is not valid, valid values are [lectureType, languageOfInstructions, studyPace, studyLocation]");
 	}
 }

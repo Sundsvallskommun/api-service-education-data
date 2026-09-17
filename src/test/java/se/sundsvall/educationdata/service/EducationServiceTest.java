@@ -52,6 +52,7 @@ class EducationServiceTest {
 	@InjectMocks
 	EducationService educationService;
 
+	private static final String MUNICIPALITY_ID = "2281";
 	private static final String EVENT_ID = "e.2282.123";
 	private static final String INFO_ID = "i.123";
 	private static final LocalDate LATEST_IMPORT_DATE = LocalDate.of(2026, Month.JUNE, 7);
@@ -127,7 +128,7 @@ class EducationServiceTest {
 			.thenReturn(List.of(EducationInfoEntity.builder().withEducationInfoId(INFO_ID).build()));
 		when(educationMapper.toPagedEducationResponse(any(), any())).thenReturn(PagedEducationResponse.builder().build());
 
-		educationService.find(parameters, null);
+		educationService.find(MUNICIPALITY_ID, parameters, null);
 
 		verify(educationInfoEntityRepository).findByEducationInfoIdInAndCreatedAt(Set.of(INFO_ID), LATEST_IMPORT_DATE);
 		verify(educationMapper).toPagedEducationResponse(page, Map.of(INFO_ID, info));

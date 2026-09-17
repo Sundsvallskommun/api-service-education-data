@@ -7,6 +7,7 @@ import se.sundsvall.dept44.test.annotation.wiremock.WireMockAppTestSuite;
 import se.sundsvall.educationdata.Application;
 
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
 @Sql(scripts = "/db/scripts/testdata.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
@@ -52,6 +53,16 @@ class EducationIT extends AbstractAppTest {
                 .withServicePath(PATH + "/filters/studyLocation/values")
                 .withHttpMethod(GET)
                 .withExpectedResponseStatus(OK)
+                .withExpectedResponse(RESPONSE_FILE)
+                .sendRequestAndVerifyResponse();
+    }
+
+    @Test
+    void test05_invalidFilter(){
+        setupCall()
+                .withServicePath(PATH + "/filters/invalid/values")
+                .withHttpMethod(GET)
+                .withExpectedResponseStatus(BAD_REQUEST)
                 .withExpectedResponse(RESPONSE_FILE)
                 .sendRequestAndVerifyResponse();
     }

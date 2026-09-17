@@ -35,7 +35,6 @@ public class EducationMapper {
 			builder.withCode(educationInfo.getCode())
 				.withSchoolType(educationInfo.getSchoolType())
 				.withEducationType(educationInfo.getEducationType())
-				.withEducationType(educationInfo.getEducationType())
 				.withInformation(educationInfo.getDescription())
 				.withCredits(educationInfo.getCredits())
 				.withCreditType(educationInfo.getCreditType())
