@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.educationdata.api.model.Education;
 import se.sundsvall.educationdata.api.model.EducationParameters;
 import se.sundsvall.educationdata.api.model.PagedEducationResponse;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @ExtendWith(MockitoExtension.class)
 class EducationServiceTest {
@@ -64,11 +66,11 @@ class EducationServiceTest {
 		final var education = Education.builder().withId(EVENT_ID).build();
 
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
-		when(educationEventEntityRepository.findByEducationEventIdAndCreatedAt(EVENT_ID, LATEST_IMPORT_DATE)).thenReturn(Optional.of(event));
+		when(educationEventEntityRepository.findByMunicipalityIdAndEducationEventIdAndCreatedAt(MUNICIPALITY_ID, EVENT_ID, LATEST_IMPORT_DATE)).thenReturn(Optional.of(event));
 		when(educationInfoEntityRepository.findByEducationInfoIdAndCreatedAt(INFO_ID, LATEST_IMPORT_DATE)).thenReturn(Optional.of(info));
 		when(educationMapper.toEducation(event, info)).thenReturn(education);
 
-		final var result = educationService.findEducationById(EVENT_ID, null);
+		final var result = educationService.findEducationById(MUNICIPALITY_ID, EVENT_ID, null);
 
 		assertThat(result).isSameAs(education);
 		verify(educationEventEntityRepository).findLatestImportDate();
@@ -77,9 +79,12 @@ class EducationServiceTest {
 	@Test
 	void findByEducationIdNotFoundThrows() {
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
-		when(educationEventEntityRepository.findByEducationEventIdAndCreatedAt(EVENT_ID, LATEST_IMPORT_DATE)).thenReturn(Optional.empty());
+		when(educationEventEntityRepository.findByMunicipalityIdAndEducationEventIdAndCreatedAt(MUNICIPALITY_ID, EVENT_ID, LATEST_IMPORT_DATE)).thenReturn(Optional.empty());
 
-		assertThatThrownBy(() -> educationService.findEducationById(EVENT_ID, null)).isInstanceOf(Throwable.class);
+		assertThatThrownBy(() -> educationService.findEducationById(MUNICIPALITY_ID, EVENT_ID, null))
+			.isInstanceOf(Problem.class)
+			.hasFieldOrPropertyWithValue("status", NOT_FOUND)
+			.hasMessage("Not Found: Education with id 'e.2282.123' not found for import date '2026-06-07'");
 
 		verifyNoInteractions(educationMapper, educationInfoEntityRepository);
 	}
@@ -88,10 +93,10 @@ class EducationServiceTest {
 	void findByEducationIdWithNoInfo() {
 		final var event = EducationEventEntity.builder().withEducationEventId(EVENT_ID).withEducationInfoId(INFO_ID).withCreatedAt(LocalDate.of(2026, Month.JUNE, 7)).build();
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
-		when(educationEventEntityRepository.findByEducationEventIdAndCreatedAt(EVENT_ID, LATEST_IMPORT_DATE)).thenReturn(Optional.of(event));
+		when(educationEventEntityRepository.findByMunicipalityIdAndEducationEventIdAndCreatedAt(MUNICIPALITY_ID, EVENT_ID, LATEST_IMPORT_DATE)).thenReturn(Optional.of(event));
 		when(educationInfoEntityRepository.findByEducationInfoIdAndCreatedAt(INFO_ID, LATEST_IMPORT_DATE)).thenReturn(Optional.empty());
 
-		educationService.findEducationById(EVENT_ID, null);
+		educationService.findEducationById(MUNICIPALITY_ID, EVENT_ID, null);
 
 		verify(educationMapper).toEducation(event, null);
 	}
@@ -101,14 +106,14 @@ class EducationServiceTest {
 		final var specificDate = LocalDate.of(2026, Month.JANUARY, 1);
 		final var event = EducationEventEntity.builder().withEducationEventId(EVENT_ID).withEducationInfoId(INFO_ID).withCreatedAt(LocalDate.of(2026, Month.JANUARY, 1)).build();
 
-		when(educationEventEntityRepository.findByEducationEventIdAndCreatedAt(EVENT_ID, specificDate))
+		when(educationEventEntityRepository.findByMunicipalityIdAndEducationEventIdAndCreatedAt(MUNICIPALITY_ID, EVENT_ID, specificDate))
 			.thenReturn(Optional.of(event));
 		when(educationInfoEntityRepository.findByEducationInfoIdAndCreatedAt(INFO_ID, specificDate))
 			.thenReturn(Optional.empty());
 
-		educationService.findEducationById(EVENT_ID, specificDate);
+		educationService.findEducationById(MUNICIPALITY_ID, EVENT_ID, specificDate);
 
-		verify(educationEventEntityRepository).findByEducationEventIdAndCreatedAt(EVENT_ID, specificDate);
+		verify(educationEventEntityRepository).findByMunicipalityIdAndEducationEventIdAndCreatedAt(MUNICIPALITY_ID, EVENT_ID, specificDate);
 		verify(educationEventEntityRepository, never()).findLatestImportDate();
 		verify(educationInfoEntityRepository).findByEducationInfoIdAndCreatedAt(INFO_ID, specificDate);
 		verify(educationMapper).toEducation(event, null);
@@ -137,51 +142,51 @@ class EducationServiceTest {
 	@Test
 	void findFilterValuesForLectureType() {
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
-		when(educationEventEntityRepository.findDistinctByCreatedAt(
-			eq(LectureTypeProjection.class), eq(LATEST_IMPORT_DATE), any(Sort.class)))
+		when(educationEventEntityRepository.findDistinctByMunicipalityIdAndCreatedAt(
+			eq(LectureTypeProjection.class), eq(MUNICIPALITY_ID), eq(LATEST_IMPORT_DATE), any(Sort.class)))
 			.thenReturn(List.of(() -> "distance"));
 
-		assertThat(educationService.findFilterValues("lectureType", null))
+		assertThat(educationService.findFilterValues("2281", "lectureType", null))
 			.containsExactly("distance");
 	}
 
 	@Test
 	void findFilterValuesForLanguageOfInstructions() {
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
-		when(educationEventEntityRepository.findDistinctByCreatedAt(
-			eq(LanguageOfInstructionsProjection.class), eq(LATEST_IMPORT_DATE), any(Sort.class)))
+		when(educationEventEntityRepository.findDistinctByMunicipalityIdAndCreatedAt(
+			eq(LanguageOfInstructionsProjection.class), eq(MUNICIPALITY_ID), eq(LATEST_IMPORT_DATE), any(Sort.class)))
 			.thenReturn(List.of(() -> "swe"));
 
-		assertThat(educationService.findFilterValues("languageOfInstructions", null))
+		assertThat(educationService.findFilterValues("2281", "languageOfInstructions", null))
 			.containsExactly("swe");
 	}
 
 	@Test
 	void findFilterValuesForCity() {
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
-		when(educationEventEntityRepository.findDistinctByCreatedAt(
-			eq(CityProjection.class), eq(LATEST_IMPORT_DATE), any(Sort.class)))
+		when(educationEventEntityRepository.findDistinctByMunicipalityIdAndCreatedAt(
+			eq(CityProjection.class), eq(MUNICIPALITY_ID), eq(LATEST_IMPORT_DATE), any(Sort.class)))
 			.thenReturn(List.of(() -> "Sundsvall"));
 
-		assertThat(educationService.findFilterValues("studyLocation", null))
+		assertThat(educationService.findFilterValues("2281", "studyLocation", null))
 			.containsExactly("Sundsvall");
 	}
 
 	@Test
 	void findFilterValuesForStudyPace() {
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
-		when(educationEventEntityRepository.findDistinctByCreatedAt(
-			eq(StudyPaceProjection.class), eq(LATEST_IMPORT_DATE), any(Sort.class)))
+		when(educationEventEntityRepository.findDistinctByMunicipalityIdAndCreatedAt(
+			eq(StudyPaceProjection.class), eq(MUNICIPALITY_ID), eq(LATEST_IMPORT_DATE), any(Sort.class)))
 			.thenReturn(List.of(() -> "75.0"));
 
-		assertThat(educationService.findFilterValues("studyPace", null))
+		assertThat(educationService.findFilterValues("2281", "studyPace", null))
 			.containsExactly("75.0");
 	}
 
 	@Test
 	void findFilterValuesNonExistentCase() {
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
-		assertThat(educationService.findFilterValues("nonsense", null)).isEmpty();
+		assertThat(educationService.findFilterValues("nonsense", "2281", null)).isEmpty();
 	}
 
 }

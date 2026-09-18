@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.ValidatedParameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
@@ -50,7 +50,7 @@ class EducationResource {
 	})
 	ResponseEntity<PagedEducationResponse> search(
 		@Parameter(name = "municipalityId", description = "MunicipalityId", example = "2281") @PathVariable @ValidMunicipalityId String municipalityId,
-		@ParameterObject @ValidatedParameter final EducationParameters parameters,
+		@ParameterObject @Valid final EducationParameters parameters,
 		@Parameter(name = "date", description = "Date of instance yyyy-mm-dd") @RequestParam(required = false) LocalDate date) {
 		return ok(educationService.find(municipalityId, parameters, date));
 	}
@@ -59,11 +59,11 @@ class EducationResource {
 	@Operation(summary = "Find educations by id", responses = {
 		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
 	})
-	ResponseEntity<Education> findEducationsEventByIdAndDate(
+	ResponseEntity<Education> findEducationsEventById(
 		@Parameter(name = "municipalityId", description = "MunicipalityId", example = "2281") @PathVariable @ValidMunicipalityId String municipalityId,
 		@Parameter(name = "educationEventId", description = "Id of Education event", example = "e.2281.12345678") @PathVariable String educationEventId,
 		@Parameter(name = "date", description = "Date of instance", example = "2026-06-07") @RequestParam(required = false) LocalDate date) {
-		return ok(educationService.findEducationById(educationEventId, date));
+		return ok(educationService.findEducationById(municipalityId, educationEventId, date));
 	}
 
 	@GetMapping(path = "/filters/{filterAttribute}/values", produces = APPLICATION_JSON_VALUE)
@@ -75,6 +75,6 @@ class EducationResource {
 		@Parameter(name = "filterAttribute",
 			description = "The attribute name to get available values from") @ValidFilter(type = FilterType.EDUCATION) @PathVariable String filterAttribute,
 		@Parameter(name = "date", description = "Date of instance yyyy-mm-dd") @RequestParam(required = false) LocalDate date) {
-		return ok(educationService.findFilterValues(filterAttribute, date));
+		return ok(educationService.findFilterValues(municipalityId, filterAttribute, date));
 	}
 }

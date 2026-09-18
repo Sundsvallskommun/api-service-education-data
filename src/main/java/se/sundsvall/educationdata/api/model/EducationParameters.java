@@ -3,7 +3,6 @@ package se.sundsvall.educationdata.api.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,22 +10,25 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import se.sundsvall.dept44.models.api.paging.AbstractParameterPagingAndSortingBase;
+import se.sundsvall.dept44.models.api.paging.validation.ValidSortByProperty;
+import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
+@ValidSortByProperty(EducationEventEntity.class)
 public class EducationParameters extends AbstractParameterPagingAndSortingBase {
 
 	@Schema(description = "Education event ID", examples = "e.2281.12345678")
 	private String educationEventId;
 
 	@Schema(description = "Education name", examples = "El och energiprogrammet")
-	private String name;
-
-	@Schema(description = "Education title", examples = "El-tekniker")
 	private String title;
+
+	@Schema(description = "Education title", examples = "Teknikprogrammet")
+	private String eventTitle;
 
 	@Schema(description = "Study location", examples = "Sundsvall")
 	private String studyLocation;
@@ -46,16 +48,16 @@ public class EducationParameters extends AbstractParameterPagingAndSortingBase {
 	@Schema(description = "Whether the education is cancelled", examples = "false")
 	private Boolean cancelled;
 
-	@Schema(description = "Education start date", examples = "2026-09-07")
+	@Schema(description = "Educations starting on or after this date", examples = "2026-09-07")
 	private LocalDate startDate;
 
-	@Schema(description = "Education end date", examples = "2026-12-31")
+	@Schema(description = "Educations ending on or after this date", examples = "2026-12-31")
 	private LocalDate endDate;
 
-	@Schema(description = "Application start date", examples = "2026-03-15")
+	@Schema(description = "Applications starting on or after this date", examples = "2026-03-15")
 	private LocalDate applicationDateStart;
 
-	@Schema(description = "Application end date", examples = "2026-04-15")
+	@Schema(description = "Applications ending on or after this date", examples = "2026-04-15")
 	private LocalDate applicationDateEnd;
 
 	@Schema(description = "School type", allowableValues = {
@@ -77,8 +79,8 @@ public class EducationParameters extends AbstractParameterPagingAndSortingBase {
 	@Schema(description = "duration of education", examples = "30")
 	private String duration;
 
-	@Schema(description = "Date of expiration", examples = "2027-12-31T23:59:59")
-	private LocalDateTime expires;
+	@Schema(description = "Educations that expire on or before this date", examples = "2027-12-31")
+	private LocalDate expires;
 
 	@Schema(description = "Amount of credits", examples = "30")
 	private Double credits;

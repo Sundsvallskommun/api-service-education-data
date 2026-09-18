@@ -18,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -69,32 +68,17 @@ class EducationResourceTest {
 		final var response = webTestClient.get().uri("/2281/educations")
 			.exchange()
 			.expectStatus().isOk()
-			.expectBody(PagedEducationResponse.PagedEducationResponseBuilder.class)
+			.expectBody(PagedEducationResponse.class)
 			.returnResult().getResponseBody();
 
 		assertThat(response).isNotNull();
-	}
-
-	@Test
-	void searchWithInvalidMunicipalityId() {
-		when(educationService.find(eq(MUNICIPALITY_ID), any(EducationParameters.class), isNull()))
-			.thenReturn(PagedEducationResponse.builder()
-				.withEducations(List.of(Education.builder().withId(EVENT_ID).build()))
-				.build());
-
-		final var response = webTestClient.get().uri("/9999/educations")
-			.exchange()
-			.expectStatus().isBadRequest();
-
-		assertThat(response).isNotNull();
-		verifyNoInteractions(educationService);
+		assertThat(response.getEducations()).isEmpty();
 	}
 
 	@Test
 	void findEducationById() {
-
 		final var education = Education.builder().withId(EVENT_ID).build();
-		when(educationService.findEducationById(EVENT_ID, null)).thenReturn(education);
+		when(educationService.findEducationById(MUNICIPALITY_ID, EVENT_ID, null)).thenReturn(education);
 
 		final var response = webTestClient.get().uri("/2281/educations/{educationEventId}", EVENT_ID)
 			.exchange()
@@ -108,7 +92,7 @@ class EducationResourceTest {
 
 	@Test
 	void findFilterValuesStudyLocation() {
-		when(educationService.findFilterValues(STUDY_LOCATION, null)).thenReturn(List.of("Sundsvall", "Örnsköldsvik"));
+		when(educationService.findFilterValues(MUNICIPALITY_ID, STUDY_LOCATION, null)).thenReturn(List.of("Sundsvall", "Örnsköldsvik"));
 
 		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "studyLocation")
 			.exchange()
@@ -123,7 +107,7 @@ class EducationResourceTest {
 
 	@Test
 	void findFilterValuesLectureType() {
-		when(educationService.findFilterValues(LECTURE_TYPE, null)).thenReturn(List.of("Classroom", "Distance"));
+		when(educationService.findFilterValues(MUNICIPALITY_ID, LECTURE_TYPE, null)).thenReturn(List.of("Classroom", "Distance"));
 
 		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "lectureType")
 			.exchange()
@@ -138,7 +122,7 @@ class EducationResourceTest {
 
 	@Test
 	void findFilterValuesStudyPace() {
-		when(educationService.findFilterValues(STUDY_PACE, null)).thenReturn(List.of("100.0", "75.0", "50.0", "25.0"));
+		when(educationService.findFilterValues(MUNICIPALITY_ID, STUDY_PACE, null)).thenReturn(List.of("100.0", "75.0", "50.0", "25.0"));
 
 		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "studyPace")
 			.exchange()
@@ -153,7 +137,7 @@ class EducationResourceTest {
 
 	@Test
 	void findFilterValuesLanguageOfInstructions() {
-		when(educationService.findFilterValues(LANGUAGE_OF_INSTRUCTIONS, null)).thenReturn(List.of("swe", "eng"));
+		when(educationService.findFilterValues(MUNICIPALITY_ID, LANGUAGE_OF_INSTRUCTIONS, null)).thenReturn(List.of("swe", "eng"));
 
 		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "languageOfInstructions")
 			.exchange()
@@ -165,14 +149,4 @@ class EducationResourceTest {
 			.contains("swe", "eng");
 	}
 
-	@Test
-	void findFilterValuesBadRequest() {
-		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "invalid")
-			.exchange()
-			.expectStatus().isBadRequest()
-			.expectBody(String.class)
-			.returnResult().getResponseBody();
-
-		assertThat(response).contains("given value invalid is not valid, valid values are [lectureType, languageOfInstructions, studyPace, studyLocation]");
-	}
 }

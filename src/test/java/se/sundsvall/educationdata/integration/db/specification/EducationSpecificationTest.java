@@ -95,7 +95,7 @@ class EducationSpecificationTest {
 	}
 
 	@Test
-	void expiresIncludesEarlierEqualAndNullDates() {
+	void expiresIncludesEarlierAndEqualDates() {
 		final var cutoff = TODAY.atStartOfDay();
 
 		entityManager.find(EducationInfoEntity.class, "info-1")
@@ -107,11 +107,27 @@ class EducationSpecificationTest {
 		entityManager.flush();
 		entityManager.clear();
 
-		final var result = educationEventEntityRepository.findAll(withExpires(cutoff))
+		final var result = educationEventEntityRepository.findAll(withExpires(cutoff.toLocalDate()))
 			.stream().map(EducationEventEntity::getEducationEventId)
 			.toList();
 
-		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2", "e.3");
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2");
+	}
+
+	@Test
+	void expiresIncludesEntireGivenDay() {
+		entityManager.find(EducationInfoEntity.class, "info-1")
+			.setExpires(TODAY.atTime(0, 0, 0));
+		entityManager.find(EducationInfoEntity.class, "info-2")
+			.setExpires(TODAY.atTime(23, 0, 0));
+		entityManager.flush();
+		entityManager.clear();
+
+		final var result = educationEventEntityRepository.findAll(withExpires(TODAY))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2");
 	}
 
 	@Test

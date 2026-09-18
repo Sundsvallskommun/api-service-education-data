@@ -2,6 +2,7 @@
 	"educations": [
 		{
 			"id": "e.1",
+			"title": "Matematik nivå 1a",
 			"studyLocation": "Sundsvall",
 			"municipalityId": "2281",
 			"lectureType": "Distance",
@@ -15,7 +16,8 @@
 		},
 		{
 			"id": "e.2",
-			"name": "Energiingenjör",
+			"title": "Energiingenjör",
+			"eventTitle": "Energiingenjör",
 			"studyLocation": "Härnösand",
 			"municipalityId": "2281",
 			"lectureType": "Distance",
@@ -33,7 +35,7 @@
 		"limit": 2,
 		"page": 1,
 		"sortBy": [
-			"id"
+			"educationEventId"
 		],
 		"sortDirection": "ASC",
 		"totalPages": 2,
