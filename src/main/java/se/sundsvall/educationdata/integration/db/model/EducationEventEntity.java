@@ -16,10 +16,13 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Data
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
@@ -32,7 +35,7 @@ public class EducationEventEntity {
 	@Column(name = "id", length = 36)
 	private String id;
 
-	@Column(name = "title", length = 100)
+	@Column(name = "title", length = 255)
 	private String title;
 
 	@Column(name = "education_event_id", length = 64)
@@ -90,6 +93,8 @@ public class EducationEventEntity {
 	@Column(name = "cancelled")
 	private Boolean cancelled;
 
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumns({
 		@JoinColumn(name = "education_info_id", referencedColumnName = "education_info_id", insertable = false, updatable = false),

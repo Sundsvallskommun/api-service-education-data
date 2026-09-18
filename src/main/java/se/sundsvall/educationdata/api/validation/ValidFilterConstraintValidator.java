@@ -16,7 +16,11 @@ public class ValidFilterConstraintValidator implements ConstraintValidator<Valid
 	@Override
 	public void initialize(final ValidFilter constraintAnnotation) {
 		ConstraintValidator.super.initialize(constraintAnnotation);
-		validValues = constraintAnnotation.type() == FilterType.EDUCATION ? VALID_EDUCATION_VALUES : VALID_STATISTICS_VALUES;
+		if (constraintAnnotation.type() == FilterType.EDUCATION) {
+			validValues = VALID_EDUCATION_VALUES;
+		} else {
+			validValues = VALID_STATISTICS_VALUES;
+		}
 	}
 
 	@Override
