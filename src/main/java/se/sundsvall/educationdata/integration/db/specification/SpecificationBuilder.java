@@ -4,9 +4,11 @@ import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.JoinType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
 import static java.util.Objects.nonNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class SpecificationBuilder {
 
@@ -26,6 +28,24 @@ public class SpecificationBuilder {
 				return cb.equal(entity.get(attribute), value);
 			}
 			return cb.and();
+		};
+	}
+
+	/**
+	 * Method builds an equal filter if value is not null. If value is null, method returns an always-true predicate
+	 * (meaning no filtering will be applied for sent in attribute)
+	 *
+	 * @param  attribute name that will be used in filter
+	 * @param  values    values (or null) to compare against
+	 * @return           Specification<T> matching sent in comparison
+	 */
+	public static <T> Specification<T> buildEqualFilterIn(final String attribute, final List<String> values) {
+		return (entity, cq, cb) -> {
+			if (isEmpty(values)) {
+				return cb.and();
+			}
+			return entity.get(attribute).in(values);
+
 		};
 	}
 

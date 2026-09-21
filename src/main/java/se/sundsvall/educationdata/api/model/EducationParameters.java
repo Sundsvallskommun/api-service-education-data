@@ -3,12 +3,14 @@ package se.sundsvall.educationdata.api.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import se.sundsvall.dept44.common.validators.annotation.ValidMunicipalityId;
 import se.sundsvall.dept44.models.api.paging.AbstractParameterPagingAndSortingBase;
 import se.sundsvall.dept44.models.api.paging.validation.ValidSortByProperty;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
@@ -23,6 +25,9 @@ public class EducationParameters extends AbstractParameterPagingAndSortingBase {
 
 	@Schema(description = "Education event ID", examples = "e.2281.12345678")
 	private String educationEventId;
+
+	@Schema(description = "Municipality Ids", examples = "2281")
+	private List<@ValidMunicipalityId String> municipalityIds;
 
 	@Schema(description = "Education name", examples = "El och energiprogrammet")
 	private String title;

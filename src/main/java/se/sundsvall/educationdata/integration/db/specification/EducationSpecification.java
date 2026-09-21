@@ -3,6 +3,7 @@ package se.sundsvall.educationdata.integration.db.specification;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 import se.sundsvall.educationdata.api.model.EducationParameters;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
@@ -33,14 +34,13 @@ import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntit
 
 public interface EducationSpecification {
 
-	static Specification<EducationEventEntity> createSpecification(String municipalityId, final EducationParameters parameters, final LocalDate date) {
+	static Specification<EducationEventEntity> createSpecification(final EducationParameters parameters, final LocalDate date) {
 		return Specification.allOf(
 			withCreated(date),
 			withEducationEventId(parameters.getEducationEventId()),
 			withInfoTitle(parameters.getTitle()),
 			withTitle(parameters.getEventTitle()),
-			withInfoTitle(parameters.getTitle()),
-			withMunicipalityId(municipalityId),
+			withMunicipalityIds(parameters.getMunicipalityIds()),
 			withCity(parameters.getStudyLocation()),
 			withLectureType(parameters.getLectureType()),
 			withLanguageOfInstructions(parameters.getLanguageOfInstructions()),
@@ -113,8 +113,8 @@ public interface EducationSpecification {
 		return SpecificationBuilder.buildLikeIgnoreCaseFilter(CITY, city);
 	}
 
-	static Specification<EducationEventEntity> withMunicipalityId(String municipalityId) {
-		return SpecificationBuilder.buildEqualFilter(MUNICIPALITY_ID, municipalityId);
+	static Specification<EducationEventEntity> withMunicipalityIds(List<String> municipalityIds) {
+		return SpecificationBuilder.buildEqualFilterIn(MUNICIPALITY_ID, municipalityIds);
 	}
 
 	static Specification<EducationEventEntity> withSeats(Integer seats) {

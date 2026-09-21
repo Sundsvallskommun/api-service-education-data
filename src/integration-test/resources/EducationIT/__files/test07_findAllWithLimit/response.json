@@ -28,24 +28,17 @@
 			"creditType": "hp",
 			"eligibility": "Fysik 2, Kemi 1",
 			"degree": []
-		},
-		{
-			"id": "e.3",
-			"eventTitle": "Utan info",
-			"studyLocation": "Sundsvall",
-			"municipalityId": "2281",
-			"lectureType": "Classroom"
 		}
 	],
 	"_meta": {
-		"count": 3,
-		"limit": 100,
+		"count": 2,
+		"limit": 2,
 		"page": 1,
 		"sortBy": [
 			"educationEventId"
 		],
 		"sortDirection": "ASC",
-		"totalPages": 1,
+		"totalPages": 2,
 		"totalRecords": 3
 	}
 }

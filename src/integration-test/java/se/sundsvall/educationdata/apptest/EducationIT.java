@@ -20,7 +20,7 @@ class EducationIT extends AbstractAppTest {
 	@Test
 	void test01_findAll() {
 		setupCall()
-			.withServicePath(PATH + "?limit=2&sortBy=educationEventId")
+			.withServicePath(PATH + "?sortBy=educationEventId")
 			.withHttpMethod(GET)
 			.withExpectedResponseStatus(OK)
 			.withExpectedResponse(RESPONSE_FILE)
@@ -65,6 +65,26 @@ class EducationIT extends AbstractAppTest {
 			.withExpectedResponseStatus(BAD_REQUEST)
 			.withExpectedResponse(RESPONSE_FILE)
 			.sendRequestAndVerifyResponse();
+	}
+
+	@Test
+	void test06_findByMunicipalityIds() {
+		setupCall()
+				.withServicePath(PATH + "?municipalityIds=2281&sortBy=educationEventId")
+				.withHttpMethod(GET)
+				.withExpectedResponseStatus(OK)
+				.withExpectedResponse(RESPONSE_FILE)
+				.sendRequestAndVerifyResponse();
+	}
+
+	@Test
+	void test07_findAllWithLimit() {
+		setupCall()
+				.withServicePath(PATH + "?limit=2&sortBy=educationEventId")
+				.withHttpMethod(GET)
+				.withExpectedResponseStatus(OK)
+				.withExpectedResponse(RESPONSE_FILE)
+				.sendRequestAndVerifyResponse();
 	}
 
 }

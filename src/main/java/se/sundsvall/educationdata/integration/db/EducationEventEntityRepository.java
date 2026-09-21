@@ -18,10 +18,10 @@ public interface EducationEventEntityRepository extends JpaRepository<EducationE
 	@Query("SELECT DISTINCT event.educationInfoId FROM EducationEventEntity event")
 	Set<String> getDistinctEducationInfoId();
 
-	Optional<EducationEventEntity> findByMunicipalityIdAndEducationEventIdAndCreatedAt(String municipalityId, String educationEventId, LocalDate date);
+	Optional<EducationEventEntity> findByEducationEventIdAndCreatedAt(String educationEventId, LocalDate date);
 
 	@Query("SELECT MAX(e.createdAt) FROM EducationEventEntity e")
 	LocalDate findLatestImportDate();
 
-	<P> List<P> findDistinctByMunicipalityIdAndCreatedAt(Class<P> type, String municipalityId, LocalDate createdAt, Sort sort);
+	<P> List<P> findDistinctByCreatedAt(Class<P> type, LocalDate createdAt, Sort sort);
 }

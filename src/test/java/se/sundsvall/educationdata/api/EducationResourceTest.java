@@ -16,7 +16,6 @@ import se.sundsvall.educationdata.service.EducationService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -41,7 +40,7 @@ class EducationResourceTest {
 
 	@Test
 	void search() {
-		when(educationService.find(eq(MUNICIPALITY_ID), any(EducationParameters.class), isNull()))
+		when(educationService.find(any(EducationParameters.class), isNull()))
 			.thenReturn(PagedEducationResponse.builder()
 				.withEducations(List.of(Education.builder().withId(EVENT_ID).build()))
 				.build());
@@ -60,7 +59,7 @@ class EducationResourceTest {
 
 	@Test
 	void searchWithNoResult() {
-		when(educationService.find(eq(MUNICIPALITY_ID), any(EducationParameters.class), isNull()))
+		when(educationService.find(any(EducationParameters.class), isNull()))
 			.thenReturn(PagedEducationResponse.builder()
 				.withEducations(List.of())
 				.build());
@@ -78,7 +77,7 @@ class EducationResourceTest {
 	@Test
 	void findEducationById() {
 		final var education = Education.builder().withId(EVENT_ID).build();
-		when(educationService.findEducationById(MUNICIPALITY_ID, EVENT_ID, null)).thenReturn(education);
+		when(educationService.findEducationById(EVENT_ID, null)).thenReturn(education);
 
 		final var response = webTestClient.get().uri("/2281/educations/{educationEventId}", EVENT_ID)
 			.exchange()
@@ -92,7 +91,7 @@ class EducationResourceTest {
 
 	@Test
 	void findFilterValuesStudyLocation() {
-		when(educationService.findFilterValues(MUNICIPALITY_ID, STUDY_LOCATION, null)).thenReturn(List.of("Sundsvall", "Örnsköldsvik"));
+		when(educationService.findFilterValues(STUDY_LOCATION, null)).thenReturn(List.of("Sundsvall", "Örnsköldsvik"));
 
 		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "studyLocation")
 			.exchange()
@@ -107,7 +106,7 @@ class EducationResourceTest {
 
 	@Test
 	void findFilterValuesLectureType() {
-		when(educationService.findFilterValues(MUNICIPALITY_ID, LECTURE_TYPE, null)).thenReturn(List.of("Classroom", "Distance"));
+		when(educationService.findFilterValues(LECTURE_TYPE, null)).thenReturn(List.of("Classroom", "Distance"));
 
 		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "lectureType")
 			.exchange()
@@ -122,7 +121,7 @@ class EducationResourceTest {
 
 	@Test
 	void findFilterValuesStudyPace() {
-		when(educationService.findFilterValues(MUNICIPALITY_ID, STUDY_PACE, null)).thenReturn(List.of("100.0", "75.0", "50.0", "25.0"));
+		when(educationService.findFilterValues(STUDY_PACE, null)).thenReturn(List.of("100.0", "75.0", "50.0", "25.0"));
 
 		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "studyPace")
 			.exchange()
@@ -137,7 +136,7 @@ class EducationResourceTest {
 
 	@Test
 	void findFilterValuesLanguageOfInstructions() {
-		when(educationService.findFilterValues(MUNICIPALITY_ID, LANGUAGE_OF_INSTRUCTIONS, null)).thenReturn(List.of("swe", "eng"));
+		when(educationService.findFilterValues(LANGUAGE_OF_INSTRUCTIONS, null)).thenReturn(List.of("swe", "eng"));
 
 		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "languageOfInstructions")
 			.exchange()

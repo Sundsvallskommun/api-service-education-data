@@ -23,7 +23,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 class EducationResourceFailureTest {
 
 	private static final String EVENT_ID = "e.2281.123";
-	private static final String MUNICIPALITY_ID = "2281";
 
 	@Autowired
 	private WebTestClient webTestClient;
@@ -78,7 +77,7 @@ class EducationResourceFailureTest {
 
 	@Test
 	void findEducationByIdNotFound() {
-		when(educationService.findEducationById(MUNICIPALITY_ID, EVENT_ID, null))
+		when(educationService.findEducationById(EVENT_ID, null))
 			.thenThrow(Problem.valueOf(NOT_FOUND, "Education with id '%s' not found for date '%s'".formatted(EVENT_ID, "2026-06-07")));
 
 		final var response = webTestClient.get().uri("/2281/educations/{educationEventId}", EVENT_ID)

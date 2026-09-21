@@ -48,19 +48,19 @@ public class EducationService {
 		this.educationMapper = educationMapper;
 	}
 
-	public Education findEducationById(String municipalityId, String educationEventId, LocalDate date) {
+	public Education findEducationById(String educationEventId, LocalDate date) {
 		final var importDate = defaultLatestDateIfNull(date);
-		final var event = educationEventEntityRepository.findByMunicipalityIdAndEducationEventIdAndCreatedAt(municipalityId, educationEventId, importDate)
+		final var event = educationEventEntityRepository.findByEducationEventIdAndCreatedAt(educationEventId, importDate)
 			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, EDUCATION_NOT_FOUND.formatted(educationEventId, importDate)));
 		final var info = Optional.ofNullable(event.getEducationInfoId())
 			.flatMap(infoId -> educationInfoEntityRepository.findByEducationInfoIdAndCreatedAt(infoId, event.getCreatedAt())).orElse(null);
 		return educationMapper.toEducation(event, info);
 	}
 
-	public PagedEducationResponse find(String municipalityId, EducationParameters parameters, LocalDate date) {
+	public PagedEducationResponse find(EducationParameters parameters, LocalDate date) {
 		date = defaultLatestDateIfNull(date);
 		final var pageable = PageRequest.of(parameters.getPage() - 1, parameters.getLimit(), parameters.sort());
-		final var specification = EducationSpecification.createSpecification(municipalityId, parameters, date);
+		final var specification = EducationSpecification.createSpecification(parameters, date);
 		final var result = educationEventEntityRepository.findAll(specification, pageable);
 		return educationMapper.toPagedEducationResponse(result, getInfos(result.getContent(), date));
 	}
@@ -71,23 +71,23 @@ public class EducationService {
 			.collect(toMap(EducationInfoEntity::getEducationInfoId, identity()));
 	}
 
-	public List<String> findFilterValues(String municipalityId, final String attribute, LocalDate date) {
+	public List<String> findFilterValues(final String attribute, LocalDate date) {
 		date = defaultLatestDateIfNull(date);
 		return switch (attribute) {
 
-			case LECTURE_TYPE -> educationEventEntityRepository.findDistinctByMunicipalityIdAndCreatedAt(LectureTypeProjection.class, municipalityId, date, Sort.by(LECTURE_TYPE)).stream()
+			case LECTURE_TYPE -> educationEventEntityRepository.findDistinctByCreatedAt(LectureTypeProjection.class, date, Sort.by(LECTURE_TYPE)).stream()
 				.filter(Objects::nonNull)
 				.map(LectureTypeProjection::getLectureType)
 				.toList();
-			case LANGUAGE_OF_INSTRUCTIONS -> educationEventEntityRepository.findDistinctByMunicipalityIdAndCreatedAt(LanguageOfInstructionsProjection.class, municipalityId, date, Sort.by(LANGUAGE_OF_INSTRUCTIONS)).stream()
+			case LANGUAGE_OF_INSTRUCTIONS -> educationEventEntityRepository.findDistinctByCreatedAt(LanguageOfInstructionsProjection.class, date, Sort.by(LANGUAGE_OF_INSTRUCTIONS)).stream()
 				.filter(Objects::nonNull)
 				.map(LanguageOfInstructionsProjection::getLanguageOfInstructions)
 				.toList();
-			case STUDY_LOCATION -> educationEventEntityRepository.findDistinctByMunicipalityIdAndCreatedAt(CityProjection.class, municipalityId, date, Sort.by(EducationEventEntity_.CITY)).stream()
+			case STUDY_LOCATION -> educationEventEntityRepository.findDistinctByCreatedAt(CityProjection.class, date, Sort.by(EducationEventEntity_.CITY)).stream()
 				.filter(Objects::nonNull)
 				.map(CityProjection::getCity)
 				.toList();
-			case STUDY_PACE -> educationEventEntityRepository.findDistinctByMunicipalityIdAndCreatedAt(StudyPaceProjection.class, municipalityId, date, Sort.by(STUDY_PACE)).stream()
+			case STUDY_PACE -> educationEventEntityRepository.findDistinctByCreatedAt(StudyPaceProjection.class, date, Sort.by(STUDY_PACE)).stream()
 				.filter(Objects::nonNull)
 				.map(StudyPaceProjection::getStudyPace)
 				.toList();

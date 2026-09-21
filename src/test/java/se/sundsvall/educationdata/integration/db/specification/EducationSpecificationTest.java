@@ -2,6 +2,7 @@ package se.sundsvall.educationdata.integration.db.specification;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -20,6 +21,7 @@ import static se.sundsvall.educationdata.integration.db.specification.EducationS
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withEducationType;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withEligibility;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withExpires;
+import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withMunicipalityIds;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withSchoolType;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withStartDate;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withTitle;
@@ -74,6 +76,24 @@ class EducationSpecificationTest {
 			.stream().map(EducationEventEntity::getEducationEventId)
 			.toList();
 		assertThat(result).containsExactly("e.1");
+	}
+
+	@Test
+	void municipalityIdsMatchesGivenIds() {
+
+		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withMunicipalityIds(List.of("2281"))))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+		assertThat(result).containsExactly("e.1", "e.3");
+	}
+
+	@Test
+	void emptyMunicipalityIdsDoesNotFilter() {
+
+		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withMunicipalityIds(List.of())))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+		assertThat(result).hasSize(3);
 	}
 
 	@Test

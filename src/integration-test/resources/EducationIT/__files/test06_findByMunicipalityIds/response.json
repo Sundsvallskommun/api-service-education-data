@@ -15,21 +15,6 @@
 			"degree": []
 		},
 		{
-			"id": "e.2",
-			"title": "Energiingenjör",
-			"eventTitle": "Energiingenjör",
-			"studyLocation": "Härnösand",
-			"municipalityId": "2280",
-			"lectureType": "Distance",
-			"code": "TEING",
-			"schoolType": "HS",
-			"educationType": "kurspaket",
-			"credits": 180.0,
-			"creditType": "hp",
-			"eligibility": "Fysik 2, Kemi 1",
-			"degree": []
-		},
-		{
 			"id": "e.3",
 			"eventTitle": "Utan info",
 			"studyLocation": "Sundsvall",
@@ -38,7 +23,7 @@
 		}
 	],
 	"_meta": {
-		"count": 3,
+		"count": 2,
 		"limit": 100,
 		"page": 1,
 		"sortBy": [
@@ -46,6 +31,6 @@
 		],
 		"sortDirection": "ASC",
 		"totalPages": 1,
-		"totalRecords": 3
+		"totalRecords": 2
 	}
 }

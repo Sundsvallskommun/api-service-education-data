@@ -49,10 +49,10 @@ class EducationResource {
 		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
 	})
 	ResponseEntity<PagedEducationResponse> search(
-		@Parameter(name = "municipalityId", description = "MunicipalityId", example = "2281") @PathVariable @ValidMunicipalityId String municipalityId,
+		@Parameter(name = "municipalityId", description = "Municipality ID", example = "2281") @PathVariable @ValidMunicipalityId String municipalityId,
 		@ParameterObject @Valid final EducationParameters parameters,
 		@Parameter(name = "date", description = "Date of instance yyyy-mm-dd") @RequestParam(required = false) LocalDate date) {
-		return ok(educationService.find(municipalityId, parameters, date));
+		return ok(educationService.find(parameters, date));
 	}
 
 	@GetMapping(path = "/{educationEventId}", produces = APPLICATION_JSON_VALUE)
@@ -60,10 +60,10 @@ class EducationResource {
 		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
 	})
 	ResponseEntity<Education> findEducationsEventById(
-		@Parameter(name = "municipalityId", description = "MunicipalityId", example = "2281") @PathVariable @ValidMunicipalityId String municipalityId,
+		@Parameter(name = "municipalityId", description = "Municipality ID", example = "2281") @PathVariable @ValidMunicipalityId String municipalityId,
 		@Parameter(name = "educationEventId", description = "Id of Education event", example = "e.2281.12345678") @PathVariable String educationEventId,
 		@Parameter(name = "date", description = "Date of instance", example = "2026-06-07") @RequestParam(required = false) LocalDate date) {
-		return ok(educationService.findEducationById(municipalityId, educationEventId, date));
+		return ok(educationService.findEducationById(educationEventId, date));
 	}
 
 	@GetMapping(path = "/filters/{filterAttribute}/values", produces = APPLICATION_JSON_VALUE)
@@ -71,10 +71,10 @@ class EducationResource {
 		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
 	})
 	ResponseEntity<List<String>> findFilterValues(
-		@Parameter(name = "municipalityId", description = "MunicipalityId", example = "2281") @PathVariable @ValidMunicipalityId String municipalityId,
+		@Parameter(name = "municipalityId", description = "Municipality ID", example = "2281") @PathVariable @ValidMunicipalityId String municipalityId,
 		@Parameter(name = "filterAttribute",
 			description = "The attribute name to get available values from") @ValidFilter(type = FilterType.EDUCATION) @PathVariable String filterAttribute,
 		@Parameter(name = "date", description = "Date of instance yyyy-mm-dd") @RequestParam(required = false) LocalDate date) {
-		return ok(educationService.findFilterValues(municipalityId, filterAttribute, date));
+		return ok(educationService.findFilterValues(filterAttribute, date));
 	}
 }
