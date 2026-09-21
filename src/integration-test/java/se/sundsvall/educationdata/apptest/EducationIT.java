@@ -70,21 +70,21 @@ class EducationIT extends AbstractAppTest {
 	@Test
 	void test06_findByMunicipalityIds() {
 		setupCall()
-				.withServicePath(PATH + "?municipalityIds=2281&sortBy=educationEventId")
-				.withHttpMethod(GET)
-				.withExpectedResponseStatus(OK)
-				.withExpectedResponse(RESPONSE_FILE)
-				.sendRequestAndVerifyResponse();
+			.withServicePath(PATH + "?municipalityIds=2281&sortBy=educationEventId")
+			.withHttpMethod(GET)
+			.withExpectedResponseStatus(OK)
+			.withExpectedResponse(RESPONSE_FILE)
+			.sendRequestAndVerifyResponse();
 	}
 
 	@Test
 	void test07_findAllWithLimit() {
 		setupCall()
-				.withServicePath(PATH + "?limit=2&sortBy=educationEventId")
-				.withHttpMethod(GET)
-				.withExpectedResponseStatus(OK)
-				.withExpectedResponse(RESPONSE_FILE)
-				.sendRequestAndVerifyResponse();
+			.withServicePath(PATH + "?limit=2&sortBy=educationEventId")
+			.withHttpMethod(GET)
+			.withExpectedResponseStatus(OK)
+			.withExpectedResponse(RESPONSE_FILE)
+			.sendRequestAndVerifyResponse();
 	}
 
 }
