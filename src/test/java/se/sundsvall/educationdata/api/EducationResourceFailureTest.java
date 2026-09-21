@@ -1,6 +1,8 @@
 package se.sundsvall.educationdata.api;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
@@ -30,45 +32,16 @@ class EducationResourceFailureTest {
 	@MockitoBean
 	private EducationService educationService;
 
-	@Test
-	void searchWithInvalidMunicipalityId() {
-		webTestClient.get().uri("/9999/educations")
-			.exchange()
-			.expectStatus().isBadRequest();
-
-		verifyNoInteractions(educationService);
-	}
-
-	@Test
-	void searchWithInvalidLimit() {
-		webTestClient.get().uri("/2281/educations?limit=0")
-			.exchange()
-			.expectStatus().isBadRequest();
-
-		verifyNoInteractions(educationService);
-	}
-
-	@Test
-	void searchWithInvalidPage() {
-		webTestClient.get().uri("/2281/educations?page=0")
-			.exchange()
-			.expectStatus().isBadRequest();
-
-		verifyNoInteractions(educationService);
-	}
-
-	@Test
-	void searchWithMalformedDate() {
-		webTestClient.get().uri("/2281/educations?date=07-06-2026")
-			.exchange()
-			.expectStatus().isBadRequest();
-
-		verifyNoInteractions(educationService);
-	}
-
-	@Test
-	void searchWithInvalidSortBy() {
-		webTestClient.get().uri("/2281/educations?sortBy=invalidSortOption")
+	@ParameterizedTest(name = "{0}")
+	@ValueSource(strings = {
+		"/9999/educations",
+		"/2281/educations?limit=0",
+		"/2281/educations?page=0",
+		"/2281/educations?date=07-06-2026",
+		"/2281/educations?sortBy=invalidSortOption"
+	})
+	void searchWithInvalidParameters(final String url) {
+		webTestClient.get().uri(url)
 			.exchange()
 			.expectStatus().isBadRequest();
 
