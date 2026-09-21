@@ -15,7 +15,7 @@ public class EducationMapper {
 	public Education toEducation(final EducationEventEntity educationEvent, final EducationInfoEntity educationInfo) {
 		final var builder = Education.builder()
 			.withId(educationEvent.getEducationEventId())
-			.withName(educationEvent.getTitle())
+			.withEventTitle(educationEvent.getTitle())
 			.withStudyLocation(educationEvent.getCity())
 			.withMunicipalityId(educationEvent.getMunicipalityId())
 			.withUrl(educationEvent.getCoursePostUrl())
@@ -33,6 +33,7 @@ public class EducationMapper {
 
 		if (educationInfo != null) {
 			builder.withCode(educationInfo.getCode())
+				.withTitle(educationInfo.getTitle())
 				.withSchoolType(educationInfo.getSchoolType())
 				.withEducationType(educationInfo.getEducationType())
 				.withInformation(educationInfo.getDescription())

@@ -5,10 +5,7 @@
 			"title": "Matematik nivå 1a",
 			"studyLocation": "Sundsvall",
 			"municipalityId": "2281",
-			"numberOfSeats": 20,
 			"lectureType": "Distance",
-			"start": "2026-04-01",
-			"end": "2026-12-01",
 			"code": "MATE1A00X",
 			"schoolType": "VUXGY",
 			"educationType": "kurs",
@@ -18,30 +15,22 @@
 			"degree": []
 		},
 		{
-			"id": "e.5",
+			"id": "e.3",
+			"eventTitle": "Utan info",
 			"studyLocation": "Sundsvall",
 			"municipalityId": "2281",
-			"numberOfSeats": 5,
-			"lectureType": "Distance",
-			"start": "2026-06-01",
-			"code": "MATE1A00X",
-			"schoolType": "VUXGY",
-			"educationType": "kurs",
-			"credits": 100.0,
-			"creditType": "vp",
-			"eligibility": "Grundläggande behörighet",
-			"degree": []
+			"lectureType": "Classroom"
 		}
 	],
 	"_meta": {
 		"count": 2,
-		"limit": 2,
+		"limit": 100,
 		"page": 1,
 		"sortBy": [
 			"educationEventId"
 		],
 		"sortDirection": "ASC",
-		"totalPages": 2,
-		"totalRecords": 3
+		"totalPages": 1,
+		"totalRecords": 2
 	}
 }

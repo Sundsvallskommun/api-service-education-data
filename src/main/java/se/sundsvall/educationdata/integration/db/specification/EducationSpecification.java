@@ -2,6 +2,8 @@ package se.sundsvall.educationdata.integration.db.specification;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 import se.sundsvall.educationdata.api.model.EducationParameters;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
@@ -36,9 +38,9 @@ public interface EducationSpecification {
 		return Specification.allOf(
 			withCreated(date),
 			withEducationEventId(parameters.getEducationEventId()),
-			withTitle(parameters.getName()),
 			withInfoTitle(parameters.getTitle()),
-			withMunicipalityId(parameters.getMunicipalityId()),
+			withTitle(parameters.getEventTitle()),
+			withMunicipalityIds(parameters.getMunicipalityIds()),
 			withCity(parameters.getStudyLocation()),
 			withLectureType(parameters.getLectureType()),
 			withLanguageOfInstructions(parameters.getLanguageOfInstructions()),
@@ -87,8 +89,8 @@ public interface EducationSpecification {
 		return SpecificationBuilder.buildJoinedEqualFilter(EDUCATION_INFO, DURATION, duration);
 	}
 
-	static Specification<EducationEventEntity> withExpires(final LocalDateTime expires) {
-		return SpecificationBuilder.buildJoinedDateIsEqualOrBeforeOrNullFilter(EDUCATION_INFO, EXPIRES, expires);
+	static Specification<EducationEventEntity> withExpires(final LocalDate expires) {
+		return SpecificationBuilder.buildJoinedDateTimeIsEqualOrBeforeFilter(EDUCATION_INFO, EXPIRES, endOfDay(expires));
 	}
 
 	static Specification<EducationEventEntity> withRecommendedPriorKnowledge(final String recommendedPriorKnowledge) {
@@ -111,8 +113,8 @@ public interface EducationSpecification {
 		return SpecificationBuilder.buildLikeIgnoreCaseFilter(CITY, city);
 	}
 
-	static Specification<EducationEventEntity> withMunicipalityId(String municipalityId) {
-		return SpecificationBuilder.buildEqualFilter(MUNICIPALITY_ID, municipalityId);
+	static Specification<EducationEventEntity> withMunicipalityIds(List<String> municipalityIds) {
+		return SpecificationBuilder.buildEqualFilterIn(MUNICIPALITY_ID, municipalityIds);
 	}
 
 	static Specification<EducationEventEntity> withSeats(Integer seats) {
@@ -149,5 +151,12 @@ public interface EducationSpecification {
 
 	static Specification<EducationEventEntity> withCancelledStatus(Boolean cancelledStatus) {
 		return SpecificationBuilder.buildEqualFilter(CANCELLED, cancelledStatus);
+	}
+
+	private static LocalDateTime endOfDay(final LocalDate date) {
+		if (date == null) {
+			return null;
+		}
+		return date.atTime(LocalTime.MAX);
 	}
 }

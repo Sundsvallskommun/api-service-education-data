@@ -2,6 +2,7 @@
 	"educations": [
 		{
 			"id": "e.1",
+			"title": "Matematik nivå 1a",
 			"studyLocation": "Sundsvall",
 			"municipalityId": "2281",
 			"numberOfSeats": 20,
@@ -18,8 +19,10 @@
 		},
 		{
 			"id": "e.2",
-			"name": "Energiingenjör",
+			"title": "Energiingenjör",
+			"eventTitle": "Energiingenjör",
 			"studyLocation": "Härnösand",
+			"municipalityId": "2280",
 			"municipalityId": "2281",
 			"numberOfSeats": 30,
 			"lectureType": "Distance",
@@ -32,16 +35,25 @@
 			"creditType": "hp",
 			"eligibility": "Fysik 2, Kemi 1",
 			"degree": []
+		},
+		{
+			"id": "e.3",
+			"eventTitle": "Utan info",
+			"studyLocation": "Sundsvall",
+			"municipalityId": "2281",
+			"lectureType": "Classroom"
 		}
 	],
 	"_meta": {
-		"count": 2,
-		"limit": 2,
+		"count": 3,
+		"limit": 100,
 		"page": 1,
 		"sortBy": [
-			"id"
+			"educationEventId"
 		],
 		"sortDirection": "ASC",
+		"totalPages": 1,
+		"totalRecords": 3
 		"totalPages": 3,
 		"totalRecords": 6
 	}

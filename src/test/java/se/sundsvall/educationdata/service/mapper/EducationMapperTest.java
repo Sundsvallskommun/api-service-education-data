@@ -57,7 +57,7 @@ class EducationMapperTest {
 		final var result = educationMapper.toEducation(educationEvent, educationInfo);
 
 		assertThat(result.getId()).isEqualTo("e.2281.123");
-		assertThat(result.getName()).isEqualTo("Matematik nivå 1a");
+		assertThat(result.getEventTitle()).isEqualTo("Matematik nivå 1a");
 		assertThat(result.getStudyLocation()).isEqualTo("Sundsvall");
 		assertThat(result.getMunicipalityId()).isEqualTo("2281");
 		assertThat(result.getLectureType()).isEqualTo("Distance");
@@ -67,6 +67,7 @@ class EducationMapperTest {
 		assertThat(result.getEnd()).isEqualTo(LocalDate.of(2026, Month.DECEMBER, 18));
 		assertThat(result.getCancelled()).isFalse();
 
+		assertThat(result.getTitle()).isEqualTo("Matematik");
 		assertThat(result.getCode()).isEqualTo("MATE1A00X");
 		assertThat(result.getSchoolType()).isEqualTo("VUXGY");
 		assertThat(result.getEducationType()).isEqualTo("kurs");

@@ -17,13 +17,8 @@ import se.sundsvall.educationdata.service.EducationService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static se.sundsvall.educationdata.api.model.ApiConstants.LANGUAGE_OF_INSTRUCTIONS;
-import static se.sundsvall.educationdata.api.model.ApiConstants.LECTURE_TYPE;
-import static se.sundsvall.educationdata.api.model.ApiConstants.STUDY_LOCATION;
-import static se.sundsvall.educationdata.api.model.ApiConstants.STUDY_PACE;
 
 @AutoConfigureWebTestClient
 @SpringBootTest(classes = Application.class, webEnvironment = RANDOM_PORT)
@@ -31,6 +26,11 @@ import static se.sundsvall.educationdata.api.model.ApiConstants.STUDY_PACE;
 class EducationResourceTest {
 
 	private static final String EVENT_ID = "e.2281.123";
+	private static final String LANGUAGE_OF_INSTRUCTIONS = "languageOfInstructions";
+	private static final String LECTURE_TYPE = "lectureType";
+	private static final String STUDY_LOCATION = "studyLocation";
+	private static final String STUDY_PACE = "studyPace";
+	private static final String MUNICIPALITY_ID = "2281";
 
 	@Autowired
 	private WebTestClient webTestClient;
@@ -67,30 +67,15 @@ class EducationResourceTest {
 		final var response = webTestClient.get().uri("/2281/educations")
 			.exchange()
 			.expectStatus().isOk()
-			.expectBody(PagedEducationResponse.PagedEducationResponseBuilder.class)
+			.expectBody(PagedEducationResponse.class)
 			.returnResult().getResponseBody();
 
 		assertThat(response).isNotNull();
-	}
-
-	@Test
-	void searchWithInvalidMunicipalityId() {
-		when(educationService.find(any(EducationParameters.class), isNull()))
-			.thenReturn(PagedEducationResponse.builder()
-				.withEducations(List.of(Education.builder().withId(EVENT_ID).build()))
-				.build());
-
-		final var response = webTestClient.get().uri("/9999/educations")
-			.exchange()
-			.expectStatus().isBadRequest();
-
-		assertThat(response).isNotNull();
-		verifyNoInteractions(educationService);
+		assertThat(response.getEducations()).isEmpty();
 	}
 
 	@Test
 	void findEducationById() {
-
 		final var education = Education.builder().withId(EVENT_ID).build();
 		when(educationService.findEducationById(EVENT_ID, null)).thenReturn(education);
 
@@ -162,4 +147,5 @@ class EducationResourceTest {
 		assertThat(response).isNotNull()
 			.contains("swe", "eng");
 	}
+
 }

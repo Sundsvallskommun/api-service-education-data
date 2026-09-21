@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.educationdata.api.model.Education;
@@ -28,6 +27,10 @@ import se.sundsvall.educationdata.service.mapper.EducationMapper;
 
 import static java.util.function.UnaryOperator.identity;
 import static java.util.stream.Collectors.toMap;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LANGUAGE_OF_INSTRUCTIONS;
+import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LECTURE_TYPE;
+import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.STUDY_PACE;
 import static se.sundsvall.educationdata.api.model.ApiConstants.LANGUAGE_OF_INSTRUCTIONS;
 import static se.sundsvall.educationdata.api.model.ApiConstants.LECTURE_TYPE;
 import static se.sundsvall.educationdata.api.model.ApiConstants.STUDY_LOCATION;
@@ -40,6 +43,9 @@ public class EducationService {
 	private final EducationInfoEntityRepository educationInfoEntityRepository;
 	private final EducationMapper educationMapper;
 
+	private static final String EDUCATION_NOT_FOUND = "Education with id '%s' not found for import date '%s'";
+	private static final String STUDY_LOCATION = "studyLocation";
+
 	public EducationService(EducationEventEntityRepository educationEventEntityRepository, EducationInfoEntityRepository educationInfoEntityRepository, EducationMapper educationMapper) {
 		this.educationEventEntityRepository = educationEventEntityRepository;
 		this.educationInfoEntityRepository = educationInfoEntityRepository;
@@ -47,9 +53,9 @@ public class EducationService {
 	}
 
 	public Education findEducationById(String educationEventId, LocalDate date) {
-		date = defaultLatestDateIfNull(date);
-		final var event = educationEventEntityRepository.findByEducationEventIdAndCreatedAt(educationEventId, date)
-			.orElseThrow(() -> Problem.valueOf(HttpStatus.NOT_FOUND));
+		final var importDate = defaultLatestDateIfNull(date);
+		final var event = educationEventEntityRepository.findByEducationEventIdAndCreatedAt(educationEventId, importDate)
+			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, EDUCATION_NOT_FOUND.formatted(educationEventId, importDate)));
 		final var info = Optional.ofNullable(event.getEducationInfoId())
 			.flatMap(infoId -> educationInfoEntityRepository.findByEducationInfoIdAndCreatedAt(infoId, event.getCreatedAt())).orElse(null);
 		return educationMapper.toEducation(event, info);
@@ -73,21 +79,21 @@ public class EducationService {
 		date = defaultLatestDateIfNull(date);
 		return switch (attribute) {
 
-			case LECTURE_TYPE -> educationEventEntityRepository.findDistinctByCreatedAt(LectureTypeProjection.class, date, Sort.by(EducationEventEntity_.LECTURE_TYPE)).stream()
+			case LECTURE_TYPE -> educationEventEntityRepository.findDistinctByCreatedAt(LectureTypeProjection.class, date, Sort.by(LECTURE_TYPE)).stream()
+				.filter(Objects::nonNull)
 				.map(LectureTypeProjection::getLectureType)
-				.filter(Objects::nonNull)
 				.toList();
-			case LANGUAGE_OF_INSTRUCTIONS -> educationEventEntityRepository.findDistinctByCreatedAt(LanguageOfInstructionsProjection.class, date, Sort.by(EducationEventEntity_.LANGUAGE_OF_INSTRUCTIONS)).stream()
+			case LANGUAGE_OF_INSTRUCTIONS -> educationEventEntityRepository.findDistinctByCreatedAt(LanguageOfInstructionsProjection.class, date, Sort.by(LANGUAGE_OF_INSTRUCTIONS)).stream()
+				.filter(Objects::nonNull)
 				.map(LanguageOfInstructionsProjection::getLanguageOfInstructions)
-				.filter(Objects::nonNull)
 				.toList();
-			case STUDY_LOCATION -> educationEventEntityRepository.findDistinctByCreatedAt(StudyLocationProjection.class, date, Sort.by(EducationEventEntity_.CITY)).stream()
-				.map(StudyLocationProjection::getCity)
+			case STUDY_LOCATION -> educationEventEntityRepository.findDistinctByCreatedAt(CityProjection.class, date, Sort.by(EducationEventEntity_.CITY)).stream()
 				.filter(Objects::nonNull)
+				.map(CityProjection::getCity)
 				.toList();
-			case STUDY_PACE -> educationEventEntityRepository.findDistinctByCreatedAt(StudyPaceProjection.class, date, Sort.by(EducationEventEntity_.STUDY_PACE)).stream()
+			case STUDY_PACE -> educationEventEntityRepository.findDistinctByCreatedAt(StudyPaceProjection.class, date, Sort.by(STUDY_PACE)).stream()
+				.filter(Objects::nonNull)
 				.map(StudyPaceProjection::getStudyPace)
-				.filter(Objects::nonNull)
 				.toList();
 			default -> List.of();
 		};

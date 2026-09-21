@@ -20,7 +20,10 @@ public class Education {
 	private String id;
 
 	@Schema(description = "Education name", examples = "Vatten- & Miljötekniker")
-	private String name;
+	private String title;
+
+	@Schema(description = "Education title, for some educations that have have a title instead of an education name", examples = "Naturprogrammet")
+	private String eventTitle;
 
 	@Schema(description = "Study location", examples = "Sundsvall")
 	private String studyLocation;

@@ -19,7 +19,7 @@ INSERT INTO education_event
 '2026-06-06', '2026-05-01', '2026-12-01', 99),
 ('event-5', 'e.5', 'i.1', NULL, 'Sundsvall', '2281', 'Distance',
 '2026-06-07', '2026-06-01', NULL, 5),
-('event-6', 'e.6', 'i.1', NULL, 'Härnösand', '2281', 'Distance',
+('event-6', 'e.6', 'i.1', NULL, 'Härnösand', '2280', 'Distance',
 '2026-06-07', NULL, '2026-10-01', NULL),
 ('event-7', 'e.7', NULL, 'Utan datum', 'Sundsvall', '2281', 'Classroom',
 '2026-06-07', NULL, NULL, NULL),

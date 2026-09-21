@@ -2,6 +2,7 @@ package se.sundsvall.educationdata.integration.db.specification;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -20,6 +21,7 @@ import static se.sundsvall.educationdata.integration.db.specification.EducationS
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withEducationType;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withEligibility;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withExpires;
+import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withMunicipalityIds;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withSchoolType;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withStartDate;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withTitle;
@@ -78,6 +80,24 @@ class EducationSpecificationTest {
 	}
 
 	@Test
+	void municipalityIdsMatchesGivenIds() {
+
+		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withMunicipalityIds(List.of("2281"))))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+		assertThat(result).containsExactly("e.1", "e.3");
+	}
+
+	@Test
+	void emptyMunicipalityIdsDoesNotFilter() {
+
+		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withMunicipalityIds(List.of())))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+		assertThat(result).hasSize(3);
+	}
+
+	@Test
 	void joinIncludesEarlierEqualAndNullDates() {
 		entityManager.find(EducationEventEntity.class, "event-1")
 			.setStartDate(TODAY);
@@ -96,7 +116,7 @@ class EducationSpecificationTest {
 	}
 
 	@Test
-	void expiresIncludesEarlierEqualAndNullDates() {
+	void expiresIncludesEarlierAndEqualDates() {
 		final var cutoff = TODAY.atStartOfDay();
 
 		entityManager.find(EducationInfoEntity.class, "info-1")
@@ -108,10 +128,27 @@ class EducationSpecificationTest {
 		entityManager.flush();
 		entityManager.clear();
 
-		final var result = educationEventEntityRepository.findAll(withExpires(cutoff))
+		final var result = educationEventEntityRepository.findAll(withExpires(cutoff.toLocalDate()))
 			.stream().map(EducationEventEntity::getEducationEventId)
 			.toList();
 
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2");
+	}
+
+	@Test
+	void expiresIncludesEntireGivenDay() {
+		entityManager.find(EducationInfoEntity.class, "info-1")
+			.setExpires(TODAY.atTime(0, 0, 0));
+		entityManager.find(EducationInfoEntity.class, "info-2")
+			.setExpires(TODAY.atTime(23, 0, 0));
+		entityManager.flush();
+		entityManager.clear();
+
+		final var result = educationEventEntityRepository.findAll(withExpires(TODAY))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2");
 		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.5", "e.6", "e.7", "e.8");
 	}
 

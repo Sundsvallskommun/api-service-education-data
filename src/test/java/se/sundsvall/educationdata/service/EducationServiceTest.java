@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.educationdata.api.model.Education;
 import se.sundsvall.educationdata.api.model.EducationParameters;
 import se.sundsvall.educationdata.api.model.PagedEducationResponse;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @ExtendWith(MockitoExtension.class)
 class EducationServiceTest {
@@ -52,6 +54,7 @@ class EducationServiceTest {
 	@InjectMocks
 	EducationService educationService;
 
+	private static final String MUNICIPALITY_ID = "2281";
 	private static final String EVENT_ID = "e.2282.123";
 	private static final String INFO_ID = "i.123";
 	private static final LocalDate LATEST_IMPORT_DATE = LocalDate.of(2026, Month.JUNE, 7);
@@ -78,7 +81,10 @@ class EducationServiceTest {
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
 		when(educationEventEntityRepository.findByEducationEventIdAndCreatedAt(EVENT_ID, LATEST_IMPORT_DATE)).thenReturn(Optional.empty());
 
-		assertThatThrownBy(() -> educationService.findEducationById(EVENT_ID, null)).isInstanceOf(Throwable.class);
+		assertThatThrownBy(() -> educationService.findEducationById(EVENT_ID, null))
+			.isInstanceOf(Problem.class)
+			.hasFieldOrPropertyWithValue("status", NOT_FOUND)
+			.hasMessage("Not Found: Education with id 'e.2282.123' not found for import date '2026-06-07'");
 
 		verifyNoInteractions(educationMapper, educationInfoEntityRepository);
 	}
