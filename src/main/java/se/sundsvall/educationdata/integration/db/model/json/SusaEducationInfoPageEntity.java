@@ -13,7 +13,9 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @AllArgsConstructor
@@ -29,6 +31,8 @@ public class SusaEducationInfoPageEntity {
 	private String id;
 
 	@Lob
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
 	@Column(name = "json_body", columnDefinition = "LONGBLOB", nullable = false, updatable = false)
 	private byte[] jsonBody;
 

@@ -83,6 +83,7 @@ class EducationEventsServiceTest {
 		verify(susaEducationEventPageRepository, times(3)).save(captor.capture());
 		assertThat(captor.getAllValues()).containsExactly(entity1, entity2, entity3);
 
+		verify(susaEducationEventPageRepository).deleteByDateCollected(LocalDate.now());
 		verify(susaNavetIntegration).getEducationEvents(0);
 		verify(susaNavetIntegration).getEducationEvents(1);
 		verify(susaNavetIntegration).getEducationEvents(2);
@@ -106,6 +107,7 @@ class EducationEventsServiceTest {
 
 		educationEventsService.saveAllPagesEventsJsonTable();
 
+		verify(susaEducationEventPageRepository).deleteByDateCollected(LocalDate.now());
 		verify(susaNavetIntegration).getEducationEvents(page);
 		verify(susaNavetIntegration, never()).getEducationEvents(nonExistingPage);
 		verify(susaEducationEventPageRepository).save(entity);
@@ -168,8 +170,11 @@ class EducationEventsServiceTest {
 
 		educationEventsService.createEventEntitiesFromJson();
 
+		verify(educationEventEntityRepository).deleteByCreatedAt(LocalDate.now());
+		verify(educationEventEntityRepository).flush();
+		verify(educationEventEntityRepository, never()).saveAll(any());
 		verify(susaEducationEventPageRepository).findAllByDateCollected(LocalDate.now());
-		verifyNoInteractions(educationEventEntityRepository, educationEventsMapper, objectMapper);
+		verifyNoInteractions(educationEventsMapper, objectMapper);
 	}
 
 	@Test

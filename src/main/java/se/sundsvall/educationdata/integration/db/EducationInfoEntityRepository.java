@@ -14,4 +14,7 @@ public interface EducationInfoEntityRepository extends JpaRepository<EducationIn
 	Optional<EducationInfoEntity> findByEducationInfoIdAndCreatedAt(String educationInfoId, LocalDate createdAt);
 
 	List<EducationInfoEntity> findByEducationInfoIdInAndCreatedAt(Set<String> educationInfoIds, LocalDate createdAt);
+
+	void deleteByCreatedAt(LocalDate createdAt);
+
 }
