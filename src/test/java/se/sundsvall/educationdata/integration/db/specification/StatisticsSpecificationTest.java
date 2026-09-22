@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.createSpecification;
 import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withCategories;
 import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withCreated;
-import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withMunicipality;
+import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withMunicipalities;
 import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withPeriod;
 
 @DataJpaTest
@@ -47,18 +47,17 @@ class StatisticsSpecificationTest {
 
 	@Test
 	void municipalityExcludesOtherMunicipalities() {
-		assertThat(eventIds(withCreated(TODAY).and(withMunicipality("2281"))))
-			.containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.5", "e.6", "e.7");
+		assertThat(eventIds(withCreated(TODAY).and(withMunicipalities(List.of("2281")))))
+			.containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.5", "e.7");
 	}
 
 	@Test
 	void periodExcludesEventsThatEndedBeforeIt() {
 		final var specification = withCreated(TODAY)
-			.and(withMunicipality("2281"))
 			.and(withPeriod(LocalDate.of(2026, Month.NOVEMBER, 15), LocalDate.of(2026, Month.DECEMBER, 31)));
 
 		assertThat(eventIds(specification))
-			.containsExactlyInAnyOrder("e.1", "e.2", "e.5", "e.6", "e.7");
+			.containsExactlyInAnyOrder("e.1", "e.2", "e.5", "e.6", "e.7", "e.8");
 	}
 
 	@Test
@@ -83,7 +82,7 @@ class StatisticsSpecificationTest {
 			.withEndDate(LocalDate.of(2026, Month.NOVEMBER, 1))
 			.build();
 
-		assertThat(eventIds(createSpecification("2281", parameters, TODAY)))
-			.containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.5", "e.6", "e.7");
+		assertThat(eventIds(createSpecification(parameters, TODAY)))
+			.containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.5", "e.6", "e.7", "e.8");
 	}
 }

@@ -16,9 +16,9 @@ import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntit
 
 public interface StatisticsSpecification {
 
-	static Specification<EducationEventEntity> createSpecification(final String municipalityId, final StatisticsParameters parameters, final LocalDate date) {
+	static Specification<EducationEventEntity> createSpecification(final StatisticsParameters parameters, final LocalDate date) {
 		return Specification.allOf(
-			withMunicipality(municipalityId),
+			withMunicipalities(parameters.getMunicipalityIds()),
 			withCreated(date),
 			withPeriod(parameters.getStartDate(), parameters.getEndDate()),
 			withSchoolType(parameters.getSchoolType()),
@@ -29,8 +29,8 @@ public interface StatisticsSpecification {
 			withDirections(parameters.getDirections()));
 	}
 
-	static Specification<EducationEventEntity> withMunicipality(final String municipalityId) {
-		return SpecificationBuilder.buildEqualFilter(MUNICIPALITY_ID, municipalityId);
+	static Specification<EducationEventEntity> withMunicipalities(final List<String> municipalityIds) {
+		return SpecificationBuilder.buildEqualFilterIn(MUNICIPALITY_ID, municipalityIds);
 	}
 
 	static Specification<EducationEventEntity> withCreated(final LocalDate date) {

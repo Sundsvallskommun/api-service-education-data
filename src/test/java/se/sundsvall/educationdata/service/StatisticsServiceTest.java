@@ -93,7 +93,7 @@ class StatisticsServiceTest {
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
 		when(educationEventEntityRepository.findAll(any(Specification.class))).thenReturn(List.of(event));
 
-		final var result = statisticsService.getStatisticsByParameters("2281", parameters, null);
+		final var result = statisticsService.getStatisticsByParameters(parameters, null);
 
 		assertThat(result.getTotalEducations()).isEqualTo(1);
 		verify(educationEventEntityRepository).findLatestImportDate();
@@ -105,7 +105,7 @@ class StatisticsServiceTest {
 
 		when(educationEventEntityRepository.findAll(any(Specification.class))).thenReturn(List.of());
 
-		statisticsService.getStatisticsByParameters("2281", parameters, LATEST_IMPORT_DATE);
+		statisticsService.getStatisticsByParameters(parameters, LATEST_IMPORT_DATE);
 
 		verify(educationEventEntityRepository, never()).findLatestImportDate();
 	}

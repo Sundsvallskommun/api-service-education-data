@@ -19,6 +19,7 @@
 		},
 		{
 			"id": "e.5",
+			"title": "Matematik nivå 1a",
 			"studyLocation": "Sundsvall",
 			"municipalityId": "2281",
 			"numberOfSeats": 5,
@@ -42,6 +43,6 @@
 		],
 		"sortDirection": "ASC",
 		"totalPages": 2,
-		"totalRecords": 3
+		"totalRecords": 4
 	}
 }

@@ -24,6 +24,9 @@ public class StatisticsParameters {
 	@Schema(description = "List of direction(subcategories)", examples = "Datateknik")
 	private List<String> directions;
 
+	@Schema(description = "List of municipalityIds", examples = "2281")
+	private List<String> municipalityIds;
+
 	@Schema(description = "School type", examples = "Distance")
 	private String schoolType;
 

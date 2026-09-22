@@ -17,9 +17,9 @@ import se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity;
 import se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity_;
 
 import static java.util.Objects.nonNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.END_DATE;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.START_DATE;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class SpecificationBuilder {
 

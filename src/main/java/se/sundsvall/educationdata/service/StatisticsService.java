@@ -56,9 +56,9 @@ public class StatisticsService {
 		this.gyProgramCategoryRepository = gyProgramCategoryRepository;
 	}
 
-	public Statistics getStatisticsByParameters(final String municipalityId, final StatisticsParameters parameters, LocalDate date) {
+	public Statistics getStatisticsByParameters(final StatisticsParameters parameters, LocalDate date) {
 		date = defaultLatestDateIfNull(date);
-		final var specification = StatisticsSpecification.createSpecification(municipalityId, parameters, date);
+		final var specification = StatisticsSpecification.createSpecification(parameters, date);
 		final var educations = educationEventEntityRepository.findAll(specification);
 		return calculateStatistics(parameters, educations);
 	}

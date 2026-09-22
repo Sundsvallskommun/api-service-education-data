@@ -102,7 +102,7 @@ class EducationResourceFailureTest {
 	}
 
 	@Test
-	void findFilerValuesWithMalformedDate() {
+	void findFilterValuesWithMalformedDate() {
 		webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values?date=07-06-2026", "lectureType")
 			.exchange()
 			.expectStatus().isBadRequest();

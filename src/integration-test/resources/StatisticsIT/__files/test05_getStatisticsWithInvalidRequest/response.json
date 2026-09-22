@@ -1,5 +1,11 @@
 {
-	"detail": "Validation failure",
 	"status": 400,
-	"title": "Bad Request"
+	"title": "Constraint Violation",
+	"type": "https://github.com/Sundsvallskommun/dept44/problems/constraint-violation",
+	"violations": [
+		{
+			"field": "endDate",
+			"message": "must not be null"
+		}
+	]
 }

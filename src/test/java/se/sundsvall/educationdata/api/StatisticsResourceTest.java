@@ -42,8 +42,7 @@ class StatisticsResourceTest {
 			.withStudyLocations(List.of("Sundsvall"))
 			.build();
 
-		when(statisticsService.getStatisticsByParameters(
-			"2281", parameters, importDate))
+		when(statisticsService.getStatisticsByParameters(parameters, importDate))
 			.thenReturn(Statistics.builder()
 				.withTotalEducations(2)
 				.withAvailableSeats(5)
@@ -63,7 +62,7 @@ class StatisticsResourceTest {
 		assertThat(response.getTotalEducations()).isEqualTo(2);
 		assertThat(response.getAvailableSeats()).isEqualTo(5);
 
-		verify(statisticsService).getStatisticsByParameters("2281", parameters, importDate);
+		verify(statisticsService).getStatisticsByParameters(parameters, importDate);
 	}
 
 	@Test

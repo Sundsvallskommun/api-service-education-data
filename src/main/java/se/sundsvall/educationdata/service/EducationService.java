@@ -31,10 +31,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LANGUAGE_OF_INSTRUCTIONS;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LECTURE_TYPE;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.STUDY_PACE;
-import static se.sundsvall.educationdata.api.model.ApiConstants.LANGUAGE_OF_INSTRUCTIONS;
-import static se.sundsvall.educationdata.api.model.ApiConstants.LECTURE_TYPE;
-import static se.sundsvall.educationdata.api.model.ApiConstants.STUDY_LOCATION;
-import static se.sundsvall.educationdata.api.model.ApiConstants.STUDY_PACE;
 
 @Service
 public class EducationService {
@@ -87,9 +83,9 @@ public class EducationService {
 				.filter(Objects::nonNull)
 				.map(LanguageOfInstructionsProjection::getLanguageOfInstructions)
 				.toList();
-			case STUDY_LOCATION -> educationEventEntityRepository.findDistinctByCreatedAt(CityProjection.class, date, Sort.by(EducationEventEntity_.CITY)).stream()
+			case STUDY_LOCATION -> educationEventEntityRepository.findDistinctByCreatedAt(StudyLocationProjection.class, date, Sort.by(EducationEventEntity_.CITY)).stream()
 				.filter(Objects::nonNull)
-				.map(CityProjection::getCity)
+				.map(StudyLocationProjection::getCity)
 				.toList();
 			case STUDY_PACE -> educationEventEntityRepository.findDistinctByCreatedAt(StudyPaceProjection.class, date, Sort.by(STUDY_PACE)).stream()
 				.filter(Objects::nonNull)
