@@ -57,7 +57,7 @@ class EducationSpecificationTest {
 		final var result = educationEventEntityRepository.findAll(specification)
 			.stream().map(EducationEventEntity::getEducationEventId)
 			.toList();
-		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.4", "e.5", "e.6", "e.7", "e.8", "e.9");
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.4", "e.5", "e.6", "e.7", "e.8", "e.9", "e.10");
 
 	}
 
@@ -85,7 +85,7 @@ class EducationSpecificationTest {
 		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withMunicipalityIds(List.of("2281"))))
 			.stream().map(EducationEventEntity::getEducationEventId)
 			.toList();
-		assertThat(result).containsExactly("e.1", "e.2", "e.3", "e.5", "e.7");
+		assertThat(result).containsExactly("e.1", "e.10", "e.2", "e.3", "e.5", "e.7");
 	}
 
 	@Test
@@ -94,7 +94,7 @@ class EducationSpecificationTest {
 		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withMunicipalityIds(List.of())))
 			.stream().map(EducationEventEntity::getEducationEventId)
 			.toList();
-		assertThat(result).hasSize(7);
+		assertThat(result).hasSize(8);
 	}
 
 	@Test
@@ -112,7 +112,7 @@ class EducationSpecificationTest {
 			.stream().map(EducationEventEntity::getEducationEventId)
 			.toList();
 
-		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2");
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2", "e.10");
 	}
 
 	@Test

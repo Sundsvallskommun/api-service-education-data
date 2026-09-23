@@ -166,12 +166,15 @@ public class SpecificationBuilder {
 
 	public static <T> Specification<T> buildIgnoreCaseFilterWithList(final String attribute, List<String> values) {
 
-		return (entity, cq, cb) -> (values == null || values.isEmpty())
-			? cb.and()
-			: cb.lower(entity.get(attribute)).in(values.stream()
+		return (entity, cq, cb) -> {
+			if (values == null || values.isEmpty()) {
+				return cb.and();
+			}
+			return cb.lower(entity.get(attribute)).in(values.stream()
 				.map(value -> value.strip().toLowerCase())
 				.distinct()
 				.toList());
+		};
 	}
 
 	public static Specification<EducationEventEntity> buildCategoryFilter(final List<String> categories) {

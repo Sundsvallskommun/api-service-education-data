@@ -99,10 +99,26 @@
 			"creditType": "vp",
 			"eligibility": "Grundläggande behörighet",
 			"degree": []
+		},
+		{
+			"id": "e.10",
+			"title": "Bygg- och anläggningsprogrammet",
+			"studyLocation": "Sundsvall",
+			"municipalityId": "2281",
+			"numberOfSeats": 30,
+			"lectureType": "Classroom",
+			"start": "2026-08-15",
+			"end": "2029-06-01",
+			"code": "BA25",
+			"schoolType": "GY",
+			"educationType": "program",
+			"credits": 2500.0,
+			"creditType": "gyp",
+			"degree": []
 		}
 	],
 	"_meta": {
-		"count": 7,
+		"count": 8,
 		"limit": 100,
 		"page": 1,
 		"sortBy": [
@@ -110,6 +126,6 @@
 		],
 		"sortDirection": "ASC",
 		"totalPages": 1,
-		"totalRecords": 7
+		"totalRecords": 8
 	}
 }

@@ -18,21 +18,19 @@
 			"degree": []
 		},
 		{
-			"id": "e.2",
-			"title": "Energiingenjör",
-			"eventTitle": "Energiingenjör",
-			"studyLocation": "Härnösand",
+			"id": "e.10",
+			"title": "Bygg- och anläggningsprogrammet",
+			"studyLocation": "Sundsvall",
 			"municipalityId": "2281",
 			"numberOfSeats": 30,
-			"lectureType": "Distance",
-			"start": "2026-05-01",
-			"end": "2026-12-01",
-			"code": "TEING",
-			"schoolType": "HS",
-			"educationType": "kurspaket",
-			"credits": 180.0,
-			"creditType": "hp",
-			"eligibility": "Fysik 2, Kemi 1",
+			"lectureType": "Classroom",
+			"start": "2026-08-15",
+			"end": "2029-06-01",
+			"code": "BA25",
+			"schoolType": "GY",
+			"educationType": "program",
+			"credits": 2500.0,
+			"creditType": "gyp",
 			"degree": []
 		}
 	],
@@ -45,6 +43,6 @@
 		],
 		"sortDirection": "ASC",
 		"totalPages": 4,
-		"totalRecords": 7
+		"totalRecords": 8
 	}
 }

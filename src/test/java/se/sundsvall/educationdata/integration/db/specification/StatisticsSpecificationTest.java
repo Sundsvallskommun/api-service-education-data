@@ -18,8 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.createSpecification;
 import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withCategories;
 import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withCreated;
+import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withDirections;
 import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withMunicipalities;
 import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withPeriod;
+import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withStudyLocations;
 
 @DataJpaTest
 @Sql(scripts = "/db/scripts/testdata.sql")
@@ -48,7 +50,7 @@ class StatisticsSpecificationTest {
 	@Test
 	void municipalityExcludesOtherMunicipalities() {
 		assertThat(eventIds(withCreated(TODAY).and(withMunicipalities(List.of("2281")))))
-			.containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.5", "e.7");
+			.containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.5", "e.7", "e.10");
 	}
 
 	@Test
@@ -57,7 +59,7 @@ class StatisticsSpecificationTest {
 			.and(withPeriod(LocalDate.of(2026, Month.NOVEMBER, 15), LocalDate.of(2026, Month.DECEMBER, 31)));
 
 		assertThat(eventIds(specification))
-			.containsExactlyInAnyOrder("e.1", "e.2", "e.5", "e.6", "e.7", "e.8");
+			.containsExactlyInAnyOrder("e.1", "e.2", "e.5", "e.6", "e.7", "e.8", "e.10");
 	}
 
 	@Test
@@ -72,7 +74,7 @@ class StatisticsSpecificationTest {
 	@Test
 	void nullCategoriesAppliesNoFilter() {
 		assertThat(eventIds(withCategories(null)))
-			.containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.4", "e.5", "e.6", "e.7", "e.8", "e.9");
+			.containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.4", "e.5", "e.6", "e.7", "e.8", "e.9", "e.10");
 	}
 
 	@Test
@@ -83,6 +85,30 @@ class StatisticsSpecificationTest {
 			.build();
 
 		assertThat(eventIds(createSpecification(parameters, TODAY)))
-			.containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.5", "e.6", "e.7", "e.8");
+			.containsExactlyInAnyOrder("e.1", "e.2", "e.3", "e.5", "e.6", "e.7", "e.8", "e.10");
+	}
+
+	@Test
+	void studyLocationsMatchIgnoringCaseAndWhitespace() {
+		assertThat(eventIds(withCreated(TODAY).and(withStudyLocations(List.of("  SUNDSVALL  ")))))
+			.containsExactlyInAnyOrder("e.1", "e.3", "e.5", "e.7", "e.10");
+	}
+
+	@Test
+	void categoriesMatchThroughEventCategory() {
+		assertThat(eventIds(withCreated(TODAY).and(withCategories(List.of("Ekonomi")))))
+			.containsExactly("e.1");
+	}
+
+	@Test
+	void directionsMatchThroughEventCategory() {
+		assertThat(eventIds(withCreated(TODAY).and(withDirections(List.of("El och energi")))))
+			.containsExactlyInAnyOrder("e.1", "e.2");
+	}
+
+	@Test
+	void gyCategoryMatchesOnProgramCodePrefix() {
+		assertThat(eventIds(withCreated(TODAY).and(withCategories(List.of("Bygg och anläggning")))))
+			.containsExactly("e.10");
 	}
 }

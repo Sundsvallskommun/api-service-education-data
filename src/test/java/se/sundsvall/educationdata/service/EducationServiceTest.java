@@ -54,7 +54,6 @@ class EducationServiceTest {
 	@InjectMocks
 	EducationService educationService;
 
-	private static final String MUNICIPALITY_ID = "2281";
 	private static final String EVENT_ID = "e.2282.123";
 	private static final String INFO_ID = "i.123";
 	private static final LocalDate LATEST_IMPORT_DATE = LocalDate.of(2026, Month.JUNE, 7);
