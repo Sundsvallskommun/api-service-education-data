@@ -42,6 +42,7 @@ public class EducationEventsService {
 
 	@Transactional
 	public void saveAllPagesEventsJsonTable() {
+		susaEducationEventPageRepository.deleteByDateCollected(LocalDate.now(ZoneId.systemDefault()));
 		int page = 0;
 		var json = susaNavetIntegration.getEducationEvents(page);
 		var response = objectMapper.readValue(json, EducationEventListResponse.class);
@@ -60,7 +61,11 @@ public class EducationEventsService {
 
 	@Transactional
 	public void createEventEntitiesFromJson() {
-		var jsonPageList = susaEducationEventPageRepository.findAllByDateCollected(LocalDate.now(ZoneId.systemDefault()));
+		final var today = LocalDate.now(ZoneId.systemDefault());
+		educationEventEntityRepository.deleteByCreatedAt(today);
+		educationEventEntityRepository.flush();
+
+		var jsonPageList = susaEducationEventPageRepository.findAllByDateCollected(today);
 
 		for (var page : jsonPageList) {
 

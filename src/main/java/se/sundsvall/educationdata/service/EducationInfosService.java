@@ -43,6 +43,7 @@ public class EducationInfosService {
 
 	@Transactional
 	public void saveAllPagesInfoJsonTable() {
+		susaEducationInfoPageRepository.deleteByDateCollected(LocalDate.now(ZoneId.systemDefault()));
 		int page = 0;
 		var json = susaNavetIntegration.getEducationInfos(page);
 		var response = objectMapper.readValue(json, EducationInfoListResponse.class);
@@ -61,7 +62,10 @@ public class EducationInfosService {
 
 	@Transactional
 	public void createInfoEntitiesFromJson() {
-		var jsonPageList = susaEducationInfoPageRepository.findAllByDateCollected(LocalDate.now(ZoneId.systemDefault()));
+		final var today = LocalDate.now(ZoneId.systemDefault());
+		educationInfoEntityRepository.deleteByCreatedAt(today);
+		educationInfoEntityRepository.flush();
+		var jsonPageList = susaEducationInfoPageRepository.findAllByDateCollected(today);
 		var municipalityFilteredIds = educationEventEntityRepository.getDistinctEducationInfoId();
 
 		for (var page : jsonPageList) {

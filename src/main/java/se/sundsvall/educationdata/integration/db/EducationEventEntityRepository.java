@@ -24,4 +24,6 @@ public interface EducationEventEntityRepository extends JpaRepository<EducationE
 	LocalDate findLatestImportDate();
 
 	<P> List<P> findDistinctByCreatedAt(Class<P> type, LocalDate createdAt, Sort sort);
+
+	void deleteByCreatedAt(LocalDate createdAt);
 }

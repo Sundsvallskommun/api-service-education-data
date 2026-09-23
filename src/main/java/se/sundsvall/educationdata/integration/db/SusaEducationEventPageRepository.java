@@ -10,4 +10,6 @@ import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEventPa
 public interface SusaEducationEventPageRepository extends JpaRepository<SusaEducationEventPageEntity, String> {
 	List<SusaEducationEventPageEntity> findAllByDateCollected(LocalDate dateCollected);
 
+	void deleteByDateCollected(LocalDate createdAt);
+
 }
