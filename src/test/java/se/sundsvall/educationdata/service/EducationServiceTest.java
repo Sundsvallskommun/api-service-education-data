@@ -23,9 +23,9 @@ import se.sundsvall.educationdata.integration.db.EducationEventEntityRepository;
 import se.sundsvall.educationdata.integration.db.EducationInfoEntityRepository;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
-import se.sundsvall.educationdata.integration.db.model.projection.CityProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LanguageOfInstructionsProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LectureTypeProjection;
+import se.sundsvall.educationdata.integration.db.model.projection.StudyLocationProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.StudyPaceProjection;
 import se.sundsvall.educationdata.service.mapper.EducationMapper;
 
@@ -54,7 +54,6 @@ class EducationServiceTest {
 	@InjectMocks
 	EducationService educationService;
 
-	private static final String MUNICIPALITY_ID = "2281";
 	private static final String EVENT_ID = "e.2282.123";
 	private static final String INFO_ID = "i.123";
 	private static final LocalDate LATEST_IMPORT_DATE = LocalDate.of(2026, Month.JUNE, 7);
@@ -165,7 +164,7 @@ class EducationServiceTest {
 	void findFilterValuesForCity() {
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
 		when(educationEventEntityRepository.findDistinctByCreatedAt(
-			eq(CityProjection.class), eq(LATEST_IMPORT_DATE), any(Sort.class)))
+			eq(StudyLocationProjection.class), eq(LATEST_IMPORT_DATE), any(Sort.class)))
 			.thenReturn(List.of(() -> "Sundsvall"));
 
 		assertThat(educationService.findFilterValues("studyLocation", null))

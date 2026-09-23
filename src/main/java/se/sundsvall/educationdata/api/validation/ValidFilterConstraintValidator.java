@@ -9,8 +9,7 @@ public class ValidFilterConstraintValidator implements ConstraintValidator<Valid
 
 	private static final String ERROR_MESSAGE_TEMPLATE = "given value %s is not valid, valid values are %s";
 	private static final List<String> VALID_EDUCATION_VALUES = List.of("lectureType", "languageOfInstructions", "studyPace", "studyLocation");
-	// Reserved for the statistics resource, which will be merged from a separate branch in the next PR
-	private static final List<String> VALID_STATISTICS_VALUES = List.of();
+	private static final List<String> VALID_STATISTICS_VALUES = List.of("studyLocations", "studyPace", "languageOfInstructions", "categories", "directions", "schoolType");
 	private List<String> validValues;
 
 	@Override

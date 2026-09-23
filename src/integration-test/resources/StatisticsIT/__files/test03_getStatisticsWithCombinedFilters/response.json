@@ -1,0 +1,19 @@
+{
+	"onGoingEducations": 1,
+	"plannedEducations": 0,
+	"finishedEducations": 0,
+	"missingStartDateEducations": 0,
+	"missingEndDateEducations": 1,
+	"missingStartAndEndDateEducations": 0,
+	"totalEducations": 2,
+	"availableSeats": 5,
+	"totalCapacity": 25,
+	"schoolType": {
+		"VUXGY": 2
+	},
+	"studyLocations": [
+		"Sundsvall"
+	],
+	"startDate": "2026-05-01",
+	"endDate": "2026-11-01"
+}
