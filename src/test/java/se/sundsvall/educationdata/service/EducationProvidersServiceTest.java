@@ -1,5 +1,6 @@
 package se.sundsvall.educationdata.service;
 
+import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -61,6 +62,7 @@ class EducationProvidersServiceTest {
 		verify(susaEducationProviderPageRepository, times(3)).save(captor.capture());
 		assertThat(captor.getAllValues()).containsExactly(entity1, entity2, entity3);
 
+		verify(susaEducationProviderPageRepository).deleteByDateCollected(LocalDate.now());
 		verify(susaNavetIntegration).getEducationProviders(0);
 		verify(susaNavetIntegration).getEducationProviders(1);
 		verify(susaNavetIntegration).getEducationProviders(2);
@@ -81,6 +83,7 @@ class EducationProvidersServiceTest {
 
 		educationProvidersService.saveAllPagesProviderJsonTable();
 
+		verify(susaEducationProviderPageRepository).deleteByDateCollected(LocalDate.now());
 		verify(susaNavetIntegration).getEducationProviders(page);
 		verify(susaNavetIntegration, never()).getEducationProviders(nonExistingPage);
 		verify(susaEducationProviderPageRepository).save(entity);

@@ -1,5 +1,7 @@
 package se.sundsvall.educationdata.service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.sundsvall.educationdata.integration.db.SusaEducationProviderPageRepository;
@@ -23,6 +25,7 @@ public class EducationProvidersService {
 
 	@Transactional
 	public void saveAllPagesProviderJsonTable() {
+		susaEducationProviderPageRepository.deleteByDateCollected(LocalDate.now(ZoneId.systemDefault()));
 		int page = 0;
 		var json = susaNavetIntegration.getEducationProviders(page);
 		int totalPages = objectMapper.readTree(json).path("page").path("totalPages").asInt();

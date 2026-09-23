@@ -40,6 +40,7 @@ CREATE TABLE education_event (
     application_end_date   DATE,
     created_at             DATE,
     cancelled                BOOLEAN,
+    CONSTRAINT uq_education_event UNIQUE (education_event_id, created_at),
     INDEX idx_education_event_edu_id (education_event_id),
     INDEX idx_education_event_info_id (education_info_id)
 ) ENGINE=InnoDB;
@@ -59,7 +60,8 @@ CREATE TABLE education_info (
     duration               VARCHAR(10),
     result_is_degree       BOOLEAN,
     expires                DATETIME,
-    created_at             DATE
+    created_at             DATE,
+    CONSTRAINT uq_education_info UNIQUE (education_info_id, created_at)
 ) ENGINE=InnoDB;
 
 CREATE TABLE reference_category (

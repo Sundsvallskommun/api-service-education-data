@@ -85,6 +85,7 @@ class EducationInfosServiceTest {
 		verify(susaEducationInfoPageRepository, times(3)).save(captor.capture());
 		assertThat(captor.getAllValues()).containsExactly(entity1, entity2, entity3);
 
+		verify(susaEducationInfoPageRepository).deleteByDateCollected(LocalDate.now());
 		verify(susaNavetIntegration).getEducationInfos(0);
 		verify(susaNavetIntegration).getEducationInfos(1);
 		verify(susaNavetIntegration).getEducationInfos(2);
@@ -107,6 +108,7 @@ class EducationInfosServiceTest {
 		when(educationInfosMapper.toZippedInfos(json, 0)).thenReturn(entity);
 		educationInfosService.saveAllPagesInfoJsonTable();
 
+		verify(susaEducationInfoPageRepository).deleteByDateCollected(LocalDate.now());
 		verify(susaNavetIntegration).getEducationInfos(page);
 		verify(susaNavetIntegration, never()).getEducationInfos(nonExistingPage);
 		verify(susaEducationInfoPageRepository).save(entity);
@@ -171,8 +173,11 @@ class EducationInfosServiceTest {
 
 		educationInfosService.createInfoEntitiesFromJson();
 
+		verify(educationInfoEntityRepository).deleteByCreatedAt(LocalDate.now());
+		verify(educationInfoEntityRepository).flush();
+		verify(educationInfoEntityRepository, never()).saveAll(any());
 		verify(susaEducationInfoPageRepository).findAllByDateCollected(LocalDate.now());
-		verifyNoInteractions(educationInfoEntityRepository, educationInfosMapper, objectMapper);
+		verifyNoInteractions(educationInfosMapper, objectMapper);
 	}
 
 	@Test

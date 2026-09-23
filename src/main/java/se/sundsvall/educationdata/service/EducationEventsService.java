@@ -3,13 +3,13 @@ package se.sundsvall.educationdata.service;
 import generated.se.sundsvall.susanavet.EducationEvent;
 import generated.se.sundsvall.susanavet.EducationEventListResponse;
 import generated.se.sundsvall.susanavet.EducationEventResponse;
-
+import generated.se.sundsvall.susanavet.PageMetadata;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,12 +42,14 @@ public class EducationEventsService {
 
 	@Transactional
 	public void saveAllPagesEventsJsonTable() {
+		susaEducationEventPageRepository.deleteByDateCollected(LocalDate.now(ZoneId.systemDefault()));
 		int page = 0;
 		var json = susaNavetIntegration.getEducationEvents(page);
 		var response = objectMapper.readValue(json, EducationEventListResponse.class);
 
-		var pageInfo = response.getPage();
-		var totalPages = (pageInfo == null || pageInfo.getTotalPages() == null) ? 0 : pageInfo.getTotalPages();
+		final long totalPages = Optional.ofNullable(response.getPage())
+			.map(PageMetadata::getTotalPages)
+			.orElse(0L);
 
 		susaEducationEventPageRepository.save(educationEventsMapper.toZippedEvents(json, page));
 
@@ -59,7 +61,11 @@ public class EducationEventsService {
 
 	@Transactional
 	public void createEventEntitiesFromJson() {
-		var jsonPageList = susaEducationEventPageRepository.findAllByDateCollected(LocalDate.now(ZoneId.systemDefault()));
+		final var today = LocalDate.now(ZoneId.systemDefault());
+		educationEventEntityRepository.deleteByCreatedAt(today);
+		educationEventEntityRepository.flush();
+
+		var jsonPageList = susaEducationEventPageRepository.findAllByDateCollected(today);
 
 		for (var page : jsonPageList) {
 

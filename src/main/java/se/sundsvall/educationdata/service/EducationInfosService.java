@@ -2,9 +2,11 @@ package se.sundsvall.educationdata.service;
 
 import generated.se.sundsvall.susanavet.EducationInfoListResponse;
 import generated.se.sundsvall.susanavet.EducationInfoResponse;
+import generated.se.sundsvall.susanavet.PageMetadata;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,32 +43,29 @@ public class EducationInfosService {
 
 	@Transactional
 	public void saveAllPagesInfoJsonTable() {
-		var municipalityFilteredIds = educationEventEntityRepository.getDistinctEducationInfoId();
-
+		susaEducationInfoPageRepository.deleteByDateCollected(LocalDate.now(ZoneId.systemDefault()));
 		int page = 0;
 		var json = susaNavetIntegration.getEducationInfos(page);
 		var response = objectMapper.readValue(json, EducationInfoListResponse.class);
 
-		var pageInfo = response.getPage();
-		var totalPages = (pageInfo == null || pageInfo.getTotalPages() == null) ? 0 : pageInfo.getTotalPages();
+		final long totalPages = Optional.ofNullable(response.getPage())
+			.map(PageMetadata::getTotalPages)
+			.orElse(0L);
 
 		susaEducationInfoPageRepository.save(educationInfosMapper.toZippedInfos(json, page));
-		var susaInfos = response.getEducationInfos();
-		saveFilteredInfos(susaInfos, municipalityFilteredIds);
 
 		for (page = 1; page < totalPages; page++) {
 			json = susaNavetIntegration.getEducationInfos(page);
 			susaEducationInfoPageRepository.save(educationInfosMapper.toZippedInfos(json, page));
-
-			response = objectMapper.readValue(json, EducationInfoListResponse.class);
-			susaInfos = response.getEducationInfos();
-			saveFilteredInfos(susaInfos, municipalityFilteredIds);
 		}
 	}
 
 	@Transactional
 	public void createInfoEntitiesFromJson() {
-		var jsonPageList = susaEducationInfoPageRepository.findAllByDateCollected(LocalDate.now(ZoneId.systemDefault()));
+		final var today = LocalDate.now(ZoneId.systemDefault());
+		educationInfoEntityRepository.deleteByCreatedAt(today);
+		educationInfoEntityRepository.flush();
+		var jsonPageList = susaEducationInfoPageRepository.findAllByDateCollected(today);
 		var municipalityFilteredIds = educationEventEntityRepository.getDistinctEducationInfoId();
 
 		for (var page : jsonPageList) {

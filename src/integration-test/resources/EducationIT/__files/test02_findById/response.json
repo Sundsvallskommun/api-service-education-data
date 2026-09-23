@@ -1,0 +1,14 @@
+{
+	"id": "e.1",
+	"title": "Matematik nivå 1a",
+	"studyLocation": "Sundsvall",
+	"municipalityId": "2281",
+	"lectureType": "Distance",
+	"code": "MATE1A00X",
+	"schoolType": "VUXGY",
+	"educationType": "kurs",
+	"credits": 100.0,
+	"creditType": "vp",
+	"eligibility": "Grundläggande behörighet",
+	"degree": []
+}
