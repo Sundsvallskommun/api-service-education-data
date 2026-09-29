@@ -21,8 +21,13 @@ import se.sundsvall.educationdata.api.model.EducationParameters;
 import se.sundsvall.educationdata.api.model.PagedEducationResponse;
 import se.sundsvall.educationdata.integration.db.EducationEventEntityRepository;
 import se.sundsvall.educationdata.integration.db.EducationInfoEntityRepository;
+import se.sundsvall.educationdata.integration.db.GyProgramCategoryRepository;
+import se.sundsvall.educationdata.integration.db.ReferenceCategoryRepository;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
+import se.sundsvall.educationdata.integration.db.model.GyProgramCategoryEntity;
+import se.sundsvall.educationdata.integration.db.model.projection.CategoryProjection;
+import se.sundsvall.educationdata.integration.db.model.projection.DirectionProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LanguageOfInstructionsProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LectureTypeProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.StudyLocationProjection;
@@ -47,6 +52,12 @@ class EducationServiceTest {
 
 	@Mock
 	private EducationInfoEntityRepository educationInfoEntityRepository;
+
+	@Mock
+	private ReferenceCategoryRepository referenceCategoryRepository;
+
+	@Mock
+	private GyProgramCategoryRepository gyProgramCategoryRepository;
 
 	@Mock
 	private EducationMapper educationMapper;
@@ -180,6 +191,27 @@ class EducationServiceTest {
 
 		assertThat(educationService.findFilterValues("studyPace", null))
 			.containsExactly("75.0");
+	}
+
+	@Test
+	void findFilterValuesForCategories() {
+		when(referenceCategoryRepository.findDistinctBy(eq(CategoryProjection.class), any(Sort.class)))
+			.thenReturn(List.of(() -> "Teknik", () -> "Naturbruk"));
+		when(gyProgramCategoryRepository.findAll())
+			.thenReturn(List.of(
+				GyProgramCategoryEntity.builder().withCategory("Bygg och anläggning").build(), (GyProgramCategoryEntity.builder().withCategory("Naturbruk").build())));
+
+		assertThat(educationService.findFilterValues("categories", null))
+			.containsExactlyInAnyOrder("Bygg och anläggning", "Naturbruk", "Teknik");
+	}
+
+	@Test
+	void findFilterValuesForDirections() {
+		when(referenceCategoryRepository.findDistinctBy(eq(DirectionProjection.class), any(Sort.class)))
+			.thenReturn(List.of(() -> "Datateknik", () -> "Databaser"));
+
+		assertThat(educationService.findFilterValues("directions", null))
+			.containsExactlyInAnyOrder("Datateknik", "Databaser");
 	}
 
 	@Test

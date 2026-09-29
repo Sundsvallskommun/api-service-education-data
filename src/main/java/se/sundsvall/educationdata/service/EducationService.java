@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,13 @@ import se.sundsvall.educationdata.api.model.EducationParameters;
 import se.sundsvall.educationdata.api.model.PagedEducationResponse;
 import se.sundsvall.educationdata.integration.db.EducationEventEntityRepository;
 import se.sundsvall.educationdata.integration.db.EducationInfoEntityRepository;
+import se.sundsvall.educationdata.integration.db.GyProgramCategoryRepository;
+import se.sundsvall.educationdata.integration.db.ReferenceCategoryRepository;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
-import se.sundsvall.educationdata.integration.db.model.EducationEventEntity_;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
+import se.sundsvall.educationdata.integration.db.model.GyProgramCategoryEntity;
+import se.sundsvall.educationdata.integration.db.model.projection.CategoryProjection;
+import se.sundsvall.educationdata.integration.db.model.projection.DirectionProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LanguageOfInstructionsProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LectureTypeProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.StudyLocationProjection;
@@ -28,23 +33,31 @@ import se.sundsvall.educationdata.service.mapper.EducationMapper;
 import static java.util.function.UnaryOperator.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.CITY;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LANGUAGE_OF_INSTRUCTIONS;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LECTURE_TYPE;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.STUDY_PACE;
+import static se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity_.CATEGORY_NAME;
+import static se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity_.DIRECTION_NAME;
 
 @Service
 public class EducationService {
 
 	private final EducationEventEntityRepository educationEventEntityRepository;
 	private final EducationInfoEntityRepository educationInfoEntityRepository;
+	private final ReferenceCategoryRepository referenceCategoryRepository;
+	private final GyProgramCategoryRepository gyProgramCategoryRepository;
 	private final EducationMapper educationMapper;
 
 	private static final String EDUCATION_NOT_FOUND = "Education with id '%s' not found for import date '%s'";
 	private static final String STUDY_LOCATION = "studyLocation";
 
-	public EducationService(EducationEventEntityRepository educationEventEntityRepository, EducationInfoEntityRepository educationInfoEntityRepository, EducationMapper educationMapper) {
+	public EducationService(EducationEventEntityRepository educationEventEntityRepository, EducationInfoEntityRepository educationInfoEntityRepository, ReferenceCategoryRepository referenceCategoryRepository,
+		GyProgramCategoryRepository gyProgramCategoryRepository, EducationMapper educationMapper) {
 		this.educationEventEntityRepository = educationEventEntityRepository;
 		this.educationInfoEntityRepository = educationInfoEntityRepository;
+		this.referenceCategoryRepository = referenceCategoryRepository;
+		this.gyProgramCategoryRepository = gyProgramCategoryRepository;
 		this.educationMapper = educationMapper;
 	}
 
@@ -83,13 +96,27 @@ public class EducationService {
 				.filter(Objects::nonNull)
 				.map(LanguageOfInstructionsProjection::getLanguageOfInstructions)
 				.toList();
-			case STUDY_LOCATION -> educationEventEntityRepository.findDistinctByCreatedAt(StudyLocationProjection.class, date, Sort.by(EducationEventEntity_.CITY)).stream()
+			case STUDY_LOCATION -> educationEventEntityRepository.findDistinctByCreatedAt(StudyLocationProjection.class, date, Sort.by(CITY)).stream()
 				.filter(Objects::nonNull)
 				.map(StudyLocationProjection::getCity)
 				.toList();
 			case STUDY_PACE -> educationEventEntityRepository.findDistinctByCreatedAt(StudyPaceProjection.class, date, Sort.by(STUDY_PACE)).stream()
 				.filter(Objects::nonNull)
 				.map(StudyPaceProjection::getStudyPace)
+				.toList();
+
+			case "categories" -> Stream.concat(referenceCategoryRepository.findDistinctBy(CategoryProjection.class, Sort.by(CATEGORY_NAME)).stream()
+				.filter(Objects::nonNull)
+				.map(CategoryProjection::getCategoryName),
+				gyProgramCategoryRepository.findAll().stream()
+					.map(GyProgramCategoryEntity::getCategory))
+				.distinct()
+				.sorted()
+				.toList();
+
+			case "directions" -> referenceCategoryRepository.findDistinctBy(DirectionProjection.class, Sort.by(DIRECTION_NAME)).stream()
+				.filter(Objects::nonNull)
+				.map(DirectionProjection::getDirectionName)
 				.toList();
 			default -> List.of();
 		};

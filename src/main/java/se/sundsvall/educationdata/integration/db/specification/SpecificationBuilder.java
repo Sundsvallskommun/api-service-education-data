@@ -177,6 +177,10 @@ public class SpecificationBuilder {
 		};
 	}
 
+	public static Specification<EducationEventEntity> buildCategoryOrGyCategoryFilter(final List<String> cateories) {
+		return buildCategoryFilter(cateories).or(buildGyCategoryFilter(cateories));
+	}
+
 	public static Specification<EducationEventEntity> buildCategoryFilter(final List<String> categories) {
 		return (entity, cq, cb) -> {
 			if (categories == null || categories.isEmpty()) {

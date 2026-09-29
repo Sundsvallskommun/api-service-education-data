@@ -17,7 +17,9 @@ import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withCategories;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withCreated;
+import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withDirections;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withEducationType;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withEligibility;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withExpires;
@@ -161,5 +163,41 @@ class EducationSpecificationTest {
 			.stream().map(EducationEventEntity::getEducationEventId)
 			.toList();
 		assertThat(result).containsExactlyInAnyOrder("e.1", "e.5", "e.6", "e.8");
+	}
+
+	@Test
+	void categoryMatchesOnProgramCodePrefix() {
+		var specification = withCreated(TODAY)
+			.and(withCategories(List.of("Ekonomi")));
+
+		final var result = educationEventEntityRepository.findAll(specification)
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).containsExactlyInAnyOrder("e.1");
+	}
+
+	@Test
+	void gyCategoryMatchesOnProgramCodePrefix() {
+		var specification = withCreated(TODAY)
+			.and(withCategories(List.of("Bygg och anläggning")));
+
+		final var result = educationEventEntityRepository.findAll(specification)
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).containsExactlyInAnyOrder("e.10");
+	}
+
+	@Test
+	void directionsMatchThroughEventCategory() {
+		var specification = withCreated(TODAY)
+			.and(withDirections(List.of("El och energi")));
+
+		final var result = educationEventEntityRepository.findAll(specification)
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2");
 	}
 }
