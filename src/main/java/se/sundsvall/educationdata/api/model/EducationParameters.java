@@ -35,10 +35,10 @@ public class EducationParameters extends AbstractParameterPagingAndSortingBase {
 	@Schema(description = "Education title", examples = "Teknikprogrammet")
 	private String eventTitle;
 
-	@Schema(description = "Categories", examples = "will be added")
+	@Schema(description = "Categories", examples = "Teknik")
 	private List<String> categories;
 
-	@Schema(description = "Direction", examples = "will be added")
+	@Schema(description = "Direction", examples = "Information- och kommunikation")
 	private List<String> directions;
 
 	@Schema(description = "Study location", examples = "Sundsvall")
