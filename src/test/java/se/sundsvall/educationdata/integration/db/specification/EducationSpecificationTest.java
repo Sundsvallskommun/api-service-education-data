@@ -18,14 +18,19 @@ import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withCategories;
+import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withCity;
+import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withCode;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withCreated;
+import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withDescription;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withDirections;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withEducationType;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withEligibility;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withExpires;
+import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withFreeSearch;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withMunicipalityIds;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withSchoolType;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withStartDate;
+import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withStudyPace;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withTitle;
 
 @DataJpaTest
@@ -54,7 +59,12 @@ class EducationSpecificationTest {
 			withSchoolType(null),
 			withEligibility(null),
 			withStartDate(null),
-			withExpires(null));
+			withExpires(null),
+			withCity(null),
+			withStudyPace(null),
+			withCode(null),
+			withDescription(null),
+			withFreeSearch(null));
 
 		final var result = educationEventEntityRepository.findAll(specification)
 			.stream().map(EducationEventEntity::getEducationEventId)
@@ -154,9 +164,37 @@ class EducationSpecificationTest {
 	}
 
 	@Test
+	void studyPaceMatchesAnyOfGivenValues() {
+		entityManager.find(EducationEventEntity.class, "event-1").setStudyPace("100.0");
+		entityManager.find(EducationEventEntity.class, "event-2").setStudyPace("50.0");
+		entityManager.find(EducationEventEntity.class, "event-3").setStudyPace("25.0");
+		entityManager.flush();
+		entityManager.clear();
+
+		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withStudyPace(List.of("100.0", "50.0"))))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2");
+	}
+
+	@Test
+	void descriptionMatchesPartiallyIgnoringCaseThroughJoin() {
+		entityManager.find(EducationInfoEntity.class, "info-2").setDescription("<p>Utbildning inom förnybar energi</p>");
+		entityManager.flush();
+		entityManager.clear();
+
+		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withDescription("FÖRNYBAR")))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).containsExactly("e.2");
+	}
+
+	@Test
 	void combinesFiltersOnTheSameJoin() {
 		var specification = withCreated(TODAY)
-			.and(withSchoolType("VUXGY"))
+			.and(withSchoolType(List.of("VUXGY")))
 			.and(withEducationType("kurs"));
 
 		final var result = educationEventEntityRepository.findAll(specification)
@@ -199,5 +237,58 @@ class EducationSpecificationTest {
 			.toList();
 
 		assertThat(result).containsExactlyInAnyOrder("e.1", "e.2");
+	}
+
+	@Test
+	void schoolTypeMatchesAnyOfGivenValues() {
+		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withSchoolType(List.of("GY", "HS"))))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).containsExactlyInAnyOrder("e.2", "e.10");
+	}
+
+	@Test
+	void studyLocationMatchesIgnoringCaseAndWhitespace() {
+		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withCity(List.of("  HÄRNÖSAND  "))))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).containsExactlyInAnyOrder("e.2", "e.6", "e.8");
+	}
+
+	@Test
+	void codeMatchesPartiallyIgnoringCaseThroughJoin() {
+		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withCode("mate1a")))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.5", "e.6", "e.8");
+	}
+
+	@Test
+	void freeSearchMatchesEveryWordInAnyField() {
+		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withFreeSearch("matematik härnösand")))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).containsExactlyInAnyOrder("e.6", "e.8");
+	}
+
+	@Test
+	void blankFreeSearchDoesNotFilter() {
+		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withFreeSearch("    ")))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).hasSize(8);
+	}
+
+	@Test
+	void freeSearchWhenEventHasNoInfo() {
+		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withFreeSearch("utan"))).stream()
+			.map(EducationEventEntity::getEducationEventId)
+			.toList();
+		assertThat(result).containsExactlyInAnyOrder("e.3", "e.7");
 	}
 }

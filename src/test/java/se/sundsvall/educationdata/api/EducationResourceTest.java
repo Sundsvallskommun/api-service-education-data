@@ -30,6 +30,9 @@ class EducationResourceTest {
 	private static final String LECTURE_TYPE = "lectureType";
 	private static final String STUDY_LOCATION = "studyLocation";
 	private static final String STUDY_PACE = "studyPace";
+	private static final String CATEGORIES = "categories";
+	private static final String DIRECTIONS = "directions";
+	private static final String SCHOOL_TYPE = "schoolType";
 	private static final String MUNICIPALITY_ID = "2281";
 
 	@Autowired
@@ -146,6 +149,48 @@ class EducationResourceTest {
 
 		assertThat(response).isNotNull()
 			.contains("swe", "eng");
+	}
+
+	@Test
+	void findFilterValuesCategories() {
+		when(educationService.findFilterValues(CATEGORIES, null)).thenReturn(List.of("transport", "teknik"));
+
+		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "categories")
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody(String.class)
+			.returnResult().getResponseBody();
+
+		assertThat(response).isNotNull()
+			.contains("transport", "teknik");
+	}
+
+	@Test
+	void findFilterValuesDirections() {
+		when(educationService.findFilterValues(DIRECTIONS, null)).thenReturn(List.of("transportledare", "informations- och kommunikation"));
+
+		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "directions")
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody(String.class)
+			.returnResult().getResponseBody();
+
+		assertThat(response).isNotNull()
+			.contains("transportledare", "informations- och kommunikation");;
+	}
+
+	@Test
+	void findFilterValuesSchoolType() {
+		when(educationService.findFilterValues(SCHOOL_TYPE, null)).thenReturn(List.of("GY", "HS", "YH"));
+
+		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "schoolType")
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody(String.class)
+			.returnResult().getResponseBody();
+
+		assertThat(response).isNotNull()
+			.contains("GY", "HS", "YH");
 	}
 
 }

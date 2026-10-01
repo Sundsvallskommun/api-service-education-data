@@ -30,6 +30,7 @@ import se.sundsvall.educationdata.integration.db.model.projection.CategoryProjec
 import se.sundsvall.educationdata.integration.db.model.projection.DirectionProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LanguageOfInstructionsProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LectureTypeProjection;
+import se.sundsvall.educationdata.integration.db.model.projection.SchoolTypeProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.StudyLocationProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.StudyPaceProjection;
 import se.sundsvall.educationdata.service.mapper.EducationMapper;
@@ -212,6 +213,17 @@ class EducationServiceTest {
 
 		assertThat(educationService.findFilterValues("directions", null))
 			.containsExactlyInAnyOrder("Datateknik", "Databaser");
+	}
+
+	@Test
+	void findFilterValuesForSchoolType() {
+		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
+		when(educationInfoEntityRepository.findDistinctByCreatedAt(
+			eq(SchoolTypeProjection.class), eq(LATEST_IMPORT_DATE), any(Sort.class)))
+			.thenReturn(List.of(() -> "GY", () -> "HS"));
+
+		assertThat(educationService.findFilterValues("schoolType", null))
+			.containsExactly("GY", "HS");
 	}
 
 	@Test
