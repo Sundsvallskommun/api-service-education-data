@@ -1,9 +1,12 @@
 package se.sundsvall.educationdata.integration.db.specification;
 
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
@@ -17,6 +20,7 @@ import se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity;
 import se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity_;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.END_DATE;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.START_DATE;
@@ -177,6 +181,16 @@ public class SpecificationBuilder {
 		};
 	}
 
+	public static <T> Specification<T> buildJoinedEqualFilterIn(final String joinAttribute, final String attribute, List<String> values) {
+
+		return (entity, cq, cb) -> {
+			if (isEmpty(values)) {
+				return cb.and();
+			}
+			return joinOf(entity, joinAttribute).get(attribute).in(values);
+		};
+	}
+
 	public static Specification<EducationEventEntity> buildCategoryOrGyCategoryFilter(final List<String> cateories) {
 		return buildCategoryFilter(cateories).or(buildGyCategoryFilter(cateories));
 	}
@@ -263,6 +277,30 @@ public class SpecificationBuilder {
 						gyProgramCategory.get(GyProgramCategoryEntity_.CATEGORY)).in(normalizedCategories));
 
 			return cb.exists(sub);
+		};
+	}
+
+	public static Specification<EducationEventEntity> buildFreeTextFilter(final String value) {
+		return (entity, cq, cb) -> {
+			if (isBlank(value)) {
+				return cb.and();
+			}
+			final var info = joinOf(entity, EducationEventEntity_.EDUCATION_INFO);
+			final List<Expression<String>> fields = List.of(
+				cb.lower(entity.get(EducationEventEntity_.TITLE)),
+				cb.lower(entity.get(EducationEventEntity_.CITY)),
+				cb.lower(info.get(EducationInfoEntity_.TITLE)),
+				cb.lower(info.get(EducationInfoEntity_.CODE)),
+				cb.lower(info.get(EducationInfoEntity_.DESCRIPTION)));
+
+			final var termPredicates = Arrays.stream(value.strip().toLowerCase().split("\\s+"))
+				.map(term -> "%" + term + "%")
+				.map(pattern -> cb.or(fields.stream()
+					.map(field -> cb.like(field, pattern))
+					.toArray(Predicate[]::new)))
+				.toArray(Predicate[]::new);
+
+			return cb.and(termPredicates);
 		};
 	}
 }
