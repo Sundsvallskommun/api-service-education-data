@@ -176,7 +176,7 @@ class EducationResourceTest {
 			.returnResult().getResponseBody();
 
 		assertThat(response).isNotNull()
-			.contains("transportledare", "informations- och kommunikation");;
+			.contains("transportledare", "informations- och kommunikation");
 	}
 
 	@Test
