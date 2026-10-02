@@ -1,5 +1,5 @@
 package se.sundsvall.educationdata.integration.db.model.projection;
 
-public interface CityProjection {
-	String getCity();
+public interface DirectionProjection {
+	String getDirectionName();
 }

@@ -21,11 +21,16 @@ import se.sundsvall.educationdata.api.model.EducationParameters;
 import se.sundsvall.educationdata.api.model.PagedEducationResponse;
 import se.sundsvall.educationdata.integration.db.EducationEventEntityRepository;
 import se.sundsvall.educationdata.integration.db.EducationInfoEntityRepository;
+import se.sundsvall.educationdata.integration.db.GyProgramCategoryRepository;
+import se.sundsvall.educationdata.integration.db.ReferenceCategoryRepository;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
-import se.sundsvall.educationdata.integration.db.model.projection.CityProjection;
+import se.sundsvall.educationdata.integration.db.model.GyProgramCategoryEntity;
+import se.sundsvall.educationdata.integration.db.model.projection.CategoryProjection;
+import se.sundsvall.educationdata.integration.db.model.projection.DirectionProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LanguageOfInstructionsProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LectureTypeProjection;
+import se.sundsvall.educationdata.integration.db.model.projection.StudyLocationProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.StudyPaceProjection;
 import se.sundsvall.educationdata.service.mapper.EducationMapper;
 
@@ -49,12 +54,17 @@ class EducationServiceTest {
 	private EducationInfoEntityRepository educationInfoEntityRepository;
 
 	@Mock
+	private ReferenceCategoryRepository referenceCategoryRepository;
+
+	@Mock
+	private GyProgramCategoryRepository gyProgramCategoryRepository;
+
+	@Mock
 	private EducationMapper educationMapper;
 
 	@InjectMocks
 	EducationService educationService;
 
-	private static final String MUNICIPALITY_ID = "2281";
 	private static final String EVENT_ID = "e.2282.123";
 	private static final String INFO_ID = "i.123";
 	private static final LocalDate LATEST_IMPORT_DATE = LocalDate.of(2026, Month.JUNE, 7);
@@ -165,7 +175,7 @@ class EducationServiceTest {
 	void findFilterValuesForCity() {
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
 		when(educationEventEntityRepository.findDistinctByCreatedAt(
-			eq(CityProjection.class), eq(LATEST_IMPORT_DATE), any(Sort.class)))
+			eq(StudyLocationProjection.class), eq(LATEST_IMPORT_DATE), any(Sort.class)))
 			.thenReturn(List.of(() -> "Sundsvall"));
 
 		assertThat(educationService.findFilterValues("studyLocation", null))
@@ -181,6 +191,29 @@ class EducationServiceTest {
 
 		assertThat(educationService.findFilterValues("studyPace", null))
 			.containsExactly("75.0");
+	}
+
+	@Test
+	void findFilterValuesForCategories() {
+		when(referenceCategoryRepository.findDistinctBy(eq(CategoryProjection.class), any(Sort.class)))
+			.thenReturn(List.of(() -> "Teknik", () -> "Naturbruk", () -> null));
+		when(gyProgramCategoryRepository.findAll())
+			.thenReturn(List.of(
+				GyProgramCategoryEntity.builder().withCategory("Bygg och anläggning").build(),
+				GyProgramCategoryEntity.builder().withCategory("Naturbruk").build(),
+				GyProgramCategoryEntity.builder().withCategory("").build()));
+
+		assertThat(educationService.findFilterValues("categories", null))
+			.containsExactlyInAnyOrder("Bygg och anläggning", "Naturbruk", "Teknik");
+	}
+
+	@Test
+	void findFilterValuesForDirections() {
+		when(referenceCategoryRepository.findDistinctBy(eq(DirectionProjection.class), any(Sort.class)))
+			.thenReturn(List.of(() -> "Datateknik", () -> "Databaser"));
+
+		assertThat(educationService.findFilterValues("directions", null))
+			.containsExactlyInAnyOrder("Datateknik", "Databaser");
 	}
 
 	@Test
