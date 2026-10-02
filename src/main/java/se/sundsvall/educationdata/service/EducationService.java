@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -110,6 +111,7 @@ public class EducationService {
 				.map(CategoryProjection::getCategoryName),
 				gyProgramCategoryRepository.findAll().stream()
 					.map(GyProgramCategoryEntity::getCategory))
+				.filter(StringUtils::isNotEmpty)
 				.distinct()
 				.sorted()
 				.toList();

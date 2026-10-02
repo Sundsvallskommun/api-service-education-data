@@ -196,10 +196,12 @@ class EducationServiceTest {
 	@Test
 	void findFilterValuesForCategories() {
 		when(referenceCategoryRepository.findDistinctBy(eq(CategoryProjection.class), any(Sort.class)))
-			.thenReturn(List.of(() -> "Teknik", () -> "Naturbruk"));
+			.thenReturn(List.of(() -> "Teknik", () -> "Naturbruk", () -> null));
 		when(gyProgramCategoryRepository.findAll())
 			.thenReturn(List.of(
-				GyProgramCategoryEntity.builder().withCategory("Bygg och anläggning").build(), (GyProgramCategoryEntity.builder().withCategory("Naturbruk").build())));
+				GyProgramCategoryEntity.builder().withCategory("Bygg och anläggning").build(),
+				GyProgramCategoryEntity.builder().withCategory("Naturbruk").build(),
+				GyProgramCategoryEntity.builder().withCategory("").build()));
 
 		assertThat(educationService.findFilterValues("categories", null))
 			.containsExactlyInAnyOrder("Bygg och anläggning", "Naturbruk", "Teknik");

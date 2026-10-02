@@ -2,7 +2,6 @@ package se.sundsvall.educationdata.api.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -47,16 +46,16 @@ public class Statistics {
 	private int totalCapacity;
 
 	@Schema(description = "Study locations used for filtering", accessMode = READ_ONLY)
-	private List<String> studyLocations = new ArrayList<>();
+	private List<String> studyLocations;
 
 	@Schema(description = "SchoolTypes", accessMode = READ_ONLY)
 	private Map<String, Long> schoolType;
 
 	@Schema(description = "Categories used for filtering", accessMode = READ_ONLY)
-	private List<String> categories = new ArrayList<>();
+	private List<String> categories;
 
 	@Schema(description = "directions used for filtering", accessMode = READ_ONLY)
-	private List<String> directions = new ArrayList<>();
+	private List<String> directions;
 
 	@Schema(description = "Start date used for filtering", accessMode = READ_ONLY)
 	private LocalDate startDate;
