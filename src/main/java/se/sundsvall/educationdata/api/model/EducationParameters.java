@@ -1,5 +1,6 @@
 package se.sundsvall.educationdata.api.model;
 
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
@@ -35,8 +36,14 @@ public class EducationParameters extends AbstractParameterPagingAndSortingBase {
 	@Schema(description = "Education title", examples = "Teknikprogrammet")
 	private String eventTitle;
 
+	@Schema(description = "Categories", examples = "Teknik")
+	private List<String> categories;
+
+	@Schema(description = "Direction", examples = "Information- och kommunikation")
+	private List<String> directions;
+
 	@Schema(description = "Study location", examples = "Sundsvall")
-	private String studyLocation;
+	private List<String> studyLocation;
 
 	@Schema(description = "Number of seats", examples = "20")
 	private Integer seats;
@@ -45,7 +52,7 @@ public class EducationParameters extends AbstractParameterPagingAndSortingBase {
 	private String lectureType;
 
 	@Schema(description = "Study pace in percent", examples = "100.0")
-	private String studyPace;
+	private List<String> studyPace;
 
 	@Schema(description = "Language of instruction", examples = "swe")
 	private String languageOfInstructions;
@@ -65,10 +72,19 @@ public class EducationParameters extends AbstractParameterPagingAndSortingBase {
 	@Schema(description = "Applications ending on or after this date", examples = "2026-04-15")
 	private LocalDate applicationDateEnd;
 
-	@Schema(description = "School type", allowableValues = {
+	@Schema(description = "Education code", examples = "MATE1A00X")
+	private String code;
+
+	@Schema(description = "Text in the description", examples = "Matematik")
+	private String description;
+
+	@Schema(description = "Free-text search in event/info title, code, description and location", examples = "svets sundsvall")
+	private String search;
+
+	@ArraySchema(schema = @Schema(description = "School type", allowableValues = {
 		"HS", "VUXGY", "GY", "VUXGR", "AUB", "VUXGRAN", "VUXGYAN", "YH", "FHS", "GYAN"
-	})
-	private String schoolType;
+	}))
+	private List<String> schoolType;
 
 	@Schema(description = "Type of education", allowableValues = {
 		"kurs", "program", "kurspaket"

@@ -88,7 +88,7 @@ class EducationResourceFailureTest {
 			.expectBody(String.class)
 			.returnResult().getResponseBody();
 
-		assertThat(response).contains("given value invalid is not valid, valid values are [lectureType, languageOfInstructions, studyPace, studyLocation]");
+		assertThat(response).contains("given value invalid is not valid, valid values are [lectureType, languageOfInstructions, studyPace, studyLocation, categories, directions, schoolType]");
 		verifyNoInteractions(educationService);
 	}
 
@@ -102,11 +102,12 @@ class EducationResourceFailureTest {
 	}
 
 	@Test
-	void findFilerValuesWithMalformedDate() {
+	void findFilterValuesWithMalformedDate() {
 		webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values?date=07-06-2026", "lectureType")
 			.exchange()
 			.expectStatus().isBadRequest();
 
 		verifyNoInteractions(educationService);
 	}
+
 }
