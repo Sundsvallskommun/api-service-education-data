@@ -176,10 +176,11 @@ class StatisticsServiceTest {
 	void findStatisticsFilterValuesForCategoriesMergesSortsAndDeduplicates() {
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
 		when(referenceCategoryRepository.findDistinctBy(eq(CategoryProjection.class), any(Sort.class)))
-			.thenReturn(List.of(() -> "Teknik", () -> "Ekonomi"));
+			.thenReturn(List.of(() -> "Teknik", () -> "Ekonomi", () -> ""));
 		when(gyProgramCategoryRepository.findAll()).thenReturn(List.of(
 			GyProgramCategoryEntity.builder().withCategory("Naturbruk").build(),
-			GyProgramCategoryEntity.builder().withCategory("Ekonomi").build()));
+			GyProgramCategoryEntity.builder().withCategory("Ekonomi").build(),
+			GyProgramCategoryEntity.builder().build()));
 
 		assertThat(statisticsService.findStatisticsFilterValues("categories", null))
 			.containsExactly("Ekonomi", "Naturbruk", "Teknik");

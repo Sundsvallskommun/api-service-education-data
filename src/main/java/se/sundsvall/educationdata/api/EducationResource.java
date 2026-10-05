@@ -34,6 +34,8 @@ import static org.springframework.http.ResponseEntity.ok;
 @Validated
 @RequestMapping(path = "/{municipalityId}/educations")
 @Tag(name = "Educations", description = "find educations")
+@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
+@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 @ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 class EducationResource {
@@ -45,9 +47,7 @@ class EducationResource {
 	}
 
 	@GetMapping(produces = APPLICATION_JSON_VALUE)
-	@Operation(summary = "Search for educations", responses = {
-		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
-	})
+	@Operation(summary = "Search for educations")
 	ResponseEntity<PagedEducationResponse> search(
 		@Parameter(name = "municipalityId", description = "Municipality ID", example = "2281") @PathVariable @ValidMunicipalityId String municipalityId,
 		@ParameterObject @Valid final EducationParameters parameters,
@@ -56,9 +56,7 @@ class EducationResource {
 	}
 
 	@GetMapping(path = "/{educationEventId}", produces = APPLICATION_JSON_VALUE)
-	@Operation(summary = "Find educations by id", responses = {
-		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
-	})
+	@Operation(summary = "Find educations by id")
 	ResponseEntity<Education> findEducationsEventById(
 		@Parameter(name = "municipalityId", description = "Municipality ID", example = "2281") @PathVariable @ValidMunicipalityId String municipalityId,
 		@Parameter(name = "educationEventId", description = "Id of Education event", example = "e.2281.12345678") @PathVariable String educationEventId,
@@ -67,9 +65,7 @@ class EducationResource {
 	}
 
 	@GetMapping(path = "/filters/{filterAttribute}/values", produces = APPLICATION_JSON_VALUE)
-	@Operation(summary = "Find available filter values", description = "Find available filter values to use in the find resource", responses = {
-		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
-	})
+	@Operation(summary = "Find available filter values", description = "Find available filter values to use in the find resource")
 	ResponseEntity<List<String>> findFilterValues(
 		@Parameter(name = "municipalityId", description = "Municipality ID", example = "2281") @PathVariable @ValidMunicipalityId String municipalityId,
 		@Parameter(name = "filterAttribute", description = "The attribute name to get available values from") @ValidFilter(type = FilterType.EDUCATION) @PathVariable String filterAttribute,

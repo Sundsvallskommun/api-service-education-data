@@ -168,10 +168,10 @@ public class StatisticsService {
 				.toList();
 			case CATEGORIES -> Stream.concat(referenceCategoryRepository.findDistinctBy(CategoryProjection.class, Sort.by(ReferenceCategoryEntity_.CATEGORY_NAME)).stream()
 				.filter(Objects::nonNull)
-				.map(CategoryProjection::getCategoryName)
-				.filter(StringUtils::isNotEmpty),
+				.map(CategoryProjection::getCategoryName),
 				gyProgramCategoryRepository.findAll().stream()
 					.map(GyProgramCategoryEntity::getCategory))
+				.filter(StringUtils::isNotEmpty)
 				.distinct()
 				.sorted()
 				.toList();
