@@ -76,6 +76,35 @@ class StatisticsResourceTest {
 	}
 
 	@Test
+	void getStatisticsWithStartDateAfterEndDateReturnsBadRequest() {
+		final var response = webTestClient.get()
+			.uri("/2281/statistics?startDate=2026-05-01&endDate=2026-04-01")
+			.exchange()
+			.expectStatus().isBadRequest()
+			.expectBody(String.class)
+			.returnResult().getResponseBody();
+
+		assertThat(response).contains("startDate must be on or before endDate");
+		verifyNoInteractions(statisticsService);
+	}
+
+	@Test
+	void getStatisticsWithStartDateSameAsEndDateReturns200() {
+		final var date = LocalDate.of(2026, Month.MAY, 1);
+		final var parameters = StatisticsParameters.builder()
+			.withStartDate(date)
+			.withEndDate(date)
+			.build();
+
+		webTestClient.get()
+			.uri("/2281/statistics?startDate=2026-05-01&endDate=2026-05-01")
+			.exchange()
+			.expectStatus().isOk();
+
+		verify(statisticsService).getStatisticsByParameters(parameters, null);
+	}
+
+	@Test
 	void getStatisticsWithInvalidMunicipalityReturnsBadRequest() {
 		webTestClient.get()
 			.uri("/9999/statistics"
