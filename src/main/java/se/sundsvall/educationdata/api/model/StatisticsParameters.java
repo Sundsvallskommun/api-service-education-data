@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import se.sundsvall.educationdata.api.validation.DatePeriod;
+import se.sundsvall.educationdata.api.validation.ValidPeriod;
 
 @EqualsAndHashCode
 @Data
@@ -16,7 +18,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
 @Schema(description = "Statistics parameters model")
-public class StatisticsParameters {
+@ValidPeriod
+public class StatisticsParameters implements DatePeriod {
 
 	@Schema(description = "List of categories", examples = "Teknik")
 	private List<String> categories;

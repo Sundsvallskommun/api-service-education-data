@@ -23,8 +23,10 @@ import static se.sundsvall.educationdata.integration.db.model.EducationEventEnti
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.START_DATE;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.STUDY_PACE;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.TITLE;
+import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_.CODE;
 import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_.CREDITS;
 import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_.CREDIT_TYPE;
+import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_.DESCRIPTION;
 import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_.DURATION;
 import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_.EDUCATION_ELIGIBILITY;
 import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_.EDUCATION_TYPE;
@@ -60,7 +62,10 @@ public interface EducationSpecification {
 			withDuration(parameters.getDuration()),
 			withExpires(parameters.getExpires()),
 			withCredits(parameters.getCredits()),
-			withCreditType(parameters.getCreditType()));
+			withCreditType(parameters.getCreditType()),
+			withCode(parameters.getCode()),
+			withDescription(parameters.getDescription()),
+			withFreeSearch(parameters.getSearch()));
 	}
 
 	static Specification<EducationEventEntity> withInfoTitle(final String infoTitle) {
@@ -75,8 +80,8 @@ public interface EducationSpecification {
 		return SpecificationBuilder.buildJoinedEqualFilter(EDUCATION_INFO, CREDIT_TYPE, creditType);
 	}
 
-	static Specification<EducationEventEntity> withSchoolType(final String schoolType) {
-		return SpecificationBuilder.buildJoinedEqualFilter(EDUCATION_INFO, SCHOOL_TYPE, schoolType);
+	static Specification<EducationEventEntity> withSchoolType(final List<String> schoolType) {
+		return SpecificationBuilder.buildJoinedEqualFilterIn(EDUCATION_INFO, SCHOOL_TYPE, schoolType);
 	}
 
 	static Specification<EducationEventEntity> withEducationType(final String educationType) {
@@ -111,8 +116,8 @@ public interface EducationSpecification {
 		return SpecificationBuilder.buildLikeIgnoreCaseFilter(TITLE, title);
 	}
 
-	static Specification<EducationEventEntity> withCity(String city) {
-		return SpecificationBuilder.buildLikeIgnoreCaseFilter(CITY, city);
+	static Specification<EducationEventEntity> withCity(List<String> city) {
+		return SpecificationBuilder.buildIgnoreCaseFilterWithList(CITY, city);
 	}
 
 	static Specification<EducationEventEntity> withMunicipalityIds(List<String> municipalityIds) {
@@ -127,8 +132,8 @@ public interface EducationSpecification {
 		return SpecificationBuilder.buildLikeIgnoreCaseFilter(LECTURE_TYPE, lectureType);
 	}
 
-	static Specification<EducationEventEntity> withStudyPace(String studyPace) {
-		return SpecificationBuilder.buildEqualFilter(STUDY_PACE, studyPace);
+	static Specification<EducationEventEntity> withStudyPace(List<String> studyPace) {
+		return SpecificationBuilder.buildIgnoreCaseFilterWithList(STUDY_PACE, studyPace);
 	}
 
 	static Specification<EducationEventEntity> withLanguageOfInstructions(String languageOfInstructions) {
@@ -153,6 +158,18 @@ public interface EducationSpecification {
 
 	static Specification<EducationEventEntity> withCancelledStatus(Boolean cancelledStatus) {
 		return SpecificationBuilder.buildEqualFilter(CANCELLED, cancelledStatus);
+	}
+
+	static Specification<EducationEventEntity> withCode(String code) {
+		return SpecificationBuilder.buildJoinedLikeIgnoreCaseFilter(EDUCATION_INFO, CODE, code);
+	}
+
+	static Specification<EducationEventEntity> withDescription(String description) {
+		return SpecificationBuilder.buildJoinedLikeIgnoreCaseFilter(EDUCATION_INFO, DESCRIPTION, description);
+	}
+
+	static Specification<EducationEventEntity> withFreeSearch(String value) {
+		return SpecificationBuilder.buildFreeTextFilter(value);
 	}
 
 	static Specification<EducationEventEntity> withCategories(List<String> categories) {

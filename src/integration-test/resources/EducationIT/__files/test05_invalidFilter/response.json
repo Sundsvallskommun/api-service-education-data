@@ -5,7 +5,7 @@
 	"violations": [
 		{
 			"field": "findFilterValues.filterAttribute",
-			"message": "given value invalid is not valid, valid values are [lectureType, languageOfInstructions, studyPace, studyLocation, categories, directions]"
+			"message": "given value invalid is not valid, valid values are [lectureType, languageOfInstructions, studyPace, studyLocation, categories, directions, schoolType]"
 		}
 	]
 }

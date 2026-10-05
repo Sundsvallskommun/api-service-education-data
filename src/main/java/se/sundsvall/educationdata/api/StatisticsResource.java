@@ -33,6 +33,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @Validated
 @RequestMapping(path = "/{municipalityId}/statistics")
 @Tag(name = "Statistics", description = "Education statistics")
+@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
 @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 public class StatisticsResource {
@@ -44,9 +45,7 @@ public class StatisticsResource {
 	}
 
 	@GetMapping(produces = APPLICATION_JSON_VALUE)
-	@Operation(summary = "Get education statistics", responses = {
-		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
-	})
+	@Operation(summary = "Get education statistics")
 	ResponseEntity<Statistics> getStatistics(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @ValidMunicipalityId @PathVariable final String municipalityId,
 		@ParameterObject @Valid final StatisticsParameters parameters,
@@ -55,9 +54,7 @@ public class StatisticsResource {
 	}
 
 	@GetMapping(path = "filters/{filterAttribute}/values", produces = APPLICATION_JSON_VALUE)
-	@Operation(summary = "Get available filter values", responses = {
-		@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
-	})
+	@Operation(summary = "Get available filter values")
 	ResponseEntity<List<String>> findFilterValue(
 		@Parameter @ValidMunicipalityId @PathVariable final String municipalityId,
 		@Parameter(name = "filterAttribute", description = "Attribute name to get available values from") @ValidFilter(type = FilterType.STATISTICS) @PathVariable final String filterAttribute,

@@ -21,11 +21,13 @@ import se.sundsvall.educationdata.integration.db.GyProgramCategoryRepository;
 import se.sundsvall.educationdata.integration.db.ReferenceCategoryRepository;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
+import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_;
 import se.sundsvall.educationdata.integration.db.model.GyProgramCategoryEntity;
 import se.sundsvall.educationdata.integration.db.model.projection.CategoryProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.DirectionProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LanguageOfInstructionsProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LectureTypeProjection;
+import se.sundsvall.educationdata.integration.db.model.projection.SchoolTypeProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.StudyLocationProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.StudyPaceProjection;
 import se.sundsvall.educationdata.integration.db.specification.EducationSpecification;
@@ -38,6 +40,7 @@ import static se.sundsvall.educationdata.integration.db.model.EducationEventEnti
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LANGUAGE_OF_INSTRUCTIONS;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LECTURE_TYPE;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.STUDY_PACE;
+import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_.SCHOOL_TYPE;
 import static se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity_.CATEGORY_NAME;
 import static se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity_.DIRECTION_NAME;
 
@@ -105,7 +108,11 @@ public class EducationService {
 				.filter(Objects::nonNull)
 				.map(StudyPaceProjection::getStudyPace)
 				.toList();
-
+			case SCHOOL_TYPE -> educationInfoEntityRepository.findDistinctByCreatedAt(SchoolTypeProjection.class, date, Sort.by(EducationInfoEntity_.SCHOOL_TYPE)).stream()
+				.filter(Objects::nonNull)
+				.map(SchoolTypeProjection::getSchoolType)
+				.filter(StringUtils::isNotEmpty)
+				.toList();
 			case "categories" -> Stream.concat(referenceCategoryRepository.findDistinctBy(CategoryProjection.class, Sort.by(CATEGORY_NAME)).stream()
 				.filter(Objects::nonNull)
 				.map(CategoryProjection::getCategoryName),
@@ -115,7 +122,6 @@ public class EducationService {
 				.distinct()
 				.sorted()
 				.toList();
-
 			case "directions" -> referenceCategoryRepository.findDistinctBy(DirectionProjection.class, Sort.by(DIRECTION_NAME)).stream()
 				.filter(Objects::nonNull)
 				.map(DirectionProjection::getDirectionName)

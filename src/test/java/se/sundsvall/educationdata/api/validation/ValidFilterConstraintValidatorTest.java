@@ -31,7 +31,7 @@ class ValidFilterConstraintValidatorTest {
 
 	@ParameterizedTest
 	@ValueSource(strings = {
-		"lectureType", "languageOfInstructions", "studyPace", "studyLocation"
+		"lectureType", "languageOfInstructions", "studyPace", "studyLocation", "categories", "directions", "schoolType"
 	})
 	void validEducationFilterTest(final String educationFilter) {
 		when(validFilterMock.type()).thenReturn(FilterType.EDUCATION);
