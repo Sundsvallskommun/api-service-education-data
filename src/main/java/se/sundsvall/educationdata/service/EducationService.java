@@ -118,6 +118,7 @@ public class EducationService {
 				.map(CategoryProjection::getCategoryName),
 				gyProgramCategoryRepository.findAll().stream()
 					.map(GyProgramCategoryEntity::getCategory))
+				.filter(StringUtils::isNotEmpty)
 				.distinct()
 				.sorted()
 				.toList();
