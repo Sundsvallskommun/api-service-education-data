@@ -13,14 +13,14 @@ import se.sundsvall.educationdata.api.model.StatisticsParameters;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class ValidPeriodConstraintValidatorTest {
+class ValidPeriodConstraintValidatorTest {
 
 	@Mock
 	private ConstraintValidatorContext constraintValidatorContextMock;
 
 	private final ValidPeriodConstraintValidator validator = new ValidPeriodConstraintValidator();
 
-	@ParameterizedTest(name = "start{0}")
+	@ParameterizedTest(name = "start{0}, end{1}")
 	@CsvSource(value = {
 		"2026-05-01, 2026-11-01, true",
 		"2026-05-01, 2026-05-01, true",
@@ -34,7 +34,7 @@ public class ValidPeriodConstraintValidatorTest {
 			.withStartDate(startDate)
 			.withEndDate(endDate)
 			.build();
-		assertThat(validator.isValid(parameters, constraintValidatorContextMock));
+		assertThat(validator.isValid(parameters, constraintValidatorContextMock)).isEqualTo(expected);
 	}
 
 	@Test

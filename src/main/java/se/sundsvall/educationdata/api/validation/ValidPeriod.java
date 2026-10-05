@@ -17,10 +17,6 @@ public @interface ValidPeriod {
 
 	String message() default "startDate must be on or before endDate";
 
-	String start() default "startDate";
-
-	String end() default "endDate";
-
 	Class<?>[] groups() default {};
 
 	Class<? extends Payload>[] payload() default {};
