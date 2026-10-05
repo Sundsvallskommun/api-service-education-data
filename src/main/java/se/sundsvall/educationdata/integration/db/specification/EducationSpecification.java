@@ -43,6 +43,8 @@ public interface EducationSpecification {
 			withMunicipalityIds(parameters.getMunicipalityIds()),
 			withCity(parameters.getStudyLocation()),
 			withLectureType(parameters.getLectureType()),
+			withCategories(parameters.getCategories()),
+			withDirections(parameters.getDirections()),
 			withLanguageOfInstructions(parameters.getLanguageOfInstructions()),
 			withCancelledStatus(parameters.getCancelled()),
 			withStartDate(parameters.getStartDate()),
@@ -151,6 +153,14 @@ public interface EducationSpecification {
 
 	static Specification<EducationEventEntity> withCancelledStatus(Boolean cancelledStatus) {
 		return SpecificationBuilder.buildEqualFilter(CANCELLED, cancelledStatus);
+	}
+
+	static Specification<EducationEventEntity> withCategories(List<String> categories) {
+		return SpecificationBuilder.buildCategoryOrGyCategoryFilter(categories);
+	}
+
+	static Specification<EducationEventEntity> withDirections(List<String> categories) {
+		return SpecificationBuilder.buildDirectionFilter(categories);
 	}
 
 	private static LocalDateTime endOfDay(final LocalDate date) {

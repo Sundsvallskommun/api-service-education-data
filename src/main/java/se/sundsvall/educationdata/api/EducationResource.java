@@ -72,8 +72,7 @@ class EducationResource {
 	})
 	ResponseEntity<List<String>> findFilterValues(
 		@Parameter(name = "municipalityId", description = "Municipality ID", example = "2281") @PathVariable @ValidMunicipalityId String municipalityId,
-		@Parameter(name = "filterAttribute",
-			description = "The attribute name to get available values from") @ValidFilter(type = FilterType.EDUCATION) @PathVariable String filterAttribute,
+		@Parameter(name = "filterAttribute", description = "The attribute name to get available values from") @ValidFilter(type = FilterType.EDUCATION) @PathVariable String filterAttribute,
 		@Parameter(name = "date", description = "Date of instance yyyy-mm-dd") @RequestParam(required = false) LocalDate date) {
 		return ok(educationService.findFilterValues(filterAttribute, date));
 	}

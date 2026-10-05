@@ -5,7 +5,10 @@
 			"title": "Matematik nivå 1a",
 			"studyLocation": "Sundsvall",
 			"municipalityId": "2281",
+			"numberOfSeats": 20,
 			"lectureType": "Distance",
+			"start": "2026-04-01",
+			"end": "2026-12-01",
 			"code": "MATE1A00X",
 			"schoolType": "VUXGY",
 			"educationType": "kurs",
@@ -15,15 +18,75 @@
 			"degree": []
 		},
 		{
+			"id": "e.2",
+			"title": "Energiingenjör",
+			"eventTitle": "Energiingenjör",
+			"studyLocation": "Härnösand",
+			"municipalityId": "2281",
+			"numberOfSeats": 30,
+			"lectureType": "Distance",
+			"start": "2026-05-01",
+			"end": "2026-12-01",
+			"code": "TEING",
+			"schoolType": "HS",
+			"educationType": "kurspaket",
+			"credits": 180.0,
+			"creditType": "hp",
+			"eligibility": "Fysik 2, Kemi 1",
+			"degree": []
+		},
+		{
 			"id": "e.3",
 			"eventTitle": "Utan info",
 			"studyLocation": "Sundsvall",
 			"municipalityId": "2281",
+			"numberOfSeats": 10,
+			"lectureType": "Classroom",
+			"start": "2026-04-01",
+			"end": "2026-11-01"
+		},
+		{
+			"id": "e.5",
+			"title": "Matematik nivå 1a",
+			"studyLocation": "Sundsvall",
+			"municipalityId": "2281",
+			"numberOfSeats": 5,
+			"lectureType": "Distance",
+			"start": "2026-06-01",
+			"code": "MATE1A00X",
+			"schoolType": "VUXGY",
+			"educationType": "kurs",
+			"credits": 100.0,
+			"creditType": "vp",
+			"eligibility": "Grundläggande behörighet",
+			"degree": []
+		},
+		{
+			"id": "e.7",
+			"eventTitle": "Utan datum",
+			"studyLocation": "Sundsvall",
+			"municipalityId": "2281",
 			"lectureType": "Classroom"
+		},
+		{
+			"id": "e.10",
+			"title": "Bygg- och anläggningsprogrammet",
+			"studyLocation": "Sundsvall",
+			"municipalityId": "2281",
+			"numberOfSeats": 30,
+			"lectureType": "Classroom",
+			"start": "2026-08-15",
+			"end": "2029-06-01",
+			"code": "BA25",
+			"schoolType": "GY",
+			"educationType": "program",
+			"credits": 2500.0,
+			"creditType": "gyp",
+			"degree": []
 		}
 	],
 	"_meta": {
-		"count": 2,
+		"count": 6,
 		"limit": 100,
 		"page": 1,
 		"sortBy": [
@@ -31,6 +94,6 @@
 		],
 		"sortDirection": "ASC",
 		"totalPages": 1,
-		"totalRecords": 2
+		"totalRecords": 6
 	}
 }

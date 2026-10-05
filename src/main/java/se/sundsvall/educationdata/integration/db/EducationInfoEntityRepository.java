@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
 
@@ -16,5 +17,7 @@ public interface EducationInfoEntityRepository extends JpaRepository<EducationIn
 	List<EducationInfoEntity> findByEducationInfoIdInAndCreatedAt(Set<String> educationInfoIds, LocalDate createdAt);
 
 	void deleteByCreatedAt(LocalDate createdAt);
+
+	<P> List<P> findDistinctByCreatedAt(Class<P> type, LocalDate createdAt, Sort sort);
 
 }
