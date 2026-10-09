@@ -10,7 +10,7 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
-@Sql(scripts ="/db/scripts/testdata.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql(scripts = "/db/scripts/testdata.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @WireMockAppTestSuite(files = "classpath:/EducationIT/", classes = Application.class)
 class EducationIT extends AbstractAppTest {
 
