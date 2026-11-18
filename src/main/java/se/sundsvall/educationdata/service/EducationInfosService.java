@@ -66,7 +66,7 @@ public class EducationInfosService {
 		educationInfoEntityRepository.deleteByCreatedAt(today);
 		educationInfoEntityRepository.flush();
 		var jsonPageList = susaEducationInfoPageRepository.findAllByDateCollected(today);
-		var municipalityFilteredIds = educationEventEntityRepository.getDistinctEducationInfoId();
+		var municipalityFilteredIds = educationEventEntityRepository.getDistinctEducationInfoIdByCreatedAt(today);
 
 		for (var page : jsonPageList) {
 

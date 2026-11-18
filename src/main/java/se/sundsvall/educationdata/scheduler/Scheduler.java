@@ -51,7 +51,7 @@ public class Scheduler {
 	}
 
 	/**
-	 * Creates and stores event and info entities found in SUSA JSON
+	 * Creates and stores event, info and provider entities found in SUSA JSON
 	 * snapshots imported that day. Only events matching the configured
 	 * municipality whitelist and information related to stored events
 	 * are included.
@@ -68,6 +68,8 @@ public class Scheduler {
 		educationEventsService.createEventEntitiesFromJson();
 
 		educationInfosService.createInfoEntitiesFromJson();
+
+		educationProvidersService.createProviderEntitiesFromJson();
 
 	}
 

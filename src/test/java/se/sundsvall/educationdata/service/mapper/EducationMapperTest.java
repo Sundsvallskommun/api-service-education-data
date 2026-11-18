@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
+import se.sundsvall.educationdata.integration.db.model.EducationProviderEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,8 +54,11 @@ class EducationMapperTest {
 			.withEducationEligibility("Grundläggande behörighet")
 			.withRecommendedPriorKnowledge("Matematik 2")
 			.build();
+		final var educationProvider = EducationProviderEntity.builder()
+			.withName("Sundsvalls kommun")
+			.withUrl("https://sundsvall.se/vuxenutbildning").build();
 
-		final var result = educationMapper.toEducation(educationEvent, educationInfo);
+		final var result = educationMapper.toEducation(educationEvent, educationInfo, educationProvider);
 
 		assertThat(result.getId()).isEqualTo("e.2281.123");
 		assertThat(result.getEventTitle()).isEqualTo("Matematik nivå 1a");
@@ -75,6 +79,9 @@ class EducationMapperTest {
 		assertThat(result.getCreditType()).isEqualTo("vp");
 		assertThat(result.getEligibility()).isEqualTo("Grundläggande behörighet");
 		assertThat(result.getRecommendedPriorKnowledge()).isEqualTo("Matematik 2");
+
+		assertThat(result.getProvider()).isEqualTo("Sundsvalls kommun");
+		assertThat(result.getProviderUrl()).isEqualTo("https://sundsvall.se/vuxenutbildning");
 	}
 
 	@Test
@@ -99,7 +106,7 @@ class EducationMapperTest {
 			.withCancelled(false)
 			.build();
 
-		final var result = educationMapper.toEducation(educationEvent, null);
+		final var result = educationMapper.toEducation(educationEvent, null, null);
 
 		assertThat(result.getId()).isEqualTo("e.2281.123");
 		assertThat(result.getLectureType()).isEqualTo("Distance");
@@ -109,6 +116,8 @@ class EducationMapperTest {
 		assertThat(result.getEducationType()).isNull();
 		assertThat(result.getCredits()).isNull();
 		assertThat(result.getDegree()).isNull();
+		assertThat(result.getProvider()).isNull();
+		assertThat(result.getProviderUrl()).isNull();
 	}
 
 	@Test
@@ -116,6 +125,7 @@ class EducationMapperTest {
 		final var educationEvent = EducationEventEntity.builder()
 			.withEducationEventId("e.2281.123")
 			.withEducationInfoId("i.123")
+			.withEducationProviderId("p.123")
 			.withTitle("Matematik nivå 1a")
 			.withCity("Sundsvall")
 			.withMunicipalityId("2281")
@@ -144,13 +154,18 @@ class EducationMapperTest {
 			.withEducationEligibility("Grundläggande behörighet")
 			.withRecommendedPriorKnowledge("Matematik 2")
 			.build();
+		final var educationProvider = EducationProviderEntity.builder()
+			.withEducationProviderId("p.123")
+			.withName("Sundsvalls kommun")
+			.build();
 
 		final var page = new PageImpl<>(List.of(educationEvent), PageRequest.of(0, 20), 1);
 
-		final var result = educationMapper.toPagedEducationResponse(page, Map.of("i.123", educationInfo));
+		final var result = educationMapper.toPagedEducationResponse(page, Map.of("i.123", educationInfo), Map.of("p.123", educationProvider));
 
 		assertThat(result.getEducations()).hasSize(1);
 		assertThat(result.getEducations().getFirst().getCode()).isEqualTo("MATE1A00X");
+		assertThat(result.getEducations().getFirst().getProvider()).isEqualTo("Sundsvalls kommun");
 		assertThat(result.getMetaData().getPage()).isEqualTo(1);
 		assertThat(result.getMetaData().getLimit()).isEqualTo(20);
 		assertThat(result.getMetaData().getTotalRecords()).isEqualTo(1);
@@ -180,10 +195,11 @@ class EducationMapperTest {
 
 		final var page = new PageImpl<>(List.of(educationEvent), PageRequest.of(0, 20), 1);
 
-		final var result = educationMapper.toPagedEducationResponse(page, Map.of());
+		final var result = educationMapper.toPagedEducationResponse(page, Map.of(), Map.of());
 
 		assertThat(result.getEducations()).hasSize(1);
 		assertThat(result.getEducations().getFirst().getId()).isEqualTo("e.2281.123");
 		assertThat(result.getEducations().getFirst().getCode()).isNull();
+		assertThat(result.getEducations().getFirst().getProvider()).isNull();
 	}
 }

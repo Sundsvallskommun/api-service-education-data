@@ -17,11 +17,13 @@ import se.sundsvall.educationdata.api.model.EducationParameters;
 import se.sundsvall.educationdata.api.model.PagedEducationResponse;
 import se.sundsvall.educationdata.integration.db.EducationEventEntityRepository;
 import se.sundsvall.educationdata.integration.db.EducationInfoEntityRepository;
+import se.sundsvall.educationdata.integration.db.EducationProviderEntityRepository;
 import se.sundsvall.educationdata.integration.db.GyProgramCategoryRepository;
 import se.sundsvall.educationdata.integration.db.ReferenceCategoryRepository;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_;
+import se.sundsvall.educationdata.integration.db.model.EducationProviderEntity;
 import se.sundsvall.educationdata.integration.db.model.GyProgramCategoryEntity;
 import se.sundsvall.educationdata.integration.db.model.projection.CategoryProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.DirectionProjection;
@@ -49,6 +51,7 @@ public class EducationService {
 
 	private final EducationEventEntityRepository educationEventEntityRepository;
 	private final EducationInfoEntityRepository educationInfoEntityRepository;
+	private final EducationProviderEntityRepository educationProviderEntityRepository;
 	private final ReferenceCategoryRepository referenceCategoryRepository;
 	private final GyProgramCategoryRepository gyProgramCategoryRepository;
 	private final EducationMapper educationMapper;
@@ -56,10 +59,12 @@ public class EducationService {
 	private static final String EDUCATION_NOT_FOUND = "Education with id '%s' not found for import date '%s'";
 	private static final String STUDY_LOCATION = "studyLocation";
 
-	public EducationService(EducationEventEntityRepository educationEventEntityRepository, EducationInfoEntityRepository educationInfoEntityRepository, ReferenceCategoryRepository referenceCategoryRepository,
+	public EducationService(EducationEventEntityRepository educationEventEntityRepository, EducationInfoEntityRepository educationInfoEntityRepository, EducationProviderEntityRepository educationProviderEntityRepository,
+		ReferenceCategoryRepository referenceCategoryRepository,
 		GyProgramCategoryRepository gyProgramCategoryRepository, EducationMapper educationMapper) {
 		this.educationEventEntityRepository = educationEventEntityRepository;
 		this.educationInfoEntityRepository = educationInfoEntityRepository;
+		this.educationProviderEntityRepository = educationProviderEntityRepository;
 		this.referenceCategoryRepository = referenceCategoryRepository;
 		this.gyProgramCategoryRepository = gyProgramCategoryRepository;
 		this.educationMapper = educationMapper;
@@ -71,7 +76,9 @@ public class EducationService {
 			.orElseThrow(() -> Problem.valueOf(NOT_FOUND, EDUCATION_NOT_FOUND.formatted(educationEventId, importDate)));
 		final var info = Optional.ofNullable(event.getEducationInfoId())
 			.flatMap(infoId -> educationInfoEntityRepository.findByEducationInfoIdAndCreatedAt(infoId, event.getCreatedAt())).orElse(null);
-		return educationMapper.toEducation(event, info);
+		final var provider = Optional.ofNullable(event.getEducationProviderId())
+			.flatMap(providerId -> educationProviderEntityRepository.findByEducationProviderIdAndCreatedAt(providerId, event.getCreatedAt())).orElse(null);
+		return educationMapper.toEducation(event, info, provider);
 	}
 
 	public PagedEducationResponse find(EducationParameters parameters, LocalDate date) {
@@ -79,13 +86,19 @@ public class EducationService {
 		final var pageable = PageRequest.of(parameters.getPage() - 1, parameters.getLimit(), parameters.sort());
 		final var specification = EducationSpecification.createSpecification(parameters, date);
 		final var result = educationEventEntityRepository.findAll(specification, pageable);
-		return educationMapper.toPagedEducationResponse(result, getInfos(result.getContent(), date));
+		return educationMapper.toPagedEducationResponse(result, getInfos(result.getContent(), date), getProviders(result.getContent(), date));
 	}
 
 	private Map<String, EducationInfoEntity> getInfos(final List<EducationEventEntity> events, LocalDate date) {
 		final var infoIds = events.stream().map(EducationEventEntity::getEducationInfoId).filter(Objects::nonNull).collect(Collectors.toSet());
 		return educationInfoEntityRepository.findByEducationInfoIdInAndCreatedAt(infoIds, date).stream()
 			.collect(toMap(EducationInfoEntity::getEducationInfoId, identity()));
+	}
+
+	private Map<String, EducationProviderEntity> getProviders(final List<EducationEventEntity> events, final LocalDate date) {
+		final var providerIds = events.stream().map(EducationEventEntity::getEducationProviderId).filter(Objects::nonNull).collect(Collectors.toSet());
+		return educationProviderEntityRepository.findByEducationProviderIdInAndCreatedAt(providerIds, date).stream()
+			.collect(toMap(EducationProviderEntity::getEducationProviderId, identity()));
 	}
 
 	public List<String> findFilterValues(final String attribute, LocalDate date) {

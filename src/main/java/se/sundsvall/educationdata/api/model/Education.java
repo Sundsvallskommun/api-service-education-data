@@ -25,6 +25,12 @@ public class Education {
 	@Schema(description = "Education title, for some educations that have have a title instead of an education name", examples = "Naturprogrammet")
 	private String eventTitle;
 
+	@Schema(description = "Education provider name", examples = "Sundsvalls kommun")
+	private String provider;
+
+	@Schema(description = "Education provider web page", examples = "https://sundsvall.se/vuxenutbildning")
+	private String providerUrl;
+
 	@Schema(description = "Study location", examples = "Sundsvall")
 	private String studyLocation;
 
