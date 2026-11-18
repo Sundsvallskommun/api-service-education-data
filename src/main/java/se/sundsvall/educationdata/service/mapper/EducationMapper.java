@@ -8,11 +8,14 @@ import se.sundsvall.educationdata.api.model.Education;
 import se.sundsvall.educationdata.api.model.PagedEducationResponse;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
+import se.sundsvall.educationdata.integration.db.model.EducationProviderEntity;
+
+import static java.util.Optional.ofNullable;
 
 @Component
 public class EducationMapper {
 
-	public Education toEducation(final EducationEventEntity educationEvent, final EducationInfoEntity educationInfo) {
+	public Education toEducation(final EducationEventEntity educationEvent, final EducationInfoEntity educationInfo, final EducationProviderEntity educationProvider) {
 		final var builder = Education.builder()
 			.withId(educationEvent.getEducationEventId())
 			.withEventTitle(educationEvent.getTitle())
@@ -45,16 +48,22 @@ public class EducationMapper {
 				.withDegree(educationInfo.getDegree());
 		}
 
+		if (educationProvider != null) {
+			builder.withProvider(educationProvider.getName())
+				.withProviderUrl(educationProvider.getUrl());
+		}
+
 		return builder.build();
 	}
 
 	public PagedEducationResponse toPagedEducationResponse(
-		final Page<EducationEventEntity> page, final Map<String, EducationInfoEntity> infosById) {
+		final Page<EducationEventEntity> page, final Map<String, EducationInfoEntity> infosById, final Map<String, EducationProviderEntity> providersById) {
 		return PagedEducationResponse.builder()
 			.withEducations(page.getContent().stream()
-				.map(event -> toEducation(event, infosById.get(event.getEducationInfoId())))
-				.toList()).withMetaData(PagingAndSortingMetaData.create()
-					.withPageData(page))
+				.map(event -> toEducation(event,
+					ofNullable(event.getEducationInfoId()).map(infosById::get).orElse(null),
+					ofNullable(event.getEducationProviderId()).map(providersById::get).orElse(null))).toList()).withMetaData(PagingAndSortingMetaData.create()
+						.withPageData(page))
 			.build();
 	}
 }

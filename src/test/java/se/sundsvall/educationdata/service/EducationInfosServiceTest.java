@@ -151,13 +151,14 @@ class EducationInfosServiceTest {
 
 	@Test
 	void createInfoEntitiesFromJsonTest() {
+		final var today = LocalDate.now();
 		final byte[] json = "json".getBytes();
 		final var zipped = Util.zip(json);
 		final var page = SusaEducationInfoPageEntity.builder().withJsonBody(zipped).build();
 		final var response = new EducationInfoListResponse().educationInfos(List.of());
 
 		when(susaEducationInfoPageRepository.findAllByDateCollected(LocalDate.now())).thenReturn(List.of(page));
-		when(educationEventEntityRepository.getDistinctEducationInfoId()).thenReturn(Set.of());
+		when(educationEventEntityRepository.getDistinctEducationInfoIdByCreatedAt(today)).thenReturn(Set.of());
 		when(objectMapper.readValue(any(byte[].class), eq(EducationInfoListResponse.class))).thenReturn(response);
 		when(educationInfosMapper.toInfoEntities(any())).thenReturn(List.of());
 

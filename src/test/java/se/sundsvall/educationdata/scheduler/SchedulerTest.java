@@ -55,8 +55,9 @@ class SchedulerTest {
 		scheduler.createEntitiesFromJson();
 		verify(educationEventsService).createEventEntitiesFromJson();
 		verify(educationInfosService).createInfoEntitiesFromJson();
-		verifyNoMoreInteractions(educationEventsService, educationInfosService);
-		verifyNoInteractions(educationProvidersService, plannedEducationService);
+		verify(educationProvidersService).createProviderEntitiesFromJson();
+		verifyNoMoreInteractions(educationEventsService, educationInfosService, educationProvidersService);
+		verifyNoInteractions(plannedEducationService);
 	}
 
 	@Test

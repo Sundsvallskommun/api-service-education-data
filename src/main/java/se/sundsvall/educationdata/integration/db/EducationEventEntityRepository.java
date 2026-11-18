@@ -11,12 +11,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 
 @CircuitBreaker(name = "educationEventEntityRepository")
 public interface EducationEventEntityRepository extends JpaRepository<EducationEventEntity, String>, JpaSpecificationExecutor<EducationEventEntity> {
-	@Query("SELECT DISTINCT event.educationInfoId FROM EducationEventEntity event")
-	Set<String> getDistinctEducationInfoId();
+	@Query("SELECT DISTINCT event.educationInfoId FROM EducationEventEntity event WHERE event.createdAt = :createdAt")
+	Set<String> getDistinctEducationInfoIdByCreatedAt(@Param("createdAt") LocalDate createdAt);
+
+	@Query("SELECT DISTINCT event.educationProviderId FROM EducationEventEntity event WHERE event.createdAt = :createdAt")
+	Set<String> findDistinctEducationProviderIdByCreatedAt(@Param("createdAt") LocalDate createdAt);
 
 	Optional<EducationEventEntity> findByEducationEventIdAndCreatedAt(String educationEventId, LocalDate date);
 
