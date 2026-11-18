@@ -21,10 +21,12 @@ import se.sundsvall.educationdata.api.model.EducationParameters;
 import se.sundsvall.educationdata.api.model.PagedEducationResponse;
 import se.sundsvall.educationdata.integration.db.EducationEventEntityRepository;
 import se.sundsvall.educationdata.integration.db.EducationInfoEntityRepository;
+import se.sundsvall.educationdata.integration.db.EducationProviderEntityRepository;
 import se.sundsvall.educationdata.integration.db.GyProgramCategoryRepository;
 import se.sundsvall.educationdata.integration.db.ReferenceCategoryRepository;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
+import se.sundsvall.educationdata.integration.db.model.EducationProviderEntity;
 import se.sundsvall.educationdata.integration.db.model.GyProgramCategoryEntity;
 import se.sundsvall.educationdata.integration.db.model.projection.CategoryProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.DirectionProjection;
@@ -55,6 +57,9 @@ class EducationServiceTest {
 	private EducationInfoEntityRepository educationInfoEntityRepository;
 
 	@Mock
+	private EducationProviderEntityRepository educationProviderEntityRepository;
+
+	@Mock
 	private ReferenceCategoryRepository referenceCategoryRepository;
 
 	@Mock
@@ -68,18 +73,21 @@ class EducationServiceTest {
 
 	private static final String EVENT_ID = "e.2282.123";
 	private static final String INFO_ID = "i.123";
+	private static final String PROVIDER_ID = "p.123";
 	private static final LocalDate LATEST_IMPORT_DATE = LocalDate.of(2026, Month.JUNE, 7);
 
 	@Test
 	void findByEducationIdLatestImportWhenNullDate() {
-		final var event = EducationEventEntity.builder().withEducationEventId(EVENT_ID).withEducationInfoId(INFO_ID).withCreatedAt(LocalDate.of(2026, Month.JUNE, 7)).build();
+		final var event = EducationEventEntity.builder().withEducationEventId(EVENT_ID).withEducationInfoId(INFO_ID).withEducationProviderId(PROVIDER_ID).withCreatedAt(LocalDate.of(2026, Month.JUNE, 7)).build();
 		final var info = EducationInfoEntity.builder().withEducationInfoId(INFO_ID).build();
+		final var provider = EducationProviderEntity.builder().withEducationProviderId(PROVIDER_ID).build();
 		final var education = Education.builder().withId(EVENT_ID).build();
 
 		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
 		when(educationEventEntityRepository.findByEducationEventIdAndCreatedAt(EVENT_ID, LATEST_IMPORT_DATE)).thenReturn(Optional.of(event));
 		when(educationInfoEntityRepository.findByEducationInfoIdAndCreatedAt(INFO_ID, LATEST_IMPORT_DATE)).thenReturn(Optional.of(info));
-		when(educationMapper.toEducation(event, info)).thenReturn(education);
+		when(educationProviderEntityRepository.findByEducationProviderIdAndCreatedAt(PROVIDER_ID, LATEST_IMPORT_DATE)).thenReturn(Optional.of(provider));
+		when(educationMapper.toEducation(event, info, provider)).thenReturn(education);
 
 		final var result = educationService.findEducationById(EVENT_ID, null);
 
@@ -97,7 +105,7 @@ class EducationServiceTest {
 			.hasFieldOrPropertyWithValue("status", NOT_FOUND)
 			.hasMessage("Not Found: Education with id 'e.2282.123' not found for import date '2026-06-07'");
 
-		verifyNoInteractions(educationMapper, educationInfoEntityRepository);
+		verifyNoInteractions(educationMapper, educationInfoEntityRepository, educationProviderEntityRepository);
 	}
 
 	@Test
@@ -109,7 +117,7 @@ class EducationServiceTest {
 
 		educationService.findEducationById(EVENT_ID, null);
 
-		verify(educationMapper).toEducation(event, null);
+		verify(educationMapper).toEducation(event, null, null);
 	}
 
 	@Test
@@ -127,14 +135,15 @@ class EducationServiceTest {
 		verify(educationEventEntityRepository).findByEducationEventIdAndCreatedAt(EVENT_ID, specificDate);
 		verify(educationEventEntityRepository, never()).findLatestImportDate();
 		verify(educationInfoEntityRepository).findByEducationInfoIdAndCreatedAt(INFO_ID, specificDate);
-		verify(educationMapper).toEducation(event, null);
+		verify(educationMapper).toEducation(event, null, null);
 	}
 
 	@Test
 	void findWithInfo() {
 		final var parameters = new EducationParameters();
-		final var event = EducationEventEntity.builder().withEducationEventId(EVENT_ID).withEducationInfoId(INFO_ID).withCreatedAt(LATEST_IMPORT_DATE).build();
+		final var event = EducationEventEntity.builder().withEducationEventId(EVENT_ID).withEducationInfoId(INFO_ID).withEducationProviderId(PROVIDER_ID).withCreatedAt(LATEST_IMPORT_DATE).build();
 		final var info = EducationInfoEntity.builder().withEducationInfoId(INFO_ID).build();
+		final var provider = EducationProviderEntity.builder().withEducationProviderId(PROVIDER_ID).build();
 
 		final var page = new PageImpl<>(List.of(event));
 
@@ -142,12 +151,14 @@ class EducationServiceTest {
 		when(educationEventEntityRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(page);
 		when(educationInfoEntityRepository.findByEducationInfoIdInAndCreatedAt(Set.of(INFO_ID), LATEST_IMPORT_DATE))
 			.thenReturn(List.of(EducationInfoEntity.builder().withEducationInfoId(INFO_ID).build()));
-		when(educationMapper.toPagedEducationResponse(any(), any())).thenReturn(PagedEducationResponse.builder().build());
+		when(educationProviderEntityRepository.findByEducationProviderIdInAndCreatedAt(Set.of(PROVIDER_ID), LATEST_IMPORT_DATE))
+			.thenReturn(List.of(provider));
+		when(educationMapper.toPagedEducationResponse(any(), any(), any())).thenReturn(PagedEducationResponse.builder().build());
 
 		educationService.find(parameters, null);
 
 		verify(educationInfoEntityRepository).findByEducationInfoIdInAndCreatedAt(Set.of(INFO_ID), LATEST_IMPORT_DATE);
-		verify(educationMapper).toPagedEducationResponse(page, Map.of(INFO_ID, info));
+		verify(educationMapper).toPagedEducationResponse(page, Map.of(INFO_ID, info), Map.of(PROVIDER_ID, provider));
 	}
 
 	@Test
