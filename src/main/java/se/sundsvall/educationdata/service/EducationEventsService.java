@@ -72,7 +72,7 @@ public class EducationEventsService {
 			var json = Util.unzip(page.getJsonBody());
 			var response = objectMapper.readValue(json, EducationEventListResponse.class);
 			var events = getMunicipalityFilteredEvents(response.getEducationEvents(), municipalityIdWhitelist);
-			educationEventEntityRepository.saveAll(educationEventsMapper.toEventEntities(events));
+			educationEventEntityRepository.saveAll(educationEventsMapper.toEventEntities(events, municipalityIdWhitelist));
 		}
 	}
 

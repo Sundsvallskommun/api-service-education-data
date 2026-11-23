@@ -156,7 +156,7 @@ class EducationEventsServiceTest {
 
 		when(susaEducationEventPageRepository.findAllByDateCollected(LocalDate.now())).thenReturn(List.of(page));
 		when(objectMapper.readValue(any(byte[].class), eq(EducationEventListResponse.class))).thenReturn(response);
-		when(educationEventsMapper.toEventEntities(any())).thenReturn(List.of());
+		when(educationEventsMapper.toEventEntities(any(), any())).thenReturn(List.of());
 
 		educationEventsService.createEventEntitiesFromJson();
 
