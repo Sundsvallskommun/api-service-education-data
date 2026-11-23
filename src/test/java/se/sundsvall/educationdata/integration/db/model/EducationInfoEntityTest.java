@@ -50,7 +50,8 @@ class EducationInfoEntityTest {
 		var recommendedPriorKnowledge = "recommendedPriorKnowledge";
 		var creditType = "creditType";
 		var credits = 300.0;
-		var duration = "6 weeks";
+		var duration = "6";
+		var durationUnit = "weeks";
 		var degree = List.of("degree");
 		var subjectType = "typeCode";
 		var subjectCode = "1234";
@@ -78,6 +79,7 @@ class EducationInfoEntityTest {
 			.withExpires(localDateTime)
 			.withSubjects(subjects)
 			.withDuration(duration)
+			.withDurationUnit(durationUnit)
 			.withCreatedAt(localDate)
 			.build();
 
@@ -96,6 +98,7 @@ class EducationInfoEntityTest {
 		assertThat(education.getRecommendedPriorKnowledge()).isEqualTo(recommendedPriorKnowledge);
 		assertThat(education.getCreditType()).isEqualTo(creditType);
 		assertThat(education.getDuration()).isEqualTo(duration);
+		assertThat(education.getDurationUnit()).isEqualTo(durationUnit);
 		assertThat(education.getResultIsDegree()).isEqualTo(resultIsDegree);
 		assertThat(education.getCreatedAt()).isEqualTo(localDate);
 		assertThat(education.getSubjects()).containsExactly(new EducationInfoSubject(subjectType, subjectCode));

@@ -20,7 +20,9 @@ public class EducationMapper {
 			.withId(educationEvent.getEducationEventId())
 			.withEventTitle(educationEvent.getTitle())
 			.withStudyLocation(educationEvent.getCity())
+			.withStudySite(educationEvent.getStudySite())
 			.withMunicipalityId(educationEvent.getMunicipalityId())
+			.withContractor(educationEvent.getContractor())
 			.withUrl(educationEvent.getCoursePostUrl())
 			.withNumberOfSeats(educationEvent.getSeats())
 			.withCost(educationEvent.getCost())
@@ -30,6 +32,7 @@ public class EducationMapper {
 			.withLanguageOfInstructions(educationEvent.getLanguageOfInstructions())
 			.withStart(educationEvent.getStartDate())
 			.withEnd(educationEvent.getEndDate())
+			.withStartType(educationEvent.getStartType())
 			.withEarliestApplication(educationEvent.getApplicationDateStart())
 			.withLatestApplication(educationEvent.getApplicationDateEnd())
 			.withCancelled(educationEvent.getCancelled());
@@ -43,6 +46,7 @@ public class EducationMapper {
 				.withCredits(educationInfo.getCredits())
 				.withCreditType(educationInfo.getCreditType())
 				.withDuration(educationInfo.getDuration())
+				.withDurationUnit(educationInfo.getDurationUnit())
 				.withEligibility(educationInfo.getEducationEligibility())
 				.withRecommendedPriorKnowledge(educationInfo.getRecommendedPriorKnowledge())
 				.withDegree(educationInfo.getDegree());

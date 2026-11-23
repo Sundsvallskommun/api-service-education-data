@@ -44,8 +44,10 @@ class EducationEventEntityTest {
 		var educationInfoId = "educationInfoId";
 		var title = "name";
 		var city = "city";
+		var studySite = "Distans";
 		var municipalityId = "municipalityId";
 		var providerId = "providerId";
+		var contractor = "Test Gy";
 		var coursePostUrl = "coursePostUrl";
 		var seats = 10;
 		var currencyType = "SEK";
@@ -55,6 +57,7 @@ class EducationEventEntityTest {
 		var languageOfInstructions = "Swedish";
 		var startDate = LocalDate.of(2026, Month.JUNE, 1);
 		var endDate = LocalDate.of(2025, Month.JUNE, 1);
+		var startType = "1";
 		var applicationDateStart = LocalDate.of(2025, Month.JUNE, 1);
 		var applicationDateEnd = LocalDate.of(2025, Month.JUNE, 1);
 		var cancelled = false;
@@ -66,8 +69,10 @@ class EducationEventEntityTest {
 			.withEducationInfoId(educationInfoId)
 			.withTitle(title)
 			.withCity(city)
+			.withStudySite(studySite)
 			.withMunicipalityId(municipalityId)
 			.withEducationProviderId(providerId)
+			.withContractor(contractor)
 			.withCoursePostUrl(coursePostUrl)
 			.withSeats(seats)
 			.withCurrencyType(currencyType)
@@ -77,6 +82,7 @@ class EducationEventEntityTest {
 			.withLanguageOfInstructions(languageOfInstructions)
 			.withStartDate(startDate)
 			.withEndDate(endDate)
+			.withStartType(startType)
 			.withApplicationDateStart(applicationDateStart)
 			.withApplicationDateEnd(applicationDateEnd)
 			.withCancelled(cancelled).build();
@@ -87,8 +93,10 @@ class EducationEventEntityTest {
 		assertThat(education.getEducationInfoId()).isEqualTo(educationInfoId);
 		assertThat(education.getTitle()).isEqualTo(title);
 		assertThat(education.getCity()).isEqualTo(city);
+		assertThat(education.getStudySite()).isEqualTo(studySite);
 		assertThat(education.getMunicipalityId()).isEqualTo(municipalityId);
 		assertThat(education.getEducationProviderId()).isEqualTo(providerId);
+		assertThat(education.getContractor()).isEqualTo(contractor);
 		assertThat(education.getCoursePostUrl()).isEqualTo(coursePostUrl);
 		assertThat(education.getSeats()).isEqualTo(seats);
 		assertThat(education.getCurrencyType()).isEqualTo(currencyType);
@@ -98,6 +106,7 @@ class EducationEventEntityTest {
 		assertThat(education.getLanguageOfInstructions()).isEqualTo(languageOfInstructions);
 		assertThat(education.getStartDate()).isEqualTo(startDate);
 		assertThat(education.getEndDate()).isEqualTo(endDate);
+		assertThat(education.getStartType()).isEqualTo(startType);
 		assertThat(education.getApplicationDateStart()).isEqualTo(applicationDateStart);
 		assertThat(education.getApplicationDateEnd()).isEqualTo(applicationDateEnd);
 		assertThat(education.getCancelled()).isEqualTo(cancelled);

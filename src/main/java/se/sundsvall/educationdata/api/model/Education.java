@@ -31,8 +31,14 @@ public class Education {
 	@Schema(description = "Education provider web page", examples = "https://sundsvall.se/vuxenutbildning")
 	private String providerUrl;
 
+	@Schema(description = "Organisation running the education on behalf of the provider", examples = "Jensen Gy")
+	private String contractor;
+
 	@Schema(description = "Study location", examples = "Sundsvall")
 	private String studyLocation;
+
+	@Schema(description = "Study site as described by the provider", examples = "Campus")
+	private String studySite;
 
 	@Schema(description = "Municipality ID", examples = "2281")
 	private String municipalityId;
@@ -64,6 +70,9 @@ public class Education {
 	@Schema(description = "End date", examples = "2028-06-01")
 	private LocalDate end;
 
+	@Schema(description = "Type of start from Susa: 0 = not decided, 1 = date set, 2 and 3 = continuous start", examples = "1")
+	private String startType;
+
 	@Schema(description = "Earliest application date", examples = "2026-01-15")
 	private LocalDate earliestApplication;
 
@@ -93,6 +102,9 @@ public class Education {
 
 	@Schema(description = "Duration", examples = "2 år")
 	private String duration;
+
+	@Schema(description = "Unit of duration", examples = "days")
+	private String durationUnit;
 
 	@Schema(description = "Eligibility requirements", examples = "Grundläggande behörighet")
 	private String eligibility;

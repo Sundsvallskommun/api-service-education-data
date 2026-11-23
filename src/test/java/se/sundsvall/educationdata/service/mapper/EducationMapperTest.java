@@ -28,7 +28,9 @@ class EducationMapperTest {
 			.withEducationInfoId("i.123")
 			.withTitle("Matematik nivå 1a")
 			.withCity("Sundsvall")
+			.withStudySite("Distans")
 			.withMunicipalityId("2281")
+			.withContractor("Test Gy")
 			.withCoursePostUrl("https://sundsvall.alvis.se/hittakurser")
 			.withSeats(25)
 			.withCost(BigDecimal.ZERO)
@@ -38,6 +40,7 @@ class EducationMapperTest {
 			.withLanguageOfInstructions("swe")
 			.withStartDate(LocalDate.of(2026, Month.OCTOBER, 12))
 			.withEndDate(LocalDate.of(2026, Month.DECEMBER, 18))
+			.withStartType("1")
 			.withApplicationDateStart(LocalDate.of(2026, Month.MARCH, 15))
 			.withApplicationDateEnd(LocalDate.of(2026, Month.APRIL, 15))
 			.withCancelled(false)
@@ -51,6 +54,8 @@ class EducationMapperTest {
 			.withDescription("Matematik nivå 1a")
 			.withCredits(100.0)
 			.withCreditType("vp")
+			.withDuration("65")
+			.withDurationUnit("days")
 			.withEducationEligibility("Grundläggande behörighet")
 			.withRecommendedPriorKnowledge("Matematik 2")
 			.build();
@@ -63,12 +68,15 @@ class EducationMapperTest {
 		assertThat(result.getId()).isEqualTo("e.2281.123");
 		assertThat(result.getEventTitle()).isEqualTo("Matematik nivå 1a");
 		assertThat(result.getStudyLocation()).isEqualTo("Sundsvall");
+		assertThat(result.getStudySite()).isEqualTo("Distans");
 		assertThat(result.getMunicipalityId()).isEqualTo("2281");
+		assertThat(result.getContractor()).isEqualTo("Test Gy");
 		assertThat(result.getLectureType()).isEqualTo("Distance");
 		assertThat(result.getStudyPace()).isEqualTo("100.0");
 		assertThat(result.getLanguageOfInstructions()).isEqualTo("swe");
 		assertThat(result.getStart()).isEqualTo(LocalDate.of(2026, Month.OCTOBER, 12));
 		assertThat(result.getEnd()).isEqualTo(LocalDate.of(2026, Month.DECEMBER, 18));
+		assertThat(result.getStartType()).isEqualTo("1");
 		assertThat(result.getCancelled()).isFalse();
 
 		assertThat(result.getTitle()).isEqualTo("Matematik");
@@ -77,6 +85,8 @@ class EducationMapperTest {
 		assertThat(result.getEducationType()).isEqualTo("kurs");
 		assertThat(result.getCredits()).isEqualTo(100.0);
 		assertThat(result.getCreditType()).isEqualTo("vp");
+		assertThat(result.getDuration()).isEqualTo("65");
+		assertThat(result.getDurationUnit()).isEqualTo("days");
 		assertThat(result.getEligibility()).isEqualTo("Grundläggande behörighet");
 		assertThat(result.getRecommendedPriorKnowledge()).isEqualTo("Matematik 2");
 

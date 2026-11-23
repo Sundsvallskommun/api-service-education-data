@@ -47,8 +47,17 @@ public class EducationEventEntity {
 	@Column(name = "education_provider_id", length = 64)
 	private String educationProviderId;
 
+	@Column(name = "contractor", length = 255)
+	private String contractor;
+
 	@Column(name = "city", length = 100)
 	private String city;
+
+	@Column(name = "study_site", length = 255)
+	private String studySite;
+
+	@Column(name = "start_type", length = 2)
+	private String startType;
 
 	@Column(name = "municipality_id", length = 6)
 	private String municipalityId;
