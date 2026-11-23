@@ -3,14 +3,17 @@ package se.sundsvall.educationdata.service.mapper;
 import generated.se.sundsvall.susanavet.CConfiguration;
 import generated.se.sundsvall.susanavet.CCredits;
 import generated.se.sundsvall.susanavet.CSchoolType;
+import generated.se.sundsvall.susanavet.CTimeType;
 import generated.se.sundsvall.susanavet.CodeSubject;
 import generated.se.sundsvall.susanavet.ConfigurationCode;
 import generated.se.sundsvall.susanavet.Credits;
+import generated.se.sundsvall.susanavet.CreditsCode;
 import generated.se.sundsvall.susanavet.EducationInfo;
 import generated.se.sundsvall.susanavet.EducationInfoResponse;
 import generated.se.sundsvall.susanavet.LangString;
 import generated.se.sundsvall.susanavet.LangStringNode;
 import generated.se.sundsvall.susanavet.TimeLength;
+import generated.se.sundsvall.susanavet.TimeTypeCode;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collections;
@@ -63,10 +66,13 @@ public class EducationInfosMapper {
 			.withDegree(toDegree(content.getDegrees()))
 			.withSubjects(toSubjects(content.getSubjects()))
 			.withCredits(ofNullable(creditNode).map(Credits::getCredits).orElse(null))
-			.withCreditType(ofNullable(creditNode).map(Credits::getSystem).map(CCredits::getCode).map(String::valueOf).orElse(null))
+			.withCreditType(ofNullable(creditNode).map(Credits::getSystem).map(CCredits::getCode)
+				.filter(code -> code != CreditsCode.UNKNOWN_DEFAULT_OPEN_API).map(String::valueOf).orElse(null))
 			.withSchoolType(ofNullable(content.getType()).map(CSchoolType::getCode).map(String::valueOf).orElse(null))
 			.withEducationType(ofNullable(content.getConfiguration()).map(CConfiguration::getCode).map(ConfigurationCode::getValue).orElse(null))
 			.withDuration(ofNullable(content.getExtent()).map(TimeLength::getLength).map(String::valueOf).orElse(null))
+			.withDurationUnit(ofNullable(content.getExtent()).map(TimeLength::getUnit).map(CTimeType::getCode)
+				.filter(code -> code != TimeTypeCode.UNKNOWN_DEFAULT_OPEN_API).map(TimeTypeCode::getValue).orElse(null))
 			.build();
 	}
 

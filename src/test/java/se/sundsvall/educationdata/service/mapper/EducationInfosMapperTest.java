@@ -2,6 +2,7 @@ package se.sundsvall.educationdata.service.mapper;
 
 import generated.se.sundsvall.susanavet.CCredits;
 import generated.se.sundsvall.susanavet.CSchoolType;
+import generated.se.sundsvall.susanavet.CTimeType;
 import generated.se.sundsvall.susanavet.CodeSubject;
 import generated.se.sundsvall.susanavet.Credits;
 import generated.se.sundsvall.susanavet.CreditsCode;
@@ -11,6 +12,8 @@ import generated.se.sundsvall.susanavet.LangString;
 import generated.se.sundsvall.susanavet.LangStringNode;
 import generated.se.sundsvall.susanavet.LangUrl;
 import generated.se.sundsvall.susanavet.SchoolTypeCode;
+import generated.se.sundsvall.susanavet.TimeLength;
+import generated.se.sundsvall.susanavet.TimeTypeCode;
 import generated.se.sundsvall.susanavet.UrlNode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -74,6 +77,9 @@ class EducationInfosMapperTest {
 			.credits(new Credits()
 				.credits(120.0)
 				.system(new CCredits().code(CreditsCode.HP)))
+			.extent(new TimeLength()
+				.length(65)
+				.unit(new CTimeType().code(TimeTypeCode.DAYS)))
 			.url(new LangUrl()
 				.urls(List.of(new UrlNode()
 					.lang("swe")
@@ -103,6 +109,8 @@ class EducationInfosMapperTest {
 		assertThat(row.getExpires()).isEqualTo(LocalDateTime.parse("2027-06-07T13:37"));
 		assertThat(row.getCredits()).isEqualTo(120.0);
 		assertThat(row.getCreditType()).isEqualTo("hp");
+		assertThat(row.getDuration()).isEqualTo("65");
+		assertThat(row.getDurationUnit()).isEqualTo("days");
 	}
 
 	@Test
@@ -132,5 +140,22 @@ class EducationInfosMapperTest {
 		infos.add(null);
 		final var result = infosMapper.toInfoEntities(infos);
 		assertThat(result).isEmpty();
+	}
+
+	@Test
+	void toInfoEntity_unrecognisedCodes_durationUnitAndCreditTypeAreNull() {
+		final var content = new EducationInfo()
+			.identifier("info-123")
+			.extent(new TimeLength()
+				.length(10)
+				.unit(new CTimeType().code(TimeTypeCode.UNKNOWN_DEFAULT_OPEN_API)))
+			.credits(new Credits()
+				.credits(10.0)
+				.system(new CCredits().code(CreditsCode.UNKNOWN_DEFAULT_OPEN_API)));
+
+		final var row = infosMapper.toInfoEntities(List.of(new EducationInfoResponse().content(content))).getFirst();
+
+		assertThat(row.getDurationUnit()).isNull();
+		assertThat(row.getCreditType()).isNull();
 	}
 }
