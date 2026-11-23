@@ -66,6 +66,9 @@ public class EducationInfoEntity {
 	@Column(name = "duration", length = 10)
 	private String duration;
 
+	@Column(name = "duration_unit", length = 16)
+	private String durationUnit;
+
 	@Column(name = "result_is_degree")
 	private Boolean resultIsDegree;
 
