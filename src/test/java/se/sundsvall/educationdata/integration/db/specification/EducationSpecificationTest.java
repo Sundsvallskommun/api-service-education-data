@@ -28,6 +28,7 @@ import static se.sundsvall.educationdata.integration.db.specification.EducationS
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withExpires;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withFreeSearch;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withMunicipalityIds;
+import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withProvider;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withSchoolType;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withStartDate;
 import static se.sundsvall.educationdata.integration.db.specification.EducationSpecification.withStudyPace;
@@ -64,6 +65,7 @@ class EducationSpecificationTest {
 			withStudyPace(null),
 			withCode(null),
 			withDescription(null),
+			withProvider(null),
 			withFreeSearch(null));
 
 		final var result = educationEventEntityRepository.findAll(specification)
@@ -290,5 +292,23 @@ class EducationSpecificationTest {
 			.map(EducationEventEntity::getEducationEventId)
 			.toList();
 		assertThat(result).containsExactlyInAnyOrder("e.3", "e.7");
+	}
+
+	@Test
+	void providerMatchesIgnoringCaseAndWhitespaceThroughJoin() {
+		final var result = educationEventEntityRepository.findAll(withCreated(TODAY).and(withProvider(List.of("  TESTANORDNARE AB  "))))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).containsExactlyInAnyOrder("e.1", "e.5");
+	}
+
+	@Test
+	void providerJoinsOnSameSnapshotDay() {
+		final var result = educationEventEntityRepository.findAll(withCreated(YESTERDAY).and(withProvider(List.of("Testanordnare AB"))))
+			.stream().map(EducationEventEntity::getEducationEventId)
+			.toList();
+
+		assertThat(result).containsExactly("e.4");
 	}
 }

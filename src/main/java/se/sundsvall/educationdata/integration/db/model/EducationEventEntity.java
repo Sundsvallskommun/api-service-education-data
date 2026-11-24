@@ -111,4 +111,13 @@ public class EducationEventEntity {
 	})
 	private EducationInfoEntity educationInfo;
 
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumns({
+		@JoinColumn(name = "education_provider_id", referencedColumnName = "education_provider_id", insertable = false, updatable = false),
+		@JoinColumn(name = "created_at", referencedColumnName = "created_at", insertable = false, updatable = false)
+	})
+	private EducationProviderEntity educationProvider;
+
 }

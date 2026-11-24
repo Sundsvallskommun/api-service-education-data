@@ -181,6 +181,18 @@ public class SpecificationBuilder {
 		};
 	}
 
+	public static <T> Specification<T> buildJoinedIgnoreCaseFilterWithList(final String joinAttribute, final String attribute, final List<String> values) {
+		return (entity, cq, cb) -> {
+			if (isEmpty(values)) {
+				return cb.and();
+			}
+			return cb.lower(joinOf(entity, joinAttribute).get(attribute)).in(values.stream()
+				.map(value -> value.strip().toLowerCase())
+				.distinct()
+				.toList());
+		};
+	}
+
 	public static <T> Specification<T> buildJoinedEqualFilterIn(final String joinAttribute, final String attribute, List<String> values) {
 
 		return (entity, cq, cb) -> {

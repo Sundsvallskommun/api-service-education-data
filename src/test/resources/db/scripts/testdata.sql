@@ -10,6 +10,8 @@ DELETE
 FROM education_event;
 DELETE
 FROM education_info;
+DELETE
+FROM education_provider;
 
 INSERT INTO education_info
 (id, education_info_id, title, code, school_type, education_type, education_eligibility, credit_type, credits,
@@ -53,3 +55,11 @@ INSERT INTO event_category (id, education_event_id, direction_id, updated_at)
 VALUES ('ec-1', 'e.1', 'd.1', '2026-06-07 10:00:00'),
        ('ec-2', 'e.1', 'd.2', '2026-06-07 10:00:00'),
        ('ec-3', 'e.2', 'd.2', '2026-06-07 10:00:00');
+
+INSERT INTO education_provider (id, education_provider_id, name, created_at)
+VALUES ('provider-1', 'p.1', 'Testanordnare AB', '2026-06-07'),
+       ('provider-2', 'p.2', 'Mittuniversitetet', '2026-06-07'),
+       ('provider-3', 'p.1', 'Testanordnare AB', '2026-06-06');
+
+UPDATE education_event SET education_provider_id = 'p.1' WHERE education_event_id IN ('e.1', 'e.4', 'e.5');
+UPDATE education_event SET education_provider_id = 'p.2' WHERE education_event_id = 'e.2';
