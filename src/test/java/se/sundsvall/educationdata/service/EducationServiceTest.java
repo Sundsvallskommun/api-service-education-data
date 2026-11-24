@@ -29,9 +29,11 @@ import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationProviderEntity;
 import se.sundsvall.educationdata.integration.db.model.GyProgramCategoryEntity;
 import se.sundsvall.educationdata.integration.db.model.projection.CategoryProjection;
+import se.sundsvall.educationdata.integration.db.model.projection.CreditsProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.DirectionProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LanguageOfInstructionsProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LectureTypeProjection;
+import se.sundsvall.educationdata.integration.db.model.projection.ProviderProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.SchoolTypeProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.StudyLocationProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.StudyPaceProjection;
@@ -237,6 +239,28 @@ class EducationServiceTest {
 
 		assertThat(educationService.findFilterValues("schoolType", null))
 			.containsExactly("GY", "HS");
+	}
+
+	@Test
+	void findFilterValuesForProvider() {
+		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
+		when(educationProviderEntityRepository.findDistinctByCreatedAt(
+			eq(ProviderProjection.class), eq(LATEST_IMPORT_DATE), any(Sort.class)))
+			.thenReturn(List.of(() -> "Mittuniversitetet", () -> "", () -> "Testanordnare AB"));
+
+		assertThat(educationService.findFilterValues("provider", null))
+			.containsExactly("Mittuniversitetet", "Testanordnare AB");
+	}
+
+	@Test
+	void findFilterValuesForCredits() {
+		when(educationEventEntityRepository.findLatestImportDate()).thenReturn(LATEST_IMPORT_DATE);
+		when(educationInfoEntityRepository.findDistinctByCreatedAt(
+			eq(CreditsProjection.class), eq(LATEST_IMPORT_DATE), any(Sort.class)))
+			.thenReturn(List.of(() -> 15.0, () -> null, () -> 100.0));
+
+		assertThat(educationService.findFilterValues("credits", null))
+			.containsExactly("15.0", "100.0");
 	}
 
 	@Test

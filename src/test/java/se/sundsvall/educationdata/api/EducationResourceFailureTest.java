@@ -88,7 +88,7 @@ class EducationResourceFailureTest {
 			.expectBody(String.class)
 			.returnResult().getResponseBody();
 
-		assertThat(response).contains("given value invalid is not valid, valid values are [lectureType, languageOfInstructions, studyPace, studyLocation, categories, directions, schoolType]");
+		assertThat(response).contains("given value invalid is not valid, valid values are [lectureType, languageOfInstructions, studyPace, studyLocation, categories, directions, schoolType, provider, credits]");
 		verifyNoInteractions(educationService);
 	}
 
