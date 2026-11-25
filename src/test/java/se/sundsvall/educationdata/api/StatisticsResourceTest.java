@@ -38,7 +38,7 @@ class StatisticsResourceTest {
 		final var parameters = StatisticsParameters.builder()
 			.withStartDate(LocalDate.of(2026, Month.MAY, 1))
 			.withEndDate(LocalDate.of(2026, Month.NOVEMBER, 1))
-			.withSchoolType("VUXGY")
+			.withSchoolType(List.of("VUXGY"))
 			.withStudyLocations(List.of("Sundsvall"))
 			.build();
 
@@ -133,5 +133,21 @@ class StatisticsResourceTest {
 
 		verify(statisticsService)
 			.findStatisticsFilterValues("studyLocations", null);
+	}
+
+	@Test
+	void getStatisticsWithSeveralSchoolTypes() {
+		final var parameters = StatisticsParameters.builder()
+			.withStartDate(LocalDate.of(2026, Month.MAY, 1))
+			.withEndDate(LocalDate.of(2026, Month.NOVEMBER, 1))
+			.withSchoolType(List.of("VUXGY", "VUXGR"))
+			.build();
+
+		webTestClient.get()
+			.uri("/2281/statistics?startDate=2026-05-01&endDate=2026-11-01&schoolType=VUXGY&schoolType=VUXGR")
+			.exchange()
+			.expectStatus().isOk();
+
+		verify(statisticsService).getStatisticsByParameters(parameters, null);
 	}
 }

@@ -45,8 +45,8 @@ public interface StatisticsSpecification {
 		return SpecificationBuilder.buildIgnoreCaseFilterWithList(STUDY_PACE, studyPace);
 	}
 
-	static Specification<EducationEventEntity> withSchoolType(final String schoolType) {
-		return SpecificationBuilder.buildJoinedEqualFilter(EDUCATION_INFO, SCHOOL_TYPE, schoolType);
+	static Specification<EducationEventEntity> withSchoolType(final List<String> schoolType) {
+		return SpecificationBuilder.buildJoinedEqualFilterIn(EDUCATION_INFO, SCHOOL_TYPE, schoolType);
 	}
 
 	static Specification<EducationEventEntity> withStudyLocations(final List<String> studyLocations) {
