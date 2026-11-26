@@ -32,6 +32,9 @@ public class EducationProviderEntity {
 	@Column(name = "name", length = 255)
 	private String name;
 
+	@Column(name = "school_name", length = 255)
+	private String schoolName;
+
 	@Column(name = "url", length = 255)
 	private String url;
 

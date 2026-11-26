@@ -76,6 +76,7 @@ public class EducationEventsMapper {
 			.withLectureType(toLectureType(event.getDistance()))
 			.withApplicationDateStart(ofNullable(application).map(Application::getFirst).orElse(null))
 			.withApplicationDateEnd(ofNullable(application).map(Application::getLast).orElse(null))
+			.withApplicationUrl(ofNullable(application).map(Application::getUrl).map(SusaNavetMapper::firstUrlValue).orElse(null))
 			.withCancelled(event.getIsCancelled())
 			.build();
 	}

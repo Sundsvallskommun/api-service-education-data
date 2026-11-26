@@ -60,6 +60,7 @@ class EducationEventEntityTest {
 		var startType = "1";
 		var applicationDateStart = LocalDate.of(2025, Month.JUNE, 1);
 		var applicationDateEnd = LocalDate.of(2025, Month.JUNE, 1);
+		var applicationUrl = "https://example.com/apply";
 		var cancelled = false;
 
 		// Act
@@ -85,6 +86,7 @@ class EducationEventEntityTest {
 			.withStartType(startType)
 			.withApplicationDateStart(applicationDateStart)
 			.withApplicationDateEnd(applicationDateEnd)
+			.withApplicationUrl(applicationUrl)
 			.withCancelled(cancelled).build();
 
 		// Assert
@@ -109,6 +111,7 @@ class EducationEventEntityTest {
 		assertThat(education.getStartType()).isEqualTo(startType);
 		assertThat(education.getApplicationDateStart()).isEqualTo(applicationDateStart);
 		assertThat(education.getApplicationDateEnd()).isEqualTo(applicationDateEnd);
+		assertThat(education.getApplicationUrl()).isEqualTo(applicationUrl);
 		assertThat(education.getCancelled()).isEqualTo(cancelled);
 	}
 

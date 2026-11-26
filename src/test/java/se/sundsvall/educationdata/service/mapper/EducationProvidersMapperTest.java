@@ -6,6 +6,7 @@ import generated.se.sundsvall.susanavet.EducationProviderResponse;
 import generated.se.sundsvall.susanavet.LangString;
 import generated.se.sundsvall.susanavet.LangStringNode;
 import generated.se.sundsvall.susanavet.LangUrl;
+import generated.se.sundsvall.susanavet.SVProviderExtension;
 import generated.se.sundsvall.susanavet.UrlNode;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -45,7 +46,9 @@ class EducationProvidersMapperTest {
 					.value("https://sundsvall.se/gymnasium"))))
 			.visitAddresses(List.of(
 				new Address().town("Sundsvall").areaCode("2281"),
-				new Address().town("Timrå").areaCode("2262")));
+				new Address().town("Timrå").areaCode("2262")))
+			.extensions(List.of(
+				new SVProviderExtension().type("SVProviderExtension").id("1").schoolName("Västermalms skola")));
 
 		final var result = providersMapper.toProviderEntities(List.of(new EducationProviderResponse().content(content)));
 
@@ -53,11 +56,12 @@ class EducationProvidersMapperTest {
 			.extracting(
 				EducationProviderEntity::getEducationProviderId,
 				EducationProviderEntity::getName,
+				EducationProviderEntity::getSchoolName,
 				EducationProviderEntity::getUrl,
 				EducationProviderEntity::getCity,
 				EducationProviderEntity::getMunicipalityId,
 				EducationProviderEntity::getCreatedAt)
-			.containsExactly("p.sv.16931486", "Sundsvalls gymnasium", "https://sundsvall.se/gymnasium", "Sundsvall", "2281", null);
+			.containsExactly("p.sv.16931486", "Sundsvalls gymnasium", "Västermalms skola", "https://sundsvall.se/gymnasium", "Sundsvall", "2281", null);
 	}
 
 	@Test
@@ -68,7 +72,7 @@ class EducationProvidersMapperTest {
 		final var result = providersMapper.toProviderEntities(List.of(new EducationProviderResponse().content(content)));
 
 		assertThat(result).singleElement()
-			.extracting(EducationProviderEntity::getCity, EducationProviderEntity::getMunicipalityId)
+			.extracting(EducationProviderEntity::getCity, EducationProviderEntity::getMunicipalityId, EducationProviderEntity::getSchoolName)
 			.containsOnlyNulls();
 	}
 

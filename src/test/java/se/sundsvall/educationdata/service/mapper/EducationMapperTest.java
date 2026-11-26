@@ -43,6 +43,7 @@ class EducationMapperTest {
 			.withStartType("1")
 			.withApplicationDateStart(LocalDate.of(2026, Month.MARCH, 15))
 			.withApplicationDateEnd(LocalDate.of(2026, Month.APRIL, 15))
+			.withApplicationUrl("https://example.com/apply")
 			.withCancelled(false)
 			.build();
 		final var educationInfo = EducationInfoEntity.builder()
@@ -61,6 +62,7 @@ class EducationMapperTest {
 			.build();
 		final var educationProvider = EducationProviderEntity.builder()
 			.withName("Sundsvalls kommun")
+			.withSchoolName("Västermalms skola")
 			.withUrl("https://sundsvall.se/vuxenutbildning").build();
 
 		final var result = educationMapper.toEducation(educationEvent, educationInfo, educationProvider);
@@ -76,6 +78,7 @@ class EducationMapperTest {
 		assertThat(result.getLanguageOfInstructions()).isEqualTo("swe");
 		assertThat(result.getStart()).isEqualTo(LocalDate.of(2026, Month.OCTOBER, 12));
 		assertThat(result.getEnd()).isEqualTo(LocalDate.of(2026, Month.DECEMBER, 18));
+		assertThat(result.getApplicationUrl()).isEqualTo("https://example.com/apply");
 		assertThat(result.getStartType()).isEqualTo("1");
 		assertThat(result.getCancelled()).isFalse();
 
@@ -91,6 +94,7 @@ class EducationMapperTest {
 		assertThat(result.getRecommendedPriorKnowledge()).isEqualTo("Matematik 2");
 
 		assertThat(result.getProvider()).isEqualTo("Sundsvalls kommun");
+		assertThat(result.getSchoolName()).isEqualTo("Västermalms skola");
 		assertThat(result.getProviderUrl()).isEqualTo("https://sundsvall.se/vuxenutbildning");
 	}
 

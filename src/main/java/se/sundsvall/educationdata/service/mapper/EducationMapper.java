@@ -35,6 +35,7 @@ public class EducationMapper {
 			.withStartType(educationEvent.getStartType())
 			.withEarliestApplication(educationEvent.getApplicationDateStart())
 			.withLatestApplication(educationEvent.getApplicationDateEnd())
+			.withApplicationUrl(educationEvent.getApplicationUrl())
 			.withCancelled(educationEvent.getCancelled());
 
 		if (educationInfo != null) {
@@ -54,7 +55,8 @@ public class EducationMapper {
 
 		if (educationProvider != null) {
 			builder.withProvider(educationProvider.getName())
-				.withProviderUrl(educationProvider.getUrl());
+				.withProviderUrl(educationProvider.getUrl())
+				.withSchoolName(educationProvider.getSchoolName());
 		}
 
 		return builder.build();
