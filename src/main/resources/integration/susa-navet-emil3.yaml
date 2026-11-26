@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: '3.0.2'
+  version: '3.0.4'
   title: Skolverket - Susa-navets öppna API
   description: <p>Skolverkets öppna API för Susa-navet tillhandahåller information om utbildningserbjudanden, utbildningsanordnare och utbildningsinformation.<br>
     API:et erbjuder funktioner för att söka, lista och visa detaljerad information om de hanterade resurserna.<br>
@@ -213,7 +213,6 @@ components:
           - **SAM** – Sameskola  
           - **SP** – Specialskola  
           - **STF** – Studieförbund  
-          - **VUX** – Kommunal vuxenutbildning  
           - **VUXGR** – Kommunal vuxenutbildning på grundläggande nivå  
           - **VUXGRAN** – Kommunal vuxenutbildning som anpassad utbildning på grundläggande nivå  
           - **VUXGY** – Kommunal vuxenutbildning på gymnasial nivå  
@@ -455,7 +454,6 @@ components:
         | SAM      | Sameskola |
         | SP       | Specialskola |
         | STF      | Studieförbund |
-        | VUX      | Kommunal vuxenutbildning |
         | VUXGR    | Kommunal vuxenutbildning på grundläggande nivå |
         | VUXGRAN  | Kommunal vuxenutbildning som anpassad utbildning på grundläggande nivå |
         | VUXGY    | Kommunal vuxenutbildning på gymnasial nivå |
@@ -480,7 +478,6 @@ components:
         - SAM
         - SP
         - STF
-        - VUX
         - VUXGR
         - VUXGRAN
         - VUXGY
@@ -821,6 +818,10 @@ components:
           $ref: '#/components/schemas/LangString'
         organisationNumber:
           type: string
+        extensions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SVProviderExtension'
     EducationProviderResponse:
       type: object
       properties:
@@ -892,6 +893,18 @@ components:
         end:
           type: string
           format: date
+    SVProviderExtension:
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        schoolName:
+          type: string
     Extension_E:
       type: object
       required:
@@ -1121,8 +1134,8 @@ components:
     SemesterType:
       type: string
       enum:
-        - vt
-        - ht
+        - VT
+        - HT
     KeywordDescriptionType:
       type: object
       required:
