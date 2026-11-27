@@ -30,8 +30,8 @@ public class StatisticsParameters implements DatePeriod {
 	@Schema(description = "List of municipalityIds", examples = "2281")
 	private List<String> municipalityIds;
 
-	@Schema(description = "School type", examples = "Distance")
-	private String schoolType;
+	@Schema(description = "List of school types", examples = "VUXGY")
+	private List<String> schoolType;
 
 	@Schema(description = "List of study locations", examples = "Sundsvall")
 	private List<String> studyLocations;

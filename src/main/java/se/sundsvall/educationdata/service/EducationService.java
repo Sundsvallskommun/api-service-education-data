@@ -24,11 +24,14 @@ import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_;
 import se.sundsvall.educationdata.integration.db.model.EducationProviderEntity;
+import se.sundsvall.educationdata.integration.db.model.EducationProviderEntity_;
 import se.sundsvall.educationdata.integration.db.model.GyProgramCategoryEntity;
 import se.sundsvall.educationdata.integration.db.model.projection.CategoryProjection;
+import se.sundsvall.educationdata.integration.db.model.projection.CreditsProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.DirectionProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LanguageOfInstructionsProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.LectureTypeProjection;
+import se.sundsvall.educationdata.integration.db.model.projection.ProviderProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.SchoolTypeProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.StudyLocationProjection;
 import se.sundsvall.educationdata.integration.db.model.projection.StudyPaceProjection;
@@ -42,6 +45,7 @@ import static se.sundsvall.educationdata.integration.db.model.EducationEventEnti
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LANGUAGE_OF_INSTRUCTIONS;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LECTURE_TYPE;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.STUDY_PACE;
+import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_.CREDITS;
 import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_.SCHOOL_TYPE;
 import static se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity_.CATEGORY_NAME;
 import static se.sundsvall.educationdata.integration.db.model.ReferenceCategoryEntity_.DIRECTION_NAME;
@@ -58,6 +62,7 @@ public class EducationService {
 
 	private static final String EDUCATION_NOT_FOUND = "Education with id '%s' not found for import date '%s'";
 	private static final String STUDY_LOCATION = "studyLocation";
+	private static final String PROVIDER = "provider";
 
 	public EducationService(EducationEventEntityRepository educationEventEntityRepository, EducationInfoEntityRepository educationInfoEntityRepository, EducationProviderEntityRepository educationProviderEntityRepository,
 		ReferenceCategoryRepository referenceCategoryRepository,
@@ -138,6 +143,17 @@ public class EducationService {
 			case "directions" -> referenceCategoryRepository.findDistinctBy(DirectionProjection.class, Sort.by(DIRECTION_NAME)).stream()
 				.filter(Objects::nonNull)
 				.map(DirectionProjection::getDirectionName)
+				.toList();
+			case PROVIDER -> educationProviderEntityRepository.findDistinctByCreatedAt(ProviderProjection.class, date, Sort.by(EducationProviderEntity_.NAME)).stream()
+				.filter(Objects::nonNull)
+				.map(ProviderProjection::getName)
+				.filter(StringUtils::isNotEmpty)
+				.toList();
+			case CREDITS -> educationInfoEntityRepository.findDistinctByCreatedAt(CreditsProjection.class, date, Sort.by(CREDITS)).stream()
+				.filter(Objects::nonNull)
+				.map(CreditsProjection::getCredits)
+				.filter(Objects::nonNull)
+				.map(String::valueOf)
 				.toList();
 			default -> List.of();
 		};

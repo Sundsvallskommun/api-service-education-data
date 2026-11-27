@@ -15,6 +15,7 @@ import static se.sundsvall.educationdata.integration.db.model.EducationEventEnti
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.CREATED_AT;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.EDUCATION_EVENT_ID;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.EDUCATION_INFO;
+import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.EDUCATION_PROVIDER;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.END_DATE;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LANGUAGE_OF_INSTRUCTIONS;
 import static se.sundsvall.educationdata.integration.db.model.EducationEventEntity_.LECTURE_TYPE;
@@ -33,6 +34,7 @@ import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntit
 import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_.EXPIRES;
 import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_.RECOMMENDED_PRIOR_KNOWLEDGE;
 import static se.sundsvall.educationdata.integration.db.model.EducationInfoEntity_.SCHOOL_TYPE;
+import static se.sundsvall.educationdata.integration.db.model.EducationProviderEntity_.NAME;
 
 public interface EducationSpecification {
 
@@ -65,7 +67,8 @@ public interface EducationSpecification {
 			withCreditType(parameters.getCreditType()),
 			withCode(parameters.getCode()),
 			withDescription(parameters.getDescription()),
-			withFreeSearch(parameters.getSearch()));
+			withFreeSearch(parameters.getSearch()),
+			withProvider(parameters.getProvider()));
 	}
 
 	static Specification<EducationEventEntity> withInfoTitle(final String infoTitle) {
@@ -178,6 +181,10 @@ public interface EducationSpecification {
 
 	static Specification<EducationEventEntity> withDirections(List<String> categories) {
 		return SpecificationBuilder.buildDirectionFilter(categories);
+	}
+
+	static Specification<EducationEventEntity> withProvider(final List<String> provider) {
+		return SpecificationBuilder.buildJoinedIgnoreCaseFilterWithList(EDUCATION_PROVIDER, NAME, provider);
 	}
 
 	private static LocalDateTime endOfDay(final LocalDate date) {

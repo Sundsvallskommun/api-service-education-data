@@ -31,9 +31,9 @@ class EducationEventEntityTest {
 		MatcherAssert.assertThat(EducationEventEntity.class, allOf(
 			hasValidBeanConstructor(),
 			hasValidGettersAndSetters(),
-			hasValidBeanHashCodeExcluding("educationInfo"),
-			hasValidBeanEqualsExcluding("educationInfo"),
-			hasValidBeanToStringExcluding("educationInfo")));
+			hasValidBeanHashCodeExcluding("educationInfo", "educationProvider"),
+			hasValidBeanEqualsExcluding("educationInfo", "educationProvider"),
+			hasValidBeanToStringExcluding("educationInfo", "educationProvider")));
 	}
 
 	@Test

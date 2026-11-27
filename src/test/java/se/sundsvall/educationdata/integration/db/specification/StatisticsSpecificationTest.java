@@ -21,6 +21,7 @@ import static se.sundsvall.educationdata.integration.db.specification.Statistics
 import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withDirections;
 import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withMunicipalities;
 import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withPeriod;
+import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withSchoolType;
 import static se.sundsvall.educationdata.integration.db.specification.StatisticsSpecification.withStudyLocations;
 
 @DataJpaTest
@@ -110,5 +111,11 @@ class StatisticsSpecificationTest {
 	void gyCategoryMatchesOnProgramCodePrefix() {
 		assertThat(eventIds(withCreated(TODAY).and(withCategories(List.of("Bygg och anläggning")))))
 			.containsExactly("e.10");
+	}
+
+	@Test
+	void schoolTypeMatchesAnyOfGivenValues() {
+		assertThat(eventIds(withCreated(TODAY).and(withSchoolType(List.of("GY", "HS")))))
+			.containsExactlyInAnyOrder("e.2", "e.10");
 	}
 }

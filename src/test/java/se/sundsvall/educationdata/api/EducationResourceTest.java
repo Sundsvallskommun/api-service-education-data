@@ -193,4 +193,32 @@ class EducationResourceTest {
 			.contains("GY", "HS", "YH");
 	}
 
+	@Test
+	void findFilterValuesProvider() {
+		when(educationService.findFilterValues("provider", null)).thenReturn(List.of("Mittuniversitetet", "Testanordnare AB"));
+
+		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "provider")
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody(String.class)
+			.returnResult().getResponseBody();
+
+		assertThat(response).isNotNull()
+			.contains("Mittuniversitetet", "Testanordnare AB");
+	}
+
+	@Test
+	void findFilterValuesCredits() {
+		when(educationService.findFilterValues("credits", null)).thenReturn(List.of("15.0", "100.0"));
+
+		final var response = webTestClient.get().uri("/2281/educations/filters/{filterAttribute}/values", "credits")
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody(String.class)
+			.returnResult().getResponseBody();
+
+		assertThat(response).isNotNull()
+			.contains("15.0", "100.0");
+	}
+
 }

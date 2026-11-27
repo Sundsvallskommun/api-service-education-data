@@ -45,6 +45,9 @@ public class EducationParameters extends AbstractParameterPagingAndSortingBase {
 	@Schema(description = "Study location", examples = "Sundsvall")
 	private List<String> studyLocation;
 
+	@Schema(description = "Education provider name", examples = "Mittuniversitetet")
+	private List<String> provider;
+
 	@Schema(description = "Number of seats", examples = "20")
 	private Integer seats;
 
