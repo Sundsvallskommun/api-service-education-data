@@ -151,11 +151,13 @@ class EducationInfosMapperTest {
 				.unit(new CTimeType().code(TimeTypeCode.UNKNOWN_DEFAULT_OPEN_API)))
 			.credits(new Credits()
 				.credits(10.0)
-				.system(new CCredits().code(CreditsCode.UNKNOWN_DEFAULT_OPEN_API)));
+				.system(new CCredits().code(CreditsCode.UNKNOWN_DEFAULT_OPEN_API)))
+			.type(new CSchoolType().code(SchoolTypeCode.UNKNOWN_DEFAULT_OPEN_API));
 
 		final var row = infosMapper.toInfoEntities(List.of(new EducationInfoResponse().content(content))).getFirst();
 
 		assertThat(row.getDurationUnit()).isNull();
 		assertThat(row.getCreditType()).isNull();
+		assertThat(row.getSchoolType()).isNull();
 	}
 }

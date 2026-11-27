@@ -95,6 +95,9 @@ public class EducationEventEntity {
 	@Column(name = "application_end_date")
 	private LocalDate applicationDateEnd;
 
+	@Column(name = "application_url", length = 500)
+	private String applicationUrl;
+
 	@CreationTimestamp
 	@Column(name = "created_at")
 	private LocalDate createdAt;

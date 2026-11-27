@@ -4,9 +4,13 @@ import generated.se.sundsvall.susanavet.Address;
 import generated.se.sundsvall.susanavet.EducationEvent;
 import generated.se.sundsvall.susanavet.EducationEventListResponse;
 import generated.se.sundsvall.susanavet.EducationEventResponse;
+import generated.se.sundsvall.susanavet.EducationProvider;
+import generated.se.sundsvall.susanavet.EducationProviderListResponse;
+import generated.se.sundsvall.susanavet.EducationProviderResponse;
 import generated.se.sundsvall.susanavet.PageMetadata;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +20,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.educationdata.integration.db.EducationEventEntityRepository;
 import se.sundsvall.educationdata.integration.db.SusaEducationEventPageRepository;
+import se.sundsvall.educationdata.integration.db.SusaEducationProviderPageRepository;
 import se.sundsvall.educationdata.integration.db.model.json.SusaEducationEventPageEntity;
+import se.sundsvall.educationdata.integration.db.model.json.SusaEducationProviderPageEntity;
 import se.sundsvall.educationdata.integration.susanavet.SusaNavetIntegration;
 import se.sundsvall.educationdata.service.mapper.EducationEventsMapper;
 import se.sundsvall.educationdata.util.Util;
@@ -43,6 +49,9 @@ class EducationEventsServiceTest {
 
 	@Mock
 	private EducationEventEntityRepository educationEventEntityRepository;
+
+	@Mock
+	private SusaEducationProviderPageRepository susaEducationProviderPageRepository;
 
 	@Mock
 	private EducationEventsMapper educationEventsMapper;
@@ -190,9 +199,50 @@ class EducationEventsServiceTest {
 		final var nullLocations = new EducationEventResponse().content(new EducationEvent().locations(null));
 
 		final var result = educationEventsService.getMunicipalityFilteredEvents(List.of(
-			matching, wrongMunicipality, nullMunicipality, nullLocations), whitelist);
+			matching, wrongMunicipality, nullMunicipality, nullLocations), whitelist, Map.of());
 
 		assertThat(result).hasSize(1);
 		assertThat(result.getFirst().getLocations().getFirst().getAreaCode()).isEqualTo("2281");
+	}
+
+	@Test
+	void getMunicipalityFilteredEvents_eventWithoutLocationGetsProviderAddress() {
+		final var whitelist = Set.of("2281");
+		final var providerAddress = new Address().town("Sundsvall").areaCode("2281");
+
+		final var gyEvent = new EducationEventResponse().content(new EducationEvent()
+			.identifier("e.sv.1").providers(List.of("p.sv.1")));
+		final var unknownProvider = new EducationEventResponse().content(new EducationEvent()
+			.identifier("e.sv.2").providers(List.of("p.sv.2")));
+		final var ownLocationOutsideWhitelist = new EducationEventResponse().content(new EducationEvent()
+			.identifier("e.sv.3").providers(List.of("p.sv.1"))
+			.locations(List.of(new Address().areaCode("1280"))));
+
+		final var result = educationEventsService.getMunicipalityFilteredEvents(
+			List.of(gyEvent, unknownProvider, ownLocationOutsideWhitelist), whitelist, Map.of("p.sv.1", providerAddress));
+
+		assertThat(result).singleElement().satisfies(event -> {
+			assertThat(event.getIdentifier()).isEqualTo("e.sv.1");
+			assertThat(event.getLocations()).containsExactly(providerAddress);
+		});
+	}
+
+	@Test
+	void getProviderVisitAddressesKeepsOnlyWhitelistedAddresses() {
+		final var page = SusaEducationProviderPageEntity.builder().withJsonBody(Util.zip("json".getBytes())).build();
+		final var sundsvall = new Address().town("Sundsvall").areaCode("2281");
+		final var response = new EducationProviderListResponse().educationProviders(List.of(
+			new EducationProviderResponse().content(new EducationProvider().identifier("p.sv.1")
+				.visitAddresses(List.of(new Address().areaCode("1280"), sundsvall))),
+			new EducationProviderResponse().content(new EducationProvider().identifier("p.sv.2")
+				.visitAddresses(List.of(new Address().areaCode("1280")))),
+			new EducationProviderResponse().content(null)));
+
+		when(susaEducationProviderPageRepository.findAllByDateCollected(LocalDate.now())).thenReturn(List.of(page));
+		when(objectMapper.readValue(any(byte[].class), eq(EducationProviderListResponse.class))).thenReturn(response);
+
+		final var result = educationEventsService.getProviderVisitAddresses(LocalDate.now(), Set.of("2281"));
+
+		assertThat(result).hasSize(1).containsEntry("p.sv.1", sundsvall);
 	}
 }

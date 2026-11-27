@@ -12,6 +12,7 @@ import generated.se.sundsvall.susanavet.EducationInfo;
 import generated.se.sundsvall.susanavet.EducationInfoResponse;
 import generated.se.sundsvall.susanavet.LangString;
 import generated.se.sundsvall.susanavet.LangStringNode;
+import generated.se.sundsvall.susanavet.SchoolTypeCode;
 import generated.se.sundsvall.susanavet.TimeLength;
 import generated.se.sundsvall.susanavet.TimeTypeCode;
 import java.time.LocalDate;
@@ -68,7 +69,8 @@ public class EducationInfosMapper {
 			.withCredits(ofNullable(creditNode).map(Credits::getCredits).orElse(null))
 			.withCreditType(ofNullable(creditNode).map(Credits::getSystem).map(CCredits::getCode)
 				.filter(code -> code != CreditsCode.UNKNOWN_DEFAULT_OPEN_API).map(String::valueOf).orElse(null))
-			.withSchoolType(ofNullable(content.getType()).map(CSchoolType::getCode).map(String::valueOf).orElse(null))
+			.withSchoolType(ofNullable(content.getType()).map(CSchoolType::getCode)
+				.filter(code -> code != SchoolTypeCode.UNKNOWN_DEFAULT_OPEN_API).map(String::valueOf).orElse(null))
 			.withEducationType(ofNullable(content.getConfiguration()).map(CConfiguration::getCode).map(ConfigurationCode::getValue).orElse(null))
 			.withDuration(ofNullable(content.getExtent()).map(TimeLength::getLength).map(String::valueOf).orElse(null))
 			.withDurationUnit(ofNullable(content.getExtent()).map(TimeLength::getUnit).map(CTimeType::getCode)

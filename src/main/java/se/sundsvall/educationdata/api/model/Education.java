@@ -34,6 +34,9 @@ public class Education {
 	@Schema(description = "Organisation running the education on behalf of the provider", examples = "Jensen Gy")
 	private String contractor;
 
+	@Schema(description = "School name, mostly for upper secondary schools", examples = "Sundsvalls gymnasium, Västermalms skola")
+	private String schoolName;
+
 	@Schema(description = "Study location", examples = "Sundsvall")
 	private String studyLocation;
 
@@ -78,6 +81,9 @@ public class Education {
 
 	@Schema(description = "Latest application date", examples = "2026-04-15")
 	private LocalDate latestApplication;
+
+	@Schema(description = "Link to the application", examples = "https://vasternorrland.mittgymnasieval.se/")
+	private String applicationUrl;
 
 	@Schema(description = "Whether the education is cancelled", examples = "false")
 	private Boolean cancelled;

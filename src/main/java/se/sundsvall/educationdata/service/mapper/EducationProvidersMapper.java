@@ -3,6 +3,7 @@ package se.sundsvall.educationdata.service.mapper;
 import generated.se.sundsvall.susanavet.Address;
 import generated.se.sundsvall.susanavet.EducationProvider;
 import generated.se.sundsvall.susanavet.EducationProviderResponse;
+import generated.se.sundsvall.susanavet.SVProviderExtension;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collections;
@@ -43,9 +44,19 @@ public class EducationProvidersMapper {
 		return EducationProviderEntity.builder()
 			.withEducationProviderId(provider.getIdentifier())
 			.withName(firstStringValue(provider.getName()))
+			.withSchoolName(toSchoolName(provider.getExtensions()))
 			.withUrl(firstUrlValue(provider.getUrl()))
 			.withCity(ofNullable(visitingAddress).map(Address::getTown).orElse(null))
 			.withMunicipalityId(ofNullable(visitingAddress).map(Address::getAreaCode).orElse(null))
 			.build();
+	}
+
+	private String toSchoolName(final List<SVProviderExtension> extensions) {
+		return ofNullable(extensions).orElse(List.of()).stream()
+			.filter(Objects::nonNull)
+			.map(SVProviderExtension::getSchoolName)
+			.filter(Objects::nonNull)
+			.findFirst()
+			.orElse(null);
 	}
 }

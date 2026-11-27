@@ -82,7 +82,8 @@ class EducationEventsMapperTest {
 				.percentage(100.0))
 			.application(new Application()
 				.first(applicationStart)
-				.last(applicationEnd))
+				.last(applicationEnd)
+				.url(new LangUrl().urls(List.of(new UrlNode().value("https://example.com/apply")))))
 			.distance(new DistanceEducation())
 			.isCancelled(true)
 			.extensions(List.of(
@@ -115,6 +116,7 @@ class EducationEventsMapperTest {
 		assertThat(row.getLectureType()).isEqualTo("Distance");
 		assertThat(row.getApplicationDateStart()).isEqualTo(applicationStart);
 		assertThat(row.getApplicationDateEnd()).isEqualTo(applicationEnd);
+		assertThat(row.getApplicationUrl()).isEqualTo("https://example.com/apply");
 		assertThat(row.getCancelled()).isTrue();
 	}
 

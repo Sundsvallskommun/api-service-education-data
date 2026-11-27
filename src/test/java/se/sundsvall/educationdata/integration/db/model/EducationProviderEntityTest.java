@@ -40,6 +40,7 @@ class EducationProviderEntityTest {
 		var id = UUID.randomUUID().toString();
 		var educationProviderId = "p.sv.16931486";
 		var name = "Sundsvalls gymnasium";
+		var schoolName = "Västermalms skola";
 		var url = "https://sundsvall.se/gymnasium";
 		var city = "Sundsvall";
 		var municipalityId = "2281";
@@ -50,6 +51,7 @@ class EducationProviderEntityTest {
 			.withId(id)
 			.withEducationProviderId(educationProviderId)
 			.withName(name)
+			.withSchoolName(schoolName)
 			.withUrl(url)
 			.withCity(city)
 			.withMunicipalityId(municipalityId)
@@ -60,6 +62,7 @@ class EducationProviderEntityTest {
 		assertThat(provider.getId()).isEqualTo(id);
 		assertThat(provider.getEducationProviderId()).isEqualTo(educationProviderId);
 		assertThat(provider.getName()).isEqualTo(name);
+		assertThat(provider.getSchoolName()).isEqualTo(schoolName);
 		assertThat(provider.getUrl()).isEqualTo(url);
 		assertThat(provider.getCity()).isEqualTo(city);
 		assertThat(provider.getMunicipalityId()).isEqualTo(municipalityId);
