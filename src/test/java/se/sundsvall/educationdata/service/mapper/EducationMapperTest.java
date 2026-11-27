@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import se.sundsvall.educationdata.api.model.Education;
 import se.sundsvall.educationdata.integration.db.model.EducationEventEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationInfoEntity;
 import se.sundsvall.educationdata.integration.db.model.EducationProviderEntity;
@@ -67,35 +68,65 @@ class EducationMapperTest {
 
 		final var result = educationMapper.toEducation(educationEvent, educationInfo, educationProvider);
 
-		assertThat(result.getId()).isEqualTo("e.2281.123");
-		assertThat(result.getEventTitle()).isEqualTo("Matematik nivå 1a");
-		assertThat(result.getStudyLocation()).isEqualTo("Sundsvall");
-		assertThat(result.getStudySite()).isEqualTo("Distans");
-		assertThat(result.getMunicipalityId()).isEqualTo("2281");
-		assertThat(result.getContractor()).isEqualTo("Test Gy");
-		assertThat(result.getLectureType()).isEqualTo("Distance");
-		assertThat(result.getStudyPace()).isEqualTo("100.0");
-		assertThat(result.getLanguageOfInstructions()).isEqualTo("swe");
-		assertThat(result.getStart()).isEqualTo(LocalDate.of(2026, Month.OCTOBER, 12));
-		assertThat(result.getEnd()).isEqualTo(LocalDate.of(2026, Month.DECEMBER, 18));
-		assertThat(result.getApplicationUrl()).isEqualTo("https://example.com/apply");
-		assertThat(result.getStartType()).isEqualTo("1");
-		assertThat(result.getCancelled()).isFalse();
+		assertThat(result)
+			.extracting(
+				Education::getId,
+				Education::getEventTitle,
+				Education::getStudyLocation,
+				Education::getStudySite,
+				Education::getMunicipalityId,
+				Education::getContractor,
+				Education::getLectureType,
+				Education::getStudyPace,
+				Education::getLanguageOfInstructions,
+				Education::getStart,
+				Education::getEnd,
+				Education::getStartType,
+				Education::getApplicationUrl,
+				Education::getCancelled)
+			.containsExactly(
+				"e.2281.123",
+				"Matematik nivå 1a",
+				"Sundsvall",
+				"Distans",
+				"2281",
+				"Test Gy",
+				"Distance",
+				"100.0",
+				"swe",
+				LocalDate.of(2026, Month.OCTOBER, 12),
+				LocalDate.of(2026, Month.DECEMBER, 18),
+				"1",
+				"https://example.com/apply",
+				false);
 
-		assertThat(result.getTitle()).isEqualTo("Matematik");
-		assertThat(result.getCode()).isEqualTo("MATE1A00X");
-		assertThat(result.getSchoolType()).isEqualTo("VUXGY");
-		assertThat(result.getEducationType()).isEqualTo("kurs");
-		assertThat(result.getCredits()).isEqualTo(100.0);
-		assertThat(result.getCreditType()).isEqualTo("vp");
-		assertThat(result.getDuration()).isEqualTo("65");
-		assertThat(result.getDurationUnit()).isEqualTo("days");
-		assertThat(result.getEligibility()).isEqualTo("Grundläggande behörighet");
-		assertThat(result.getRecommendedPriorKnowledge()).isEqualTo("Matematik 2");
+		assertThat(result)
+			.extracting(
+				Education::getTitle,
+				Education::getCode,
+				Education::getSchoolType,
+				Education::getEducationType,
+				Education::getCredits,
+				Education::getCreditType,
+				Education::getDuration,
+				Education::getDurationUnit,
+				Education::getEligibility,
+				Education::getRecommendedPriorKnowledge)
+			.containsExactly(
+				"Matematik",
+				"MATE1A00X",
+				"VUXGY",
+				"kurs",
+				100.0,
+				"vp",
+				"65",
+				"days",
+				"Grundläggande behörighet",
+				"Matematik 2");
 
-		assertThat(result.getProvider()).isEqualTo("Sundsvalls kommun");
-		assertThat(result.getSchoolName()).isEqualTo("Västermalms skola");
-		assertThat(result.getProviderUrl()).isEqualTo("https://sundsvall.se/vuxenutbildning");
+		assertThat(result)
+			.extracting(Education::getProvider, Education::getSchoolName, Education::getProviderUrl)
+			.containsExactly("Sundsvalls kommun", "Västermalms skola", "https://sundsvall.se/vuxenutbildning");
 	}
 
 	@Test
